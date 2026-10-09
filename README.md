@@ -7,7 +7,7 @@
   <source media="(max-width: 600px)" srcset="./assets/hero-mobile-light.gif">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/hero-desktop-dark.gif">
   <source media="(prefers-color-scheme: light)" srcset="./assets/hero-desktop-light.gif">
-  <img src="./assets/hero-desktop-light.png" alt="João Vitor Sesma — From complex data to interactive tools. Computer Engineering at IMT, Brazil. A curious silver dragon with a blue wing and a glass ribbon." width="1200">
+  <img src="./assets/hero-desktop-light.png" alt="João Vitor Sesma —. Computer Engineering at IMT, Brazil. A curious silver dragon with a blue wing and a glass ribbon." width="1200">
 </picture>
 
 I'm **João Vitor Morimoto Sesma**, a Computer Engineering student at **Instituto Mauá de Tecnologia, Brazil**.
