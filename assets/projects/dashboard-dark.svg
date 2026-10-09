@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title description">
+<title id="title">02 / DATA VISUALIZATION</title>
+<desc id="description">An abstract interface illustration with filters, charts and a regional shape. This is not an application screenshot or a measured result.</desc>
+<g font-family="Segoe UI, Arial, sans-serif">
+<rect width="1200" height="675" rx="32" fill="#161618"/>
+<text x="62" y="81" font-size="23" font-weight="500" letter-spacing="3" fill="#B0B0B7">02 / DATA VISUALIZATION</text>
+<rect x="62" y="108" width="44" height="4" rx="2" fill="#64B5FF"/>
+<rect x="62" y="165" width="1076" height="414" rx="22" fill="#222225" stroke="#343438" stroke-width="2"/>
+<path d="M279 165V579" stroke="#343438" stroke-width="2"/>
+<rect x="98" y="213" width="117" height="8" rx="4" fill="#B0B0B7" opacity=".55"/>
+<rect x="98" y="253" width="144" height="43" rx="9" fill="#1E3046"/>
+<rect x="112" y="269" width="86" height="8" rx="4" fill="#64B5FF"/>
+<rect x="98" y="324" width="99" height="8" rx="4" fill="#343438"/>
+<rect x="98" y="360" width="128" height="8" rx="4" fill="#343438"/>
+<rect x="98" y="396" width="84" height="8" rx="4" fill="#343438"/>
+<text x="324" y="228" font-size="25" font-weight="500" fill="#F5F5F7">Diagnosis trends</text>
+<path d="M326 280H701M326 329H701M326 378H701" stroke="#343438" stroke-width="2"/>
+<path d="M326 367L388 338L451 348L513 294L575 316L638 269L701 278" fill="none" stroke="#64B5FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="326" y="473" width="48" height="61" rx="6" fill="#64B5FF" opacity=".4"/>
+<rect x="408" y="449" width="48" height="85" rx="6" fill="#64B5FF" opacity=".55"/>
+<rect x="490" y="428" width="48" height="106" rx="6" fill="#64B5FF" opacity=".7"/>
+<rect x="572" y="460" width="48" height="74" rx="6" fill="#64B5FF" opacity=".55"/>
+<rect x="654" y="414" width="48" height="120" rx="6" fill="#64B5FF"/>
+<path d="M748 203V541" stroke="#343438" stroke-width="2"/>
+<text x="794" y="228" font-size="25" font-weight="500" fill="#F5F5F7">Regional view</text>
+<path d="M837 296L935 279L1024 325L1056 391L1001 421L953 492L875 469L812 402Z" fill="#1E3046" stroke="#64B5FF" stroke-width="3" stroke-linejoin="round"/>
+<path d="M935 279L924 369L812 402M924 369L1056 391M924 369L953 492" fill="none" stroke="#64B5FF" stroke-width="3" stroke-opacity=".5"/>
+<circle cx="924" cy="369" r="8" fill="#64B5FF"/>
+<text x="62" y="623" font-size="29" font-weight="500" fill="#F5F5F7">From datasets to exploration.</text>
+<text x="1138" y="623" text-anchor="end" font-size="23" fill="#B0B0B7">Streamlit</text></g>
+</svg>
