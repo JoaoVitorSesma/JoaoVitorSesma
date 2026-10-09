@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title description">
-<title id="title">01 / RESEARCH</title>
+<title id="title">SURVIVAL RESEARCH</title>
 <desc id="description">Conceptual step curves for survival research. The illustration contains no patient results or measured statistics.</desc>
 <g font-family="Segoe UI, Arial, sans-serif">
 <rect width="1200" height="675" rx="32" fill="#161618"/>
-<text x="62" y="81" font-size="23" font-weight="500" letter-spacing="3" fill="#B0B0B7">01 / RESEARCH</text>
+<text x="62" y="81" font-size="23" font-weight="500" letter-spacing="3" fill="#B5BCC7">SURVIVAL RESEARCH</text>
 <rect x="62" y="108" width="44" height="4" rx="2" fill="#64B5FF"/>
 <rect x="62" y="165" width="1076" height="414" rx="22" fill="#222225" stroke="#343438" stroke-width="2"/><path d="M123 254H1080" fill="none" stroke="#343438" stroke-width="2"/><path d="M123 331H1080" fill="none" stroke="#343438" stroke-width="2"/><path d="M123 408H1080" fill="none" stroke="#343438" stroke-width="2"/><path d="M123 485H1080" fill="none" stroke="#343438" stroke-width="2"/>
-<path d="M123 226H265V257H394V312H556V341H711V401H868V444H1080" fill="none" stroke="#B0B0B7" stroke-opacity=".42" stroke-width="7" stroke-linejoin="round"/>
+<path d="M123 226H265V257H394V312H556V341H711V401H868V444H1080" fill="none" stroke="#B5BCC7" stroke-opacity=".42" stroke-width="7" stroke-linejoin="round"/>
 <path d="M123 226H306V247H443V275H601V321H768V346H920V397H1080" fill="none" stroke="#64B5FF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
 <circle cx="1046" cy="209" r="6" fill="#64B5FF"/>
-<text x="894" y="214" font-size="21" fill="#B0B0B7">Kaplan–Meier</text>
-<text x="62" y="623" font-size="29" font-weight="500" fill="#F5F5F7">Statistical models. Clearer questions.</text>
-<text x="1138" y="623" text-anchor="end" font-size="23" fill="#B0B0B7">Cox / KM</text></g>
+<text x="894" y="214" font-size="21" fill="#B5BCC7">Kaplan–Meier</text>
+<text x="62" y="623" font-size="29" font-weight="500" fill="#F5F5F7">Exploring survival data.</text>
+<text x="1138" y="623" text-anchor="end" font-size="23" fill="#B5BCC7">Cox / KM</text></g>
 </svg>
