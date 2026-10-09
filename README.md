@@ -18,47 +18,75 @@ I work on **survival analysis, interactive dashboards and automation**.
 
 ## Selected work
 
+### [Colorectal Cancer Survival Research](https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC)
+
+Investigating colorectal cancer survival through data preparation, **Cox regression** and **Kaplan–Meier analysis**.
+
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/projects/survival-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="./assets/projects/survival-light.svg">
-  <img src="./assets/projects/survival-light.svg" alt="Conceptual illustration of survival step curves; no patient results are shown." width="640">
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/research-mobile-dark.png">
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px)" srcset="./assets/selected-work/research-mobile-light.png">
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/research-desktop-dark.png">
+  <source media="(prefers-reduced-motion: reduce)" srcset="./assets/selected-work/research-desktop-light.png">
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/research-mobile-dark.gif">
+  <source media="(max-width: 600px)" srcset="./assets/selected-work/research-mobile-light.gif">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/selected-work/research-desktop-dark.gif">
+  <source media="(prefers-color-scheme: light)" srcset="./assets/selected-work/research-desktop-light.gif">
+  <img src="./assets/selected-work/research-desktop-light.png" alt="Published colorectal cancer Kaplan–Meier figure, with original axes and legend, alongside the project’s COX artwork. Source: FOSP_curvas_Kaplan_Meier.ipynb." width="760">
 </picture>
-
-### [Cancer Survival Analysis](https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC)
-
-Exploring colorectal cancer survival with FOSP data, **Cox regression** and **Kaplan–Meier curves**.
 
 **My contribution:** Data preparation, statistical modeling and survival visualizations in research notebooks.
 
 **Tools:** Python · pandas · lifelines · Jupyter
 
+[Explore research ↗](https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC) · [View published figure ↗](./assets/selected-work/research-km-published.png)
+
 <br>
 
+### [FOSP Cervical Cancer Dashboard](https://github.com/JoaoVitorSesma/Dashboard)
+
+An interactive dashboard for exploring **cervical cancer diagnoses** and regional survival estimates.
+
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/projects/dashboard-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="./assets/projects/dashboard-light.svg">
-  <img src="./assets/projects/dashboard-light.svg" alt="Conceptual dashboard illustration with filters, charts and a regional view; not an application screenshot." width="320">
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/dashboard-mobile-dark.png">
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px)" srcset="./assets/selected-work/dashboard-mobile-light.png">
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/dashboard-desktop-dark.png">
+  <source media="(prefers-reduced-motion: reduce)" srcset="./assets/selected-work/dashboard-desktop-light.png">
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/dashboard-mobile-dark.gif">
+  <source media="(max-width: 600px)" srcset="./assets/selected-work/dashboard-mobile-light.gif">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/selected-work/dashboard-desktop-dark.gif">
+  <source media="(prefers-color-scheme: light)" srcset="./assets/selected-work/dashboard-desktop-light.gif">
+  <img src="./assets/selected-work/dashboard-desktop-light.png" alt="Interface reconstruction based on DFOSP.py: age, staging and outcome filters; diagnosis trends and regional survival views. No patient data or numerical results are displayed." width="640">
 </picture>
 
-### [FOSP Health Dashboard](https://github.com/JoaoVitorSesma/Dashboard)
-
-A Streamlit app for exploring cervical cancer diagnosis trends and regional survival estimates. **My contribution:** Interactive filters, charts and geographic visualizations.
+**My contribution:** Interactive filters, charts and geographic visualizations.
 
 **Tools:** Python · Streamlit · Plotly · GeoPandas · Folium
 
-<br>
+[View dashboard code ↗](https://github.com/JoaoVitorSesma/Dashboard)
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/projects/monitor-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="./assets/projects/monitor-light.svg">
-  <img src="./assets/projects/monitor-light.svg" alt="Collect, classify, deduplicate and notify: the stages of a public announcement monitor." width="320">
-</picture>
+<br>
 
 ### [Codex Reset Monitor](https://github.com/JoaoVitorSesma/codex-reset-monitor)
 
-A monitor for public Codex usage-reset announcements, with relevant alerts sent to Discord. **Project focus:** Source classification, event deduplication and scheduled alerts.
+Monitoring public Codex reset announcements and delivering relevant alerts to **Discord**.
+
+<picture>
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/monitor-mobile-dark.png">
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px)" srcset="./assets/selected-work/monitor-mobile-light.png">
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/monitor-desktop-dark.png">
+  <source media="(prefers-reduced-motion: reduce)" srcset="./assets/selected-work/monitor-desktop-light.png">
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/monitor-mobile-dark.gif">
+  <source media="(max-width: 600px)" srcset="./assets/selected-work/monitor-mobile-light.gif">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/selected-work/monitor-desktop-dark.gif">
+  <source media="(prefers-color-scheme: light)" srcset="./assets/selected-work/monitor-desktop-light.gif">
+  <img src="./assets/selected-work/monitor-desktop-light.png" alt="Architecture overview: public sources flow through classification and event deduplication to Discord alerts. The moving pulse illustrates the flow, not live activity." width="640">
+</picture>
+
+**Project focus:** Source classification, event deduplication and scheduled alerts.
 
 **Tools:** Python · GitHub Actions · Cloudflare Workers
+
+[Explore monitor ↗](https://github.com/JoaoVitorSesma/codex-reset-monitor)
 
 ## Tools & technologies
 
