@@ -1,81 +1,79 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/banner-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="./assets/banner-light.png">
-  <img src="./assets/banner-light.png" alt="João Vitor Sesma — a silver dragon resting beside my name." width="1200">
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero-mobile-dark.png">
+  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px)" srcset="./assets/hero-mobile-light.png">
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="./assets/hero-desktop-dark.png">
+  <source media="(prefers-reduced-motion: reduce)" srcset="./assets/hero-desktop-light.png">
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero-mobile-dark.gif">
+  <source media="(max-width: 600px)" srcset="./assets/hero-mobile-light.gif">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/hero-desktop-dark.gif">
+  <source media="(prefers-color-scheme: light)" srcset="./assets/hero-desktop-light.gif">
+  <img src="./assets/hero-desktop-light.png" alt="João Vitor Sesma — From complex data to interactive tools. Computer Engineering at IMT, Brazil. A curious silver dragon with a blue wing and a glass ribbon." width="1200">
 </picture>
 
-**Computer Engineering student at Instituto Mauá de Tecnologia (IMT), Brazil.**
+I'm **João Vitor Morimoto Sesma**, a Computer Engineering student at **Instituto Mauá de Tecnologia, Brazil**.
 
-I'm João Vitor Morimoto Sesma. My public projects bring together data analysis, interactive applications and automation.
+I work on **survival analysis, interactive dashboards and automation**.
 
-[Projects](#selected-projects) · [Tools](#tools--technologies) · [Learning](#currently-exploring) · [Contact](#connect)
+[Explore my work ↓](#selected-work) · [Email ↗](mailto:jv0707204@gmail.com)
 
-## Selected Projects
+## Selected work
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/projects/survival-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="./assets/projects/survival-light.svg">
-  <img src="./assets/projects/survival-light.svg" alt="Conceptual illustration of Cox regression and Kaplan–Meier survival analysis." width="520">
+  <img src="./assets/projects/survival-light.svg" alt="Conceptual illustration of survival step curves; no patient results are shown." width="640">
 </picture>
 
 ### [Cancer Survival Analysis](https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC)
 
-Research notebooks exploring colorectal cancer survival using FOSP data, Cox regression and Kaplan–Meier curves.
+Exploring colorectal cancer survival with FOSP data, **Cox regression** and **Kaplan–Meier curves**.
 
-**My work:** Data preparation, statistical modeling and survival visualizations.
+**My contribution:** Data preparation, statistical modeling and survival visualizations in research notebooks.
 
-**Built with:** Python · lifelines · Jupyter
-
-[Explore the research →](https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC)
+**Tools:** Python · pandas · lifelines · Jupyter
 
 <br>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/projects/dashboard-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="./assets/projects/dashboard-light.svg">
-  <img src="./assets/projects/dashboard-light.svg" alt="Conceptual illustration of filters, trend charts and regional data exploration." width="520">
+  <img src="./assets/projects/dashboard-light.svg" alt="Conceptual dashboard illustration with filters, charts and a regional view; not an application screenshot." width="320">
 </picture>
 
 ### [FOSP Health Dashboard](https://github.com/JoaoVitorSesma/Dashboard)
 
-A Streamlit application for exploring cervical cancer diagnosis trends and regional survival estimates.
+A Streamlit app for exploring cervical cancer diagnosis trends and regional survival estimates. **My contribution:** Interactive filters, charts and geographic visualizations.
 
-**My work:** Interactive filters, trend charts and geographic visualizations.
-
-**Built with:** Python · Streamlit · Plotly · GeoPandas · Folium
-
-[Explore the dashboard →](https://github.com/JoaoVitorSesma/Dashboard)
+**Tools:** Python · Streamlit · Plotly · GeoPandas · Folium
 
 <br>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/projects/monitor-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="./assets/projects/monitor-light.svg">
-  <img src="./assets/projects/monitor-light.svg" alt="Diagram of a public announcement monitor: collect, classify, deduplicate and notify." width="520">
+  <img src="./assets/projects/monitor-light.svg" alt="Collect, classify, deduplicate and notify: the stages of a public announcement monitor." width="320">
 </picture>
 
 ### [Codex Reset Monitor](https://github.com/JoaoVitorSesma/codex-reset-monitor)
 
-An automated monitor that classifies public Codex usage-reset announcements and sends relevant alerts to Discord.
+A monitor for public Codex usage-reset announcements, with relevant alerts sent to Discord. **Project focus:** Source classification, event deduplication and scheduled alerts.
 
-**Project focus:** Source classification, event deduplication and scheduled alerts.
+**Tools:** Python · GitHub Actions · Cloudflare Workers
 
-**Built with:** Python · GitHub Actions · Cloudflare Workers
-
-[Explore the monitor →](https://github.com/JoaoVitorSesma/codex-reset-monitor)
-
-## Tools & Technologies
+## Tools & technologies
 
 <img src="./assets/icons/data.svg" width="18" height="18" alt=""> **Data & research:** Python · pandas · NumPy · lifelines · Plotly
 
-<img src="./assets/icons/apps.svg" width="18" height="18" alt=""> **Apps & coursework:** Streamlit · Flutter · Dart
+<img src="./assets/icons/apps.svg" width="18" height="18" alt=""> **Applications:** Streamlit · GeoPandas · Folium
 
 <img src="./assets/icons/automation.svg" width="18" height="18" alt=""> **Automation:** GitHub Actions · Cloudflare Workers
 
-## Currently Exploring
+## Currently exploring
 
-- **Flutter and Dart:** Applications and exercises from [ECM252 coursework at IMT](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter).
+**Flutter and Dart:** Building applications and exercises through [ECM252 coursework at IMT](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter).
 
-## Connect
+## Let's connect
 
-[Email](mailto:jv0707204@gmail.com) · [GitHub](https://github.com/JoaoVitorSesma) · [All repositories](https://github.com/JoaoVitorSesma?tab=repositories)
+Want to discuss my projects or an internship opportunity? [Send me an email ↗](mailto:jv0707204@gmail.com)
+
+[GitHub](https://github.com/JoaoVitorSesma) · [All repositories](https://github.com/JoaoVitorSesma?tab=repositories)
