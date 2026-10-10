@@ -4,7 +4,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero/hero-pt-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/hero/hero-pt-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/hero/hero-pt-dark.svg">
-  <img src="./assets/hero/hero-pt-light.svg" width="100%" alt="João Vitor Sesma — dados de saúde para modelos de sobrevida para ferramentas. Engenharia de Computação no Instituto Mauá de Tecnologia, Brasil. Ao lado do nome, uma curva de Kaplan–Meier da sua pesquisa sobre câncer colorretal se desenha: 37.621 pacientes, sobrevida mediana de 44 meses.">
+  <img src="./assets/hero/hero-pt-light.svg" width="100%" alt="João Vitor Sesma. Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. Engenharia de Computação no Instituto Mauá de Tecnologia, Brasil. Ao lado do nome, uma curva de Kaplan–Meier da sua pesquisa sobre câncer colorretal se desenha: 37.621 pacientes, sobrevida mediana de 44 meses.">
 </picture>
 
 <picture>
@@ -14,9 +14,9 @@
   <img src="./assets/strip/walk-light.svg" width="100%" alt="Um pequeno dragão em pixel art caminhando sobre uma fileira de quadradinhos de contribuição.">
 </picture>
 
-Sou estudante de Engenharia de Computação no **Instituto Mauá de Tecnologia**. Pego registros de saúde bagunçados, modelo o que eles dizem sobre sobrevida e transformo os resultados em ferramentas que as pessoas realmente usam — e na automação que mantém tudo funcionando.
+Sou estudante de Engenharia de Computação no **Instituto Mauá de Tecnologia**. Pego registros de saúde bagunçados, modelo o que eles dizem sobre sobrevida e transformo os resultados em ferramentas que as pessoas realmente usam. Também construo a automação que mantém essas ferramentas funcionando.
 
-[Projetos ↓](#projetos) · [E-mail ↗](mailto:jv0707204@gmail.com)
+[Projetos](#projetos) · [E-mail](mailto:jv0707204@gmail.com)
 
 ## Projetos
 
@@ -29,8 +29,8 @@ Sou estudante de Engenharia de Computação no **Instituto Mauá de Tecnologia**
 </picture>
 </a>
 
-**Sobrevida no câncer colorretal** — preparação de dados, regressão de Cox e curvas de Kaplan–Meier no registro de câncer de São Paulo (FOSP).<br>
-<sub>Python · pandas · lifelines · Jupyter — [Repositório ↗](https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC) · [Abrir no Colab ↗](https://colab.research.google.com/github/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC/blob/main/Predi%C3%A7%C3%A3o_da_Sobrevida_em_Pacientes_com_C%C3%A2ncer_Colorretal_COX.ipynb)</sub>
+**Sobrevida no câncer colorretal.** Preparação de dados, regressão de Cox e curvas de Kaplan–Meier no registro de câncer de São Paulo (FOSP).<br>
+<sub>Python · pandas · lifelines · Jupyter · [Repositório](https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC) · [Abrir no Colab](https://colab.research.google.com/github/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC/blob/main/Predi%C3%A7%C3%A3o_da_Sobrevida_em_Pacientes_com_C%C3%A2ncer_Colorretal_COX.ipynb)</sub>
 
 <a href="https://github.com/JoaoVitorSesma/Dashboard">
 <picture>
@@ -41,8 +41,8 @@ Sou estudante de Engenharia de Computação no **Instituto Mauá de Tecnologia**
 </picture>
 </a>
 
-**Dashboard de câncer do colo do útero** — filtros interativos, tendências e sobrevida por região com dados públicos da FOSP.<br>
-<sub>Python · Streamlit · Plotly · GeoPandas · Folium — [Repositório ↗](https://github.com/JoaoVitorSesma/Dashboard)</sub>
+**Dashboard de câncer do colo do útero.** Filtros interativos, tendências e sobrevida por região com dados públicos da FOSP.<br>
+<sub>Python · Streamlit · Plotly · GeoPandas · Folium · [Repositório](https://github.com/JoaoVitorSesma/Dashboard)</sub>
 
 <a href="https://github.com/JoaoVitorSesma/codex-reset-monitor">
 <picture>
@@ -53,8 +53,8 @@ Sou estudante de Engenharia de Computação no **Instituto Mauá de Tecnologia**
 </picture>
 </a>
 
-**Monitor de resets do Codex** — acompanha fontes públicas, classifica anúncios de reset com regras determinísticas, deduplica entre fontes e avisa no Discord.<br>
-<sub>Python · GitHub Actions · Cloudflare Workers · pytest — [Repositório ↗](https://github.com/JoaoVitorSesma/codex-reset-monitor)</sub>
+**Monitor de resets do Codex.** Acompanha fontes públicas, classifica anúncios de reset com regras determinísticas, deduplica entre fontes e avisa no Discord.<br>
+<sub>Python · GitHub Actions · Cloudflare Workers · pytest · [Repositório](https://github.com/JoaoVitorSesma/codex-reset-monitor)</sub>
 
 ## Agora
 
@@ -63,13 +63,13 @@ Sou estudante de Engenharia de Computação no **Instituto Mauá de Tecnologia**
 
 ## Ferramentas
 
-**Dados e pesquisa** — Python · pandas · NumPy · lifelines · Jupyter<br>
-**Aplicações e visualização** — Streamlit · Plotly · GeoPandas · Folium<br>
-**Automação** — GitHub Actions · Cloudflare Workers · webhooks do Discord<br>
-**Aprendendo** — Flutter · Dart
+**Dados e pesquisa:** Python · pandas · NumPy · lifelines · Jupyter<br>
+**Aplicações e visualização:** Streamlit · Plotly · GeoPandas · Folium<br>
+**Automação:** GitHub Actions · Cloudflare Workers · webhooks do Discord<br>
+**Aprendendo:** Flutter · Dart
 
 ## Vamos conversar
 
-Aberto a estágios em **ciência de dados, análise em saúde e automação**. [Me mande um e-mail ↗](mailto:jv0707204@gmail.com)
+Aberto a estágios em **ciência de dados, análise em saúde e automação**. [Me mande um e-mail](mailto:jv0707204@gmail.com)
 
-<sub>Todas as figuras desta página são desenhadas a partir dos dados dos próprios projetos por [`scripts/build_assets.py`](./scripts/build_assets.py); fontes em [`assets/SOURCES.md`](./assets/SOURCES.md). As animações param quando o sistema pede movimento reduzido.</sub>
+<sub>Todas as figuras desta página são desenhadas a partir dos dados dos próprios projetos por [`scripts/build_assets.py`](./scripts/build_assets.py); fontes em [`assets/SOURCES.md`](./assets/SOURCES.md). As animações param quando o sistema pede movimento reduzido. Tipografia em Atkinson Hyperlegible, desenhada pelo Braille Institute para leitores com baixa visão.</sub>

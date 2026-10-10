@@ -11,7 +11,7 @@ from pathlib import Path
 
 import cards
 import sprite
-from svgkit import MIN_PX, MONO, MONO_MD, SERIF, SERIF_IT, THEMES, base_css, canvas, smallest, svg, text
+from svgkit import MIN_PX, MONO, MONO_MD, SANS, SANS_BD, THEMES, base_css, canvas, smallest, svg, text, wrap
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = Path(__file__).parent / "data"
@@ -22,34 +22,32 @@ KM = json.loads((DATA / "km_curve.json").read_text())
 STR = {
     "en": dict(
         cmd="whoami",
-        tagline_m=["health data → survival models", "→ tools people use"],
-        tagline_m3=["health data →", "survival models →", "tools people use"],
+        tagline="Health data, survival models and the tools people use.",
         meta_m=["Computer Engineering", "Instituto Mauá de Tecnologia · Brazil"],
         now_label="now",
-        now="recurrence modeling — Cox × ML",
+        now="modeling recurrence with Cox and machine learning",
         months="months",
         median="median 44 months",
         fig1_a=" Colorectal cancer survival",
         fig1_b="FOSP · n = 37,621 · 2000–2023",
         hero_title="João Vitor Sesma",
-        hero_desc="João Vitor Sesma. Health data to survival models to tools people use. "
+        hero_desc="João Vitor Sesma. Health data, survival models and the tools people use. "
         "Computer Engineering at Instituto Mauá de Tecnologia, Brazil. Currently modeling "
         "recurrence with Cox and machine learning. Figure: Kaplan–Meier survival curve for "
         "colorectal cancer, FOSP, 37,621 patients, median survival 44 months.",
     ),
     "pt": dict(
         cmd="whoami",
-        tagline_m=["dados de saúde → modelos de sobrevida", "→ ferramentas"],
-        tagline_m3=["dados de saúde →", "modelos de sobrevida →", "ferramentas"],
+        tagline="Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam.",
         meta_m=["Engenharia de Computação", "Instituto Mauá de Tecnologia · Brasil"],
         now_label="agora",
-        now="modelando recidiva — Cox × ML",
+        now="modelando recidiva com Cox e machine learning",
         months="meses",
         median="mediana 44 meses",
         fig1_a=" Sobrevida no câncer colorretal",
         fig1_b="FOSP · n = 37.621 · 2000–2023",
         hero_title="João Vitor Sesma",
-        hero_desc="João Vitor Sesma. Dados de saúde para modelos de sobrevida para ferramentas. "
+        hero_desc="João Vitor Sesma. Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. "
         "Engenharia de Computação no Instituto Mauá de Tecnologia, Brasil. Agora modelando "
         "recidiva com Cox e machine learning. Figura: curva de Kaplan–Meier do câncer "
         "colorretal, FOSP, 37.621 pacientes, sobrevida mediana de 44 meses.",
@@ -166,32 +164,25 @@ def hero(lang, theme, mobile):
     css.append(c)
 
     # name: as large as the column allows, capped
-    name_size = min(r(64), col_w / (SERIF.width("João Vitor ", 1) + SERIF_IT.width("Sesma", 1)) * 0.98)
-    y += name_size * 1.0
-    n1, wn1 = text(SERIF, "João Vitor ", x, y, name_size, "fg")
-    n2, _ = text(SERIF_IT, "Sesma", x + wn1, y, name_size, "ac")
-    parts.append(f'<g class="name">{n1}{n2}</g>')
+    name_size = min(r(52), col_w / SANS_BD.width("João Vitor Sesma", 1) * 0.98)
+    y += name_size * 1.05
+    n1, _ = text(SANS_BD, "João Vitor Sesma", x, y, name_size, "fg", tracking=-name_size * 0.01)
+    parts.append(f'<g class="name">{n1}</g>')
     css.append(f".name{{animation:rise .9s cubic-bezier(.2,.8,.2,1) {t_end + .15:.2f}s both}}")
 
-    lines = s["tagline_m3"] if mobile else s["tagline_m"]
-    start = t_end + 0.7
-    y += tag * 2.0
-    for i, line in enumerate(lines):
-        b, c, wl, start = type_line(MONO, line, x, y, tag, "fg", start, 26, f"ty{i + 1}")
-        parts.append(b)
-        css.append(c)
-        last_w, last_y = wl, y
-        y += tag * 1.5
-    parts.append(
-        f'<rect class="cur" x="{x + last_w + tag * 0.25:.1f}" y="{last_y - tag * 0.82:.1f}" '
-        f'width="{tag * 0.6:.1f}" height="{tag * 1.05:.1f}" fill="{t["ac"]}"/>'
-    )
-    css.append(f".cur{{animation:fade .01s {start:.2f}s both,blink 1.1s steps(1) {start:.2f}s infinite}}")
-
+    start = t_end + 0.5
+    y += tag * 1.9
+    tl = []
+    for line in wrap(SANS, s["tagline"], tag, col_w):
+        tl.append(text(SANS, line, x, y, tag, "fg")[0])
+        y += tag * 1.4
+    parts.append(f'<g class="tag">{"".join(tl)}</g>')
+    css.append(f".tag{{animation:rise .8s cubic-bezier(.2,.8,.2,1) {start:.2f}s both}}")
+    start += 0.6
     y += meta * 0.5
     g = []
     for line in s["meta_m"]:
-        g.append(text(MONO, line, x, y, meta, "mu")[0])
+        g.append(text(SANS, line, x, y, meta, "mu")[0])
         y += meta * 1.5
     y += meta * 0.6
     cy = y - meta * 0.33
@@ -203,7 +194,11 @@ def hero(lang, theme, mobile):
     lx = x + dot * 2 + meta * 0.6
     lbl, wl = text(MONO_MD, s["now_label"], lx, y, meta, "gr")
     g.append(lbl)
-    g.append(text(MONO, s["now"], lx + wl + meta * 0.6, y, meta, "fg")[0])
+    nx = lx + wl + meta * 0.6
+    for i, line in enumerate(wrap(SANS, s["now"], meta, x + col_w - nx)):
+        if i:
+            y += meta * 1.4
+        g.append(text(SANS, line, nx, y, meta, "fg")[0])
     parts.append(f'<g class="meta">{"".join(g)}</g>')
     css.append(f".meta{{animation:fade .8s ease {start + .1:.2f}s both}}")
     css.append(f".pl{{animation:pulse 2.4s ease-out {start + .5:.2f}s infinite}}")
@@ -223,7 +218,7 @@ def hero(lang, theme, mobile):
     cap_y = ty + cap * 2.6
     f1, wf = text(MONO_MD, "FIG. 1", cap_x, cap_y, tick, "ac")
     indent = wf + cap * 0.8
-    f2, _ = text(MONO, s["fig1_a"].strip(), cap_x + indent, cap_y, cap, "mu")
+    f2, _ = text(SANS, s["fig1_a"].strip(), cap_x + indent, cap_y, cap, "mu")
     f3, _ = text(MONO, s["fig1_b"], cap_x + indent, cap_y + cap * 1.5, tick, "fa")
     parts.append(body)
     parts.append(f'<g class="cap">{f1}{f2}{f3}</g>')
