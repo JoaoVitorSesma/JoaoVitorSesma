@@ -11,7 +11,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/strip/walk-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/strip/walk-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/strip/walk-dark.svg">
-  <img src="./assets/strip/walk-light.svg" width="100%" alt="Um pequeno dragão em pixel art caminhando sobre uma fileira de quadradinhos de contribuição.">
+  <img src="./assets/strip/walk-light.svg" width="100%" alt="Um pequeno ouriço em pixel art andando sobre uma fileira de quadradinhos de contribuição, que se enrola em bola e rola parte do caminho.">
 </picture>
 
 Sou estudante de Engenharia de Computação no **Instituto Mauá de Tecnologia**. Pego registros de saúde bagunçados, modelo o que eles dizem sobre sobrevida e transformo os resultados em ferramentas que as pessoas realmente usam. Também construo a automação que mantém essas ferramentas funcionando.
