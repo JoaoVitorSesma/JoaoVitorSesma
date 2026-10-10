@@ -8,8 +8,13 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero/hero-pt-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/hero/hero-pt-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/hero/hero-pt-dark.svg">
-  <img src="./assets/hero/hero-pt-light.svg" width="100%" alt="João Vitor Sesma. Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. Engenharia de Computação no Instituto Mauá de Tecnologia, Brasil. Ao lado do nome, uma curva de Kaplan–Meier da sua pesquisa sobre câncer colorretal se desenha: 37.621 pacientes, sobrevida mediana de 44 meses.">
+  <img src="./assets/hero/hero-pt-light.svg" width="100%" alt="João Vitor Sesma. Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. Engenharia de Computação no Instituto Mauá de Tecnologia, Brasil. 37.621 pacientes modelados, 55.647 registros visualizados, 96 verificações automáticas por dia. Ao lado do nome, uma curva de Kaplan–Meier da sua pesquisa sobre câncer colorretal se desenha: 37.621 pacientes, sobrevida mediana de 44 meses.">
 </picture>
+
+<p>
+  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-pt-dark.svg"><img src="./assets/cta/main-pt-light.svg" alt="Aberto a estágio. Fale comigo" height="34" width="247"></picture></a>
+  <a href="#projetos"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/alt-pt-dark.svg"><img src="./assets/cta/alt-pt-light.svg" alt="Ver projetos" height="34" width="109"></picture></a>
+</p>
 
 <picture>
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/strip/walk-dark-mobile.svg">
@@ -19,8 +24,6 @@
 </picture>
 
 Sou estudante de Engenharia de Computação no **Instituto Mauá de Tecnologia**. Pego registros de saúde bagunçados, modelo o que eles dizem sobre sobrevida e transformo os resultados em ferramentas que as pessoas realmente usam. Também construo a automação que mantém essas ferramentas funcionando.
-
-[Projetos](#projetos) · [E-mail](mailto:jv0707204@gmail.com)
 
 ## Projetos
 

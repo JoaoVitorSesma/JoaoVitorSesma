@@ -8,8 +8,13 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/hero/hero-en-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark.svg">
-  <img src="./assets/hero/hero-en-light.svg" width="100%" alt="João Vitor Sesma. Health data, survival models and the tools people use. Computer Engineering at Instituto Mauá de Tecnologia, Brazil. Beside the name, a Kaplan–Meier curve from his colorectal cancer research draws itself: 37,621 patients, median survival 44 months.">
+  <img src="./assets/hero/hero-en-light.svg" width="100%" alt="João Vitor Sesma. Health data, survival models and the tools people use. Computer Engineering at Instituto Mauá de Tecnologia, Brazil. 37,621 patients modeled, 55,647 records visualized, 96 automated checks a day. Beside the name, a Kaplan–Meier curve from his colorectal cancer research draws itself: 37,621 patients, median survival 44 months.">
 </picture>
+
+<p>
+  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-en-dark.svg"><img src="./assets/cta/main-en-light.svg" alt="Open to internships. Email me" height="34" width="249"></picture></a>
+  <a href="#selected-work"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/alt-en-dark.svg"><img src="./assets/cta/alt-en-light.svg" alt="See projects" height="34" width="111"></picture></a>
+</p>
 
 <picture>
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/strip/walk-dark-mobile.svg">
@@ -19,8 +24,6 @@
 </picture>
 
 I'm a Computer Engineering student at **Instituto Mauá de Tecnologia**. I take messy health records, model what they say about survival, and turn the results into tools people can actually use. I also build the automation that keeps those tools running.
-
-[Selected work](#selected-work) · [Email](mailto:jv0707204@gmail.com)
 
 ## Selected work
 
