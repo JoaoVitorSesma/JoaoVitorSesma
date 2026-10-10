@@ -237,7 +237,7 @@ def _mix(a, b, k):
     return "#" + "".join(f"{round(x + (y - x) * k):02x}" for x, y in zip(a, b))
 
 
-MASCOT = "silver"  # one of creatures.CREATURES: silver, egg, mecha, blob
+MASCOT = "silver"  # one of creatures.CREATURES: silver, egg, mecha, blob, hedgehog
 
 
 def strip(theme, mobile, mascot=None):
