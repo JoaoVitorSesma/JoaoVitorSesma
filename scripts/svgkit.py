@@ -74,10 +74,32 @@ class Font:
         return pen.getCommands(), w
 
 
-SERIF = Font("instrument-serif-latin-400-normal.ttf")
-SERIF_IT = Font("instrument-serif-latin-400-italic.ttf")
-MONO = Font("jetbrains-mono-latin-400-normal.ttf")
-MONO_MD = Font("jetbrains-mono-latin-500-normal.ttf")
+# Atkinson Hyperlegible (Braille Institute): every glyph is built to be told
+# apart from its neighbours (l / I / 1, 0 / O), which keeps small labels legible.
+SANS = Font("atkinson-hyperlegible-next-latin-400-normal.ttf")
+SANS_BD = Font("atkinson-hyperlegible-next-latin-700-normal.ttf")
+MONO = Font("atkinson-hyperlegible-mono-latin-400-normal.ttf")
+MONO_MD = Font("atkinson-hyperlegible-mono-latin-500-normal.ttf")
+
+
+def wrap(font, s, size, max_w):
+    """Greedy word wrap by real glyph widths."""
+    lines, cur = [], ""
+    for word in s.split():
+        trial = f"{cur} {word}".strip()
+        if cur and font.width(trial, size) > max_w:
+            lines.append(cur)
+            cur = word
+        else:
+            cur = trial
+    if cur:
+        lines.append(cur)
+    # avoid a lone word on the last line when the previous line can spare one
+    if len(lines) > 1 and " " not in lines[-1] and " " in lines[-2]:
+        head, moved = lines[-2].rsplit(" ", 1)
+        if font.width(f"{moved} {lines[-1]}", size) <= max_w:
+            lines[-2], lines[-1] = head, f"{moved} {lines[-1]}"
+    return lines
 
 
 # README column width in CSS px: ~795 on desktop (measured on the live profile),

@@ -8,7 +8,7 @@ import json
 import math
 from pathlib import Path
 
-from svgkit import MONO, MONO_MD, SERIF, THEMES, base_css, canvas, svg, text
+from svgkit import MONO, MONO_MD, SANS, SANS_BD, THEMES, base_css, canvas, svg, text, wrap
 
 DATA = Path(__file__).parent / "data"
 HR = json.loads((DATA / "cox_hazard_ratios.json").read_text())
@@ -25,80 +25,70 @@ KEYS = (
 
 # Rendered sizes (CSS px) per layout.
 SIZES = {
-    False: dict(pad=32, eyebrow=12.5, title=34, body=14, num=22, label=12.5, small=12.5, cap=13.5, term=13.5),
-    True: dict(pad=18, eyebrow=12.5, title=30, body=13, num=22, label=12.5, small=12, cap=13, term=12),
+    False: dict(pad=32, eyebrow=12, title=28, body=14, num=22, label=12.5, small=12.5, cap=13.5, term=13.5),
+    True: dict(pad=18, eyebrow=12, title=25, body=13, num=22, label=12.5, small=12, cap=13, term=12),
 }
 
 C = {
     "en": dict(
-        r_eyebrow="01 — undergraduate research · FOSP",
-        r_title=["Who survives colorectal", "cancer — and why?"],
-        r_title_m=["Who survives", "colorectal cancer", "— and why?"],
-        r_body=["Cox proportional hazards model on", "São Paulo's cancer registry: data",
-                "cleaning, encoding, variable", "selection and validation."],
+        r_eyebrow="Undergraduate research · FOSP",
+        r_title="Who survives colorectal cancer, and why?",
+        r_body="A Cox proportional hazards model on São Paulo's cancer registry: data cleaning, "
+        "encoding, variable selection and validation.",
         r_stats=[("0.747", "C-index"), ("37,499", "patients"), ("22,078", "deaths observed"), ("2000–23", "follow-up")],
-        r_fig=" Adjusted hazard ratios, 95% CI",
+        r_fig="Adjusted hazard ratios, 95% CI",
         r_lower="lower risk",
         r_higher="higher risk",
-        d_eyebrow="02 — app · Streamlit",
-        d_title=["Cervical cancer in", "São Paulo, year by year"],
-        d_title_m=["Cervical cancer", "in São Paulo,", "year by year"],
-        d_window="DFOSP.py — streamlit run",
-        d_filters="filters",
-        d_age="age",
-        d_stage="stage",
-        d_outcome="outcome",
+        d_eyebrow="App · Streamlit",
+        d_title="Cervical cancer in São Paulo, year by year",
+        d_window="DFOSP.py · streamlit run",
+        d_filters="Filters",
+        d_age="Age",
+        d_stage="Stage",
+        d_outcome="Outcome",
         d_alive="alive",
         d_dead="deceased",
-        d_chart="diagnoses per year",
+        d_chart="Diagnoses per year",
         d_2020="2020 · −20%",
-        d_fig=["55,647 public FOSP records per diagnosis year · 2023 incomplete"],
-        d_fig_m=["55,647 public FOSP records", "per diagnosis year", "2023 incomplete"],
-        m_eyebrow="03 — automation · every 15 min",
-        m_title=["A watchtower for", "Codex usage resets"],
-        m_title_m=["A watchtower", "for Codex", "usage resets"],
-        m_body=["Polls public sources, classifies", "reset announcements with",
-                "deterministic rules and alerts", "Discord only when it matters."],
+        d_fig="55,647 public FOSP records per diagnosis year. 2023 is still incomplete.",
+        m_eyebrow="Automation · every 15 min",
+        m_title="A watchtower for Codex usage resets",
+        m_body="Polls public sources, classifies reset announcements with deterministic rules "
+        "and alerts Discord only when it matters.",
         m_facts=[("R$ 0", "monthly cost"), ("0", "LLM calls"), ("4", "sources"), ("2", "schedulers")],
         m_likely="likely",
         m_confirmed="confirmed",
-        m_note=["illustrative run, based on the project README"],
-        m_note_m=["illustrative run, based on", "the project README"],
+        m_note="Illustrative run, based on the project README.",
     ),
     "pt": dict(
-        r_eyebrow="01 — iniciação científica · FOSP",
-        r_title=["Quem sobrevive ao câncer", "colorretal — e por quê?"],
-        r_title_m=["Quem sobrevive", "ao câncer colorretal", "— e por quê?"],
-        r_body=["Modelo de riscos proporcionais de", "Cox no registro de câncer de SP:",
-                "limpeza, codificação, seleção de", "variáveis e validação."],
+        r_eyebrow="Iniciação científica · FOSP",
+        r_title="Quem sobrevive ao câncer colorretal, e por quê?",
+        r_body="Modelo de riscos proporcionais de Cox no registro de câncer de SP: limpeza, "
+        "codificação, seleção de variáveis e validação.",
         r_stats=[("0,747", "C-index"), ("37.499", "pacientes"), ("22.078", "óbitos observados"), ("2000–23", "seguimento")],
-        r_fig=" Hazard ratios ajustados, IC 95%",
+        r_fig="Hazard ratios ajustados, IC 95%",
         r_lower="menor risco",
         r_higher="maior risco",
-        d_eyebrow="02 — aplicação · Streamlit",
-        d_title=["Câncer do colo do útero", "em SP, ano a ano"],
-        d_title_m=["Câncer do colo", "do útero em SP,", "ano a ano"],
-        d_window="DFOSP.py — streamlit run",
-        d_filters="filtros",
-        d_age="idade",
-        d_stage="estádio",
-        d_outcome="desfecho",
+        d_eyebrow="Aplicação · Streamlit",
+        d_title="Câncer do colo do útero em SP, ano a ano",
+        d_window="DFOSP.py · streamlit run",
+        d_filters="Filtros",
+        d_age="Idade",
+        d_stage="Estádio",
+        d_outcome="Desfecho",
         d_alive="vivo",
         d_dead="óbito",
-        d_chart="diagnósticos por ano",
+        d_chart="Diagnósticos por ano",
         d_2020="2020 · −20%",
-        d_fig=["55.647 registros públicos da FOSP por ano · 2023 incompleto"],
-        d_fig_m=["55.647 registros públicos", "da FOSP por ano", "2023 incompleto"],
-        m_eyebrow="03 — automação · a cada 15 min",
-        m_title=["Uma sentinela para os", "resets de uso do Codex"],
-        m_title_m=["Uma sentinela", "para os resets", "de uso do Codex"],
-        m_body=["Consulta fontes públicas, classifica", "anúncios de reset com regras",
-                "determinísticas e só avisa no", "Discord quando importa."],
+        d_fig="55.647 registros públicos da FOSP por ano de diagnóstico. 2023 ainda está incompleto.",
+        m_eyebrow="Automação · a cada 15 min",
+        m_title="Uma sentinela para os resets de uso do Codex",
+        m_body="Consulta fontes públicas, classifica anúncios de reset com regras determinísticas "
+        "e só avisa no Discord quando importa.",
         m_facts=[("R$ 0", "custo mensal"), ("0", "chamadas a LLM"), ("4", "fontes"), ("2", "agendadores")],
         m_likely="provável",
         m_confirmed="confirmado",
-        m_note=["execução ilustrativa, baseada no README do projeto"],
-        m_note_m=["execução ilustrativa,", "baseada no README do projeto"],
+        m_note="Execução ilustrativa, baseada no README do projeto.",
     ),
 }
 
@@ -122,23 +112,23 @@ def frame(L, H, t):
     )
 
 
-def header(L, s, eyebrow_key, title_key):
-    """Eyebrow + serif title. Returns (svg, y below the title)."""
+def header(L, s, eyebrow_key, title_key, max_w):
+    """Eyebrow + title wrapped to max_w. Returns (svg, y below the title)."""
     y = L.pad + L.eyebrow
-    out = [text(MONO, s[eyebrow_key], L.pad, y, L.eyebrow, "ac")[0]]
-    y += L.eyebrow * 1.2
-    for line in s[title_key + ("_m" if L.mobile else "")]:
-        y += L.title * 1.08
-        out.append(text(SERIF, line, L.pad, y, L.title, "fg")[0])
+    out = [text(MONO_MD, s[eyebrow_key].upper(), L.pad, y, L.eyebrow, "ac", tracking=L.r(0.6))[0]]
+    y += L.eyebrow * 0.9
+    for line in wrap(SANS_BD, s[title_key], L.title, max_w):
+        y += L.title * 1.15
+        out.append(text(SANS_BD, line, L.pad, y, L.title, "fg", tracking=-L.title * 0.01)[0])
     return "".join(out), y
 
 
-def body_lines(L, lines, y, x=None):
+def body_lines(L, s, y, max_w, x=None):
     x = L.pad if x is None else x
     out = []
-    for line in lines:
-        y += L.body * 1.6
-        out.append(text(MONO, line, x, y, L.body, "mu")[0])
+    for line in wrap(SANS, s, L.body, max_w):
+        y += L.body * 1.5
+        out.append(text(SANS, line, x, y, L.body, "mu")[0])
     return "".join(out), y
 
 
@@ -149,7 +139,7 @@ def stats(L, items, x, y, col_w):
         cx = x + (i % 2) * col_w
         cy = y + L.num + (i // 2) * row_h
         out.append(text(MONO_MD, num, cx, cy, L.num, "fg")[0])
-        out.append(text(MONO, lbl, cx, cy + L.label * 1.5, L.label, "mu")[0])
+        out.append(text(SANS, lbl, cx, cy + L.label * 1.5, L.label, "mu")[0])
     end = y + L.num + row_h + L.label * 1.5
     return f'<g class="st">{"".join(out)}</g>', end
 
@@ -168,15 +158,16 @@ def window(L, t, x, y, w, h, title):
     return "".join(out), y + bar
 
 
-def caption(L, label, lines, x, y):
-    """'FIG. n' label in mono accent, then the caption text in mono."""
+def caption(L, label, s, x, y, max_w):
+    """'FIG. n' label in mono accent, then the caption text wrapped beside it."""
     out = []
-    f1, wf = text(MONO_MD, label.upper(), x, y, L.label, "ac")
+    f1, wf = text(MONO_MD, label.upper(), x, y, L.label, "ac", tracking=L.r(0.4))
     out.append(f1)
     indent = wf + L.cap * 0.8
+    lines = wrap(SANS, s, L.cap, max_w - indent)
     for i, line in enumerate(lines):
-        out.append(text(MONO, line.strip(), x + indent, y + i * L.cap * 1.5, L.cap, "mu")[0])
-    return "".join(out), y + (len(lines) - 1) * L.cap * 1.5
+        out.append(text(SANS, line, x + indent, y + i * L.cap * 1.45, L.cap, "mu")[0])
+    return "".join(out), y + (len(lines) - 1) * L.cap * 1.45
 
 
 # ---------------------------------------------------------------- research
@@ -185,7 +176,7 @@ def forest(L, lang, t, x, y, w):
     s, r = C[lang], L.r
     size = L.small
     row_h = r(36) if not L.mobile else r(32)
-    label_w = max(MONO.width(row[lang], size) for row in HR["rows"]) + r(12)
+    label_w = max(SANS.width(row[lang], size) for row in HR["rows"]) + r(12)
     val_w = MONO_MD.width("2,18", size) + r(10)
     pw = w - label_w - val_w
     lo_d, hi_d = 0.45, 2.5
@@ -196,8 +187,8 @@ def forest(L, lang, t, x, y, w):
     ref = px(1)
     sw = r(1)
     out, css = [], []
-    out.append(text(MONO, s["r_lower"], ref - r(6), y + size, size, "cool", anchor="end")[0])
-    out.append(text(MONO, s["r_higher"], ref + r(6), y + size, size, "hot")[0])
+    out.append(text(SANS, s["r_lower"], ref - r(6), y + size, size, "cool", anchor="end")[0])
+    out.append(text(SANS, s["r_higher"], ref + r(6), y + size, size, "hot")[0])
     out.append(f'<path class="ln" stroke-width="{sw:.2f}" d="M{x + label_w:.1f} {bottom + r(4):.1f} H{x + label_w + pw:.1f}"/>')
     out.append(
         f'<path stroke="{t["fa"]}" stroke-width="{sw:.2f}" stroke-dasharray="{r(3):.1f} {r(3):.1f}" '
@@ -208,7 +199,7 @@ def forest(L, lang, t, x, y, w):
         out.append(text(MONO, lab, px(v), bottom + r(4) + size * 1.4, size, "fa", anchor="middle")[0])
     for i, row in enumerate(rows):
         cy = top + row_h * (i + 0.5)
-        out.append(text(MONO, row[lang], x + label_w - r(12), cy + size * 0.35, size, "mu", anchor="end")[0])
+        out.append(text(SANS, row[lang], x + label_w - r(12), cy + size * 0.35, size, "mu", anchor="end")[0])
         up = row["hr"] > 1
         col = t["hot"] if up else t["cool"]
         hx = px(row["hr"])
@@ -235,21 +226,22 @@ def research(lang, theme, mobile):
     L = Layout(mobile)
     r = L.r
     css = [base_css(t), KEYS, f".st{{animation:pop {P}s ease .1s infinite both}}"]
-    head, y = header(L, s, "r_eyebrow", "r_title")
+    col = L.W - 2 * L.pad if mobile else r(400) - L.pad - r(28)
+    head, y = header(L, s, "r_eyebrow", "r_title", col)
     parts = [head]
     if mobile:
         st, y = stats(L, s["r_stats"], L.pad, y + r(18), (L.W - 2 * L.pad) / 2)
         parts.append(st)
         fb, fc, end = forest(L, lang, t, L.pad, y + r(22), L.W - 2 * L.pad)
-        cap, cy = caption(L, "Fig. 2", [s["r_fig"]], L.pad, end + L.cap * 3)
+        cap, cy = caption(L, "Fig. 2", s["r_fig"], L.pad, end + L.cap * 3, L.W - 2 * L.pad)
     else:
-        bl, y = body_lines(L, s["r_body"], y + r(14))
+        bl, y = body_lines(L, s["r_body"], y + r(8), col)
         parts.append(bl)
         st, y = stats(L, s["r_stats"], L.pad, y + r(22), r(165))
         parts.append(st)
         fx = r(400)
         fb, fc, end = forest(L, lang, t, fx, L.pad + r(4), L.W - L.pad - fx)
-        cap, cy = caption(L, "Fig. 2", [s["r_fig"]], fx + r(40), end + L.cap * 3)
+        cap, cy = caption(L, "Fig. 2", s["r_fig"], fx + r(40), end + L.cap * 3, L.W - L.pad - fx - r(40))
         cy = max(cy, y)
     parts += [fb, cap]
     css.append(fc)
@@ -269,14 +261,14 @@ def chips(L, t, labels, x, y, on=None):
     out = []
     h = L.small * 1.8
     for i, lab in enumerate(labels):
-        w = MONO.width(lab, L.small) + r(12)
+        w = SANS.width(lab, L.small) + r(14)
         sel = i == on
         out.append(
             f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" rx="{r(4):.1f}" '
             f'fill="{t["ac"] if sel else "none"}" fill-opacity="{.15 if sel else 0}" '
             f'stroke="{t["ac"] if sel else t["line"]}" stroke-width="{r(1):.2f}"/>'
         )
-        out.append(text(MONO, lab, x + w / 2, y + h / 2 + L.small * 0.35, L.small, "ac" if sel else "mu", anchor="middle")[0])
+        out.append(text(SANS, lab, x + w / 2, y + h / 2 + L.small * 0.35, L.small, "ac" if sel else "mu", anchor="middle")[0])
         x += w + r(4)
     return "".join(out), y + h
 
@@ -288,7 +280,7 @@ def dashboard(lang, theme, mobile):
     css = [base_css(t), KEYS]
     years = [(int(k), v) for k, v in YEARS["years"].items() if int(k) <= 2023]
     vmax = max(v for _, v in years)
-    head, y = header(L, s, "d_eyebrow", "d_title")
+    head, y = header(L, s, "d_eyebrow", "d_title", L.W - 2 * L.pad if mobile else r(560))
     parts = [head]
 
     wx, wy, ww = L.pad, y + r(22), L.W - 2 * L.pad
@@ -298,9 +290,9 @@ def dashboard(lang, theme, mobile):
     if side_w:
         sx = wx + r(14)
         sy = wy + r(24) + r(14) + L.body
-        side.append(text(MONO_MD, s["d_filters"], sx, sy, L.body, "fg")[0])
+        side.append(text(SANS_BD, s["d_filters"], sx, sy, L.body, "fg")[0])
         yy = sy + r(26)
-        side.append(text(MONO, s["d_age"], sx, yy, L.small, "mu")[0])
+        side.append(text(SANS, s["d_age"], sx, yy, L.small, "mu")[0])
         yy += r(14)
         x1, x2 = sx + r(5), wx + side_w - r(20)
         side.append(
@@ -309,11 +301,11 @@ def dashboard(lang, theme, mobile):
             f'<circle cx="{x2:.1f}" cy="{yy:.1f}" r="{r(4.5):.1f}" fill="{t["panel2"]}" stroke="{t["ac"]}" stroke-width="{r(1.8):.1f}"/>'
         )
         yy += r(28)
-        side.append(text(MONO, s["d_stage"], sx, yy, L.small, "mu")[0])
+        side.append(text(SANS, s["d_stage"], sx, yy, L.small, "mu")[0])
         c, yy = chips(L, t, ["0", "I", "II", "III", "IV"], sx, yy + r(8), on=0)
         side.append(c)
         yy += r(24)
-        side.append(text(MONO, s["d_outcome"], sx, yy, L.small, "mu")[0])
+        side.append(text(SANS, s["d_outcome"], sx, yy, L.small, "mu")[0])
         c, yy = chips(L, t, [s["d_alive"], s["d_dead"]], sx, yy + r(8))
         side.append(c)
         wh = yy + r(16) - wy
@@ -328,7 +320,7 @@ def dashboard(lang, theme, mobile):
     cx0 = wx + side_w + r(16)
     cw = wx + ww - r(16) - cx0
     title_y = inner_top + r(14) + L.body
-    parts.append(text(MONO_MD, s["d_chart"], cx0, title_y, L.body, "fg")[0])
+    parts.append(text(SANS_BD, s["d_chart"], cx0, title_y, L.body, "fg")[0])
     ctop = title_y + L.small * 2.6
     cbot = wy + wh - L.small * 2.2
     n = len(years)
@@ -358,7 +350,7 @@ def dashboard(lang, theme, mobile):
     parts.append("".join(bars))
     css.append(f".ann{{animation:pop {P}s ease 1.6s infinite both}}")
 
-    cap, cy = caption(L, "Fig. 3", s["d_fig_m" if mobile else "d_fig"], L.pad, wy + wh + L.cap * 3)
+    cap, cy = caption(L, "Fig. 3", s["d_fig"], L.pad, wy + wh + L.cap * 3, L.W - 2 * L.pad)
     parts.append(cap)
     H = int(cy + L.pad)
     desc = (
@@ -372,12 +364,12 @@ def dashboard(lang, theme, mobile):
 
 LOG = [
     ("$ ", "python src/run_monitor.py", "fg"),
-    ("", "cron :07 → workflow_dispatch", "mu"),
+    ("", "cron :07 -> workflow_dispatch", "mu"),
     ("", "fetch help.openai.com ...... ok", "mu"),
     ("", "fetch community.openai.com . ok", "mu"),
     ("", "fetch codexreset.org ....... ok", "mu"),
     ("", "classify  reset · global · high", "fg"),
-    ("", "dedupe    3 sources → 1 event", "fg"),
+    ("", "dedupe    3 sources -> 1 event", "fg"),
     ("", "notify    discord #codex-alerts", "fg"),
 ]
 
@@ -387,7 +379,8 @@ def monitor(lang, theme, mobile):
     L = Layout(mobile)
     r = L.r
     css = [base_css(t), KEYS, f".st{{animation:pop {P}s ease .1s infinite both}}"]
-    head, y = header(L, s, "m_eyebrow", "m_title")
+    col = L.W - 2 * L.pad if mobile else r(400) - L.pad - r(28)
+    head, y = header(L, s, "m_eyebrow", "m_title", col)
     parts = [head]
     if mobile:
         st, y = stats(L, s["m_facts"], L.pad, y + r(18), (L.W - 2 * L.pad) / 2)
@@ -395,7 +388,7 @@ def monitor(lang, theme, mobile):
         tx, ty, tw = L.pad, y + r(22), L.W - 2 * L.pad
         left_end = y
     else:
-        bl, y = body_lines(L, s["m_body"], y + r(14))
+        bl, y = body_lines(L, s["m_body"], y + r(8), col)
         parts.append(bl)
         st, left_end = stats(L, s["m_facts"], L.pad, y + r(22), r(165))
         parts.append(st)
@@ -437,7 +430,7 @@ def monitor(lang, theme, mobile):
     dot = r(3.5)
     cy = y - fs * 0.33
     e1, w1 = text(MONO_MD, s["m_likely"], x + dot * 2 + r(6), y, fs, "warn")
-    arrow, wa = text(MONO, " → ", x + dot * 2 + r(6) + w1, y, fs, "mu")
+    arrow, wa = text(MONO, " -> ", x + dot * 2 + r(6) + w1, y, fs, "mu")
     x2 = x + dot * 2 + r(6) + w1 + wa
     e2, w2 = text(MONO_MD, s["m_confirmed"], x2 + dot * 2 + r(6), y, fs, "gr")
     parts.append(
@@ -452,8 +445,8 @@ def monitor(lang, theme, mobile):
     )
     note = []
     ny = ty + th + L.small * 2.4
-    for i, line in enumerate(s["m_note_m" if mobile else "m_note"]):
-        note.append(text(MONO, line, tx, ny + i * L.small * 1.5, L.small, "fa")[0])
+    for i, line in enumerate(wrap(SANS, s["m_note"], L.small, tw)):
+        note.append(text(SANS, line, tx, ny + i * L.small * 1.5, L.small, "fa")[0])
         last = ny + i * L.small * 1.5
     parts.append("".join(note))
     H = int(max(last, left_end) + L.pad)
