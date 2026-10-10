@@ -1,107 +1,75 @@
+<p align="right"><sub><b>English</b> · <a href="./README.pt-BR.md">Português</a></sub></p>
+
 <picture>
-  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero-mobile-dark.png">
-  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px)" srcset="./assets/hero-mobile-light.png">
-  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="./assets/hero-desktop-dark.png">
-  <source media="(prefers-reduced-motion: reduce)" srcset="./assets/hero-desktop-light.png">
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero-mobile-dark.gif">
-  <source media="(max-width: 600px)" srcset="./assets/hero-mobile-light.gif">
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/hero-desktop-dark.gif">
-  <source media="(prefers-color-scheme: light)" srcset="./assets/hero-desktop-light.gif">
-  <img src="./assets/hero-desktop-light.png" alt="João Vitor Sesma — Computer Engineering at IMT, Brazil. A curious silver dragon with a blue wing and a short glass rim." width="1200">
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/hero/hero-en-light-mobile.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark.svg">
+  <img src="./assets/hero/hero-en-light.svg" width="100%" alt="João Vitor Sesma — health data to survival models to tools people use. Computer Engineering at Instituto Mauá de Tecnologia, Brazil. Beside the name, a Kaplan–Meier curve from his colorectal cancer research draws itself: 37,621 patients, median survival 44 months.">
 </picture>
 
-I'm **João Vitor Morimoto Sesma**, a Computer Engineering student at **Instituto Mauá de Tecnologia, Brazil**.
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/strip/walk-dark-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/strip/walk-light-mobile.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/strip/walk-dark.svg">
+  <img src="./assets/strip/walk-light.svg" width="100%" alt="A small pixel-art dragon walking across a row of contribution squares.">
+</picture>
 
-I work on **survival analysis, interactive dashboards and automation**.
+I'm a Computer Engineering student at **Instituto Mauá de Tecnologia**. I take messy health records, model what they say about survival, and turn the results into tools people can actually use — plus the automation that keeps things running.
 
-[Explore my work ↓](#selected-work) · [Email ↗](mailto:jv0707204@gmail.com)
+[Selected work ↓](#selected-work) · [Email ↗](mailto:jv0707204@gmail.com)
 
 ## Selected work
 
-### [Colorectal Cancer Survival Research](https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC)
-
-Investigating colorectal cancer survival through data preparation, **Cox regression** and **Kaplan–Meier analysis**.
-
+<a href="https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC">
 <picture>
-  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/research-mobile-dark.png">
-  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px)" srcset="./assets/selected-work/research-mobile-light.png">
-  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/research-desktop-dark.png">
-  <source media="(prefers-reduced-motion: reduce)" srcset="./assets/selected-work/research-desktop-light.png">
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/research-mobile-dark.gif">
-  <source media="(max-width: 600px)" srcset="./assets/selected-work/research-mobile-light.gif">
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/selected-work/research-desktop-dark.gif">
-  <source media="(prefers-color-scheme: light)" srcset="./assets/selected-work/research-desktop-light.gif">
-  <img src="./assets/selected-work/research-desktop-light.png" alt="Published colorectal cancer Kaplan–Meier figure, with original axes and legend, alongside the project’s COX artwork. Source: FOSP_curvas_Kaplan_Meier.ipynb." width="760">
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/work/research-en-dark-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/work/research-en-light-mobile.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/work/research-en-dark.svg">
+  <img src="./assets/work/research-en-light.svg" width="100%" alt="Colorectal cancer survival research. Cox model on the FOSP registry: C-index 0.747, 37,499 patients, 22,078 deaths. Adjusted hazard ratios: metastasis 2.18, no treatment 1.73, recurrence 1.20, stage 1.12 per level, hormone therapy 0.66, chemotherapy 0.59, surgery 0.55.">
 </picture>
+</a>
 
-**My contribution:** Data preparation, statistical modeling and survival visualizations in research notebooks.
+**Colorectal cancer survival** — data preparation, Cox regression and Kaplan–Meier curves on São Paulo's cancer registry (FOSP).<br>
+<sub>Python · pandas · lifelines · Jupyter — [Repository ↗](https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC) · [Open in Colab ↗](https://colab.research.google.com/github/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC/blob/main/Predi%C3%A7%C3%A3o_da_Sobrevida_em_Pacientes_com_C%C3%A2ncer_Colorretal_COX.ipynb)</sub>
 
-**Tools:** Python · pandas · lifelines · Jupyter
-
-[Explore research ↗](https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC) · [View published figure ↗](./assets/selected-work/research-km-published.png)
-
-<br>
-
-### [FOSP Cervical Cancer Dashboard](https://github.com/JoaoVitorSesma/Dashboard)
-
-An interactive dashboard for exploring **cervical cancer diagnoses** and regional survival estimates.
-
+<a href="https://github.com/JoaoVitorSesma/Dashboard">
 <picture>
-  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/dashboard-mobile-dark.png">
-  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px)" srcset="./assets/selected-work/dashboard-mobile-light.png">
-  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/dashboard-desktop-dark.png">
-  <source media="(prefers-reduced-motion: reduce)" srcset="./assets/selected-work/dashboard-desktop-light.png">
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/dashboard-mobile-dark.gif">
-  <source media="(max-width: 600px)" srcset="./assets/selected-work/dashboard-mobile-light.gif">
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/selected-work/dashboard-desktop-dark.gif">
-  <source media="(prefers-color-scheme: light)" srcset="./assets/selected-work/dashboard-desktop-light.gif">
-  <img src="./assets/selected-work/dashboard-desktop-light.png" alt="Interface reconstruction based on DFOSP.py: age, staging and outcome filters; diagnosis trends and regional survival views. No patient data or numerical results are displayed." width="640">
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/work/dashboard-en-dark-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/work/dashboard-en-light-mobile.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/work/dashboard-en-dark.svg">
+  <img src="./assets/work/dashboard-en-light.svg" width="100%" alt="Cervical cancer dashboard built with Streamlit: age, stage and outcome filters. Chart of diagnoses per year in public FOSP data from 2000 to 2023, with a 20 percent drop in 2020.">
 </picture>
+</a>
 
-**My contribution:** Interactive filters, charts and geographic visualizations.
+**Cervical cancer dashboard** — interactive filters, trends and regional survival views for public FOSP data.<br>
+<sub>Python · Streamlit · Plotly · GeoPandas · Folium — [Repository ↗](https://github.com/JoaoVitorSesma/Dashboard)</sub>
 
-**Tools:** Python · Streamlit · Plotly · GeoPandas · Folium
-
-[View dashboard code ↗](https://github.com/JoaoVitorSesma/Dashboard)
-
-<br>
-
-### [Codex Reset Monitor](https://github.com/JoaoVitorSesma/codex-reset-monitor)
-
-Monitoring public Codex reset announcements and delivering relevant alerts to **Discord**.
-
+<a href="https://github.com/JoaoVitorSesma/codex-reset-monitor">
 <picture>
-  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/monitor-mobile-dark.png">
-  <source media="(prefers-reduced-motion: reduce) and (max-width: 600px)" srcset="./assets/selected-work/monitor-mobile-light.png">
-  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/monitor-desktop-dark.png">
-  <source media="(prefers-reduced-motion: reduce)" srcset="./assets/selected-work/monitor-desktop-light.png">
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/selected-work/monitor-mobile-dark.gif">
-  <source media="(max-width: 600px)" srcset="./assets/selected-work/monitor-mobile-light.gif">
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/selected-work/monitor-desktop-dark.gif">
-  <source media="(prefers-color-scheme: light)" srcset="./assets/selected-work/monitor-desktop-light.gif">
-  <img src="./assets/selected-work/monitor-desktop-light.png" alt="Architecture overview: public sources flow through classification and event deduplication to Discord alerts. The moving pulse illustrates the flow, not live activity." width="640">
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/work/monitor-en-dark-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/work/monitor-en-light-mobile.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/work/monitor-en-dark.svg">
+  <img src="./assets/work/monitor-en-light.svg" width="100%" alt="Codex reset monitor: a terminal shows an illustrative run where a Cloudflare cron dispatches the workflow, public sources are fetched, an announcement is classified, deduplicated and sent to Discord. Free to run, no LLM calls, four sources, two independent schedulers.">
 </picture>
+</a>
 
-**Project focus:** Source classification, event deduplication and scheduled alerts.
+**Codex reset monitor** — watches public sources, classifies reset announcements with deterministic rules, deduplicates across sources and alerts Discord.<br>
+<sub>Python · GitHub Actions · Cloudflare Workers · pytest — [Repository ↗](https://github.com/JoaoVitorSesma/codex-reset-monitor)</sub>
 
-**Tools:** Python · GitHub Actions · Cloudflare Workers
+## Now
 
-[Explore monitor ↗](https://github.com/JoaoVitorSesma/codex-reset-monitor)
+- **Research:** modeling cancer **recurrence**, comparing Cox regression with machine learning.
+- **Coursework:** learning Flutter and Dart in [ECM252 at IMT](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter).
 
-## Tools & technologies
+## Toolbox
 
-<img src="./assets/icons/data.svg" width="18" height="18" alt=""> **Data & research:** Python · pandas · NumPy · lifelines · Plotly
+**Data & research** — Python · pandas · NumPy · lifelines · Jupyter<br>
+**Apps & visualization** — Streamlit · Plotly · GeoPandas · Folium<br>
+**Automation** — GitHub Actions · Cloudflare Workers · Discord webhooks<br>
+**Learning** — Flutter · Dart
 
-<img src="./assets/icons/apps.svg" width="18" height="18" alt=""> **Applications:** Streamlit · GeoPandas · Folium
+## Let's talk
 
-<img src="./assets/icons/automation.svg" width="18" height="18" alt=""> **Automation:** GitHub Actions · Cloudflare Workers
+Open to internships in **data science, health analytics and automation**. [Send me an email ↗](mailto:jv0707204@gmail.com)
 
-## Currently exploring
-
-**Flutter and Dart:** Building applications and exercises through [ECM252 coursework at IMT](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter).
-
-## Let's connect
-
-Want to discuss my projects or an internship opportunity? [Send me an email ↗](mailto:jv0707204@gmail.com)
-
-[GitHub](https://github.com/JoaoVitorSesma) · [All repositories](https://github.com/JoaoVitorSesma?tab=repositories)
+<sub>Every figure on this page is drawn from the projects' own data by [`scripts/build_assets.py`](./scripts/build_assets.py); sources in [`assets/SOURCES.md`](./assets/SOURCES.md). Animations stop when your system asks for reduced motion.</sub>
