@@ -383,7 +383,7 @@ def strip(theme, mobile, mascot=None):
         W, H, "Walking mascot",
         "A small pixel-art hedgehog walking across a row of contribution squares, curling up and rolling along part of the way."
         if roll else "A small pixel-art creature walking across a row of contribution squares.",
-        "".join(rects) + f'<g class="walk"><g class="flip">{body}</g></g>', "".join(css),
+        "".join(rects) + f'<g class="walk" shape-rendering="crispEdges"><g class="flip">{body}</g></g>', "".join(css),
     )
 
 
