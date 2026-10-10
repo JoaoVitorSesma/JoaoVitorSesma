@@ -154,7 +154,7 @@ def hero(lang, theme, mobile):
     r = canvas(W, mobile)
     x = r(10) if mobile else r(4)
     # sizes in rendered px
-    prompt, tag, meta, tick, cap = (13, 15, 13, 12.5, 16.5) if mobile else (13, 16, 13.5, 12.5, 17)
+    prompt, tag, meta, tick, cap = (13, 15, 13, 12.5, 13) if mobile else (13, 16, 13.5, 12.5, 13.5)
     prompt, tag, meta, tick, cap = r(prompt), r(tag), r(meta), r(tick), r(cap)
     col_w = (W - 2 * x) if mobile else r(440)
 
@@ -218,17 +218,18 @@ def hero(lang, theme, mobile):
     else:
         fx, fy = r(500), r(34)
         fw, fh = W - x - fx, r(165)
-        cap_x = fx - tick * 2.2
+        cap_x = fx - tick * 2.4
     body, c, ty = km_figure(lang, t, fx, fy, fw, fh, fig_delay, r, tick)
-    cap_y = ty + cap * 2.0
-    f1, wf = text(SERIF_IT, "Fig. 1", cap_x, cap_y, cap, "fg")
-    f2, _ = text(SERIF, s["fig1_a"], cap_x + wf, cap_y, cap, "mu")
-    f3, _ = text(MONO, s["fig1_b"], cap_x, cap_y + tick * 1.7, tick, "fa")
+    cap_y = ty + cap * 2.6
+    f1, wf = text(MONO_MD, "FIG. 1", cap_x, cap_y, tick, "ac")
+    indent = wf + cap * 0.8
+    f2, _ = text(MONO, s["fig1_a"].strip(), cap_x + indent, cap_y, cap, "mu")
+    f3, _ = text(MONO, s["fig1_b"], cap_x + indent, cap_y + cap * 1.5, tick, "fa")
     parts.append(body)
     parts.append(f'<g class="cap">{f1}{f2}{f3}</g>')
     css.append(c)
     css.append(f".cap{{animation:fade 1s ease {fig_delay + .4:.2f}s both}}")
-    H = int(max(cap_y + tick * 1.7, left_bottom) + r(14))
+    H = int(max(cap_y + cap * 1.5, left_bottom) + r(14))
     return svg(W, H, s["hero_title"], s["hero_desc"], "".join(parts), "".join(css))
 
 

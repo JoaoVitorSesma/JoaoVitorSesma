@@ -8,7 +8,7 @@ import json
 import math
 from pathlib import Path
 
-from svgkit import MONO, MONO_MD, SERIF, SERIF_IT, THEMES, base_css, canvas, svg, text
+from svgkit import MONO, MONO_MD, SERIF, THEMES, base_css, canvas, svg, text
 
 DATA = Path(__file__).parent / "data"
 HR = json.loads((DATA / "cox_hazard_ratios.json").read_text())
@@ -25,8 +25,8 @@ KEYS = (
 
 # Rendered sizes (CSS px) per layout.
 SIZES = {
-    False: dict(pad=32, eyebrow=12.5, title=34, body=14, num=22, label=12.5, small=12.5, cap=17, term=13.5),
-    True: dict(pad=18, eyebrow=12.5, title=30, body=13, num=22, label=12.5, small=12, cap=16, term=12),
+    False: dict(pad=32, eyebrow=12.5, title=34, body=14, num=22, label=12.5, small=12.5, cap=13.5, term=13.5),
+    True: dict(pad=18, eyebrow=12.5, title=30, body=13, num=22, label=12.5, small=12, cap=13, term=12),
 }
 
 C = {
@@ -52,8 +52,8 @@ C = {
         d_dead="deceased",
         d_chart="diagnoses per year",
         d_2020="2020 · −20%",
-        d_fig=[" 55,647 public FOSP records per diagnosis year · 2023 still incomplete"],
-        d_fig_m=[" 55,647 public FOSP records", "per diagnosis year · 2023 incomplete"],
+        d_fig=["55,647 public FOSP records per diagnosis year · 2023 incomplete"],
+        d_fig_m=["55,647 public FOSP records", "per diagnosis year", "2023 incomplete"],
         m_eyebrow="03 — automation · every 15 min",
         m_title=["A watchtower for", "Codex usage resets"],
         m_title_m=["A watchtower", "for Codex", "usage resets"],
@@ -87,8 +87,8 @@ C = {
         d_dead="óbito",
         d_chart="diagnósticos por ano",
         d_2020="2020 · −20%",
-        d_fig=[" 55.647 registros públicos da FOSP por ano de diagnóstico · 2023 incompleto"],
-        d_fig_m=[" 55.647 registros públicos da", "FOSP por ano · 2023 incompleto"],
+        d_fig=["55.647 registros públicos da FOSP por ano · 2023 incompleto"],
+        d_fig_m=["55.647 registros públicos", "da FOSP por ano", "2023 incompleto"],
         m_eyebrow="03 — automação · a cada 15 min",
         m_title=["Uma sentinela para os", "resets de uso do Codex"],
         m_title_m=["Uma sentinela", "para os resets", "de uso do Codex"],
@@ -98,7 +98,7 @@ C = {
         m_likely="provável",
         m_confirmed="confirmado",
         m_note=["execução ilustrativa, baseada no README do projeto"],
-        m_note_m=["execução ilustrativa, baseada", "no README do projeto"],
+        m_note_m=["execução ilustrativa,", "baseada no README do projeto"],
     ),
 }
 
@@ -169,12 +169,14 @@ def window(L, t, x, y, w, h, title):
 
 
 def caption(L, label, lines, x, y):
+    """'FIG. n' label in mono accent, then the caption text in mono."""
     out = []
-    f1, wf = text(SERIF_IT, label, x, y, L.cap, "fg")
+    f1, wf = text(MONO_MD, label.upper(), x, y, L.label, "ac")
     out.append(f1)
+    indent = wf + L.cap * 0.8
     for i, line in enumerate(lines):
-        out.append(text(SERIF, line, x + (wf if i == 0 else 0), y + i * L.cap * 1.2, L.cap, "mu")[0])
-    return "".join(out), y + (len(lines) - 1) * L.cap * 1.2
+        out.append(text(MONO, line.strip(), x + indent, y + i * L.cap * 1.5, L.cap, "mu")[0])
+    return "".join(out), y + (len(lines) - 1) * L.cap * 1.5
 
 
 # ---------------------------------------------------------------- research
@@ -239,7 +241,7 @@ def research(lang, theme, mobile):
         st, y = stats(L, s["r_stats"], L.pad, y + r(18), (L.W - 2 * L.pad) / 2)
         parts.append(st)
         fb, fc, end = forest(L, lang, t, L.pad, y + r(22), L.W - 2 * L.pad)
-        cap, cy = caption(L, "Fig. 2", [s["r_fig"]], L.pad, end + L.cap * 2.2)
+        cap, cy = caption(L, "Fig. 2", [s["r_fig"]], L.pad, end + L.cap * 3)
     else:
         bl, y = body_lines(L, s["r_body"], y + r(14))
         parts.append(bl)
@@ -247,7 +249,7 @@ def research(lang, theme, mobile):
         parts.append(st)
         fx = r(400)
         fb, fc, end = forest(L, lang, t, fx, L.pad + r(4), L.W - L.pad - fx)
-        cap, cy = caption(L, "Fig. 2", [s["r_fig"]], fx + r(40), end + L.cap * 2.2)
+        cap, cy = caption(L, "Fig. 2", [s["r_fig"]], fx + r(40), end + L.cap * 3)
         cy = max(cy, y)
     parts += [fb, cap]
     css.append(fc)
@@ -356,7 +358,7 @@ def dashboard(lang, theme, mobile):
     parts.append("".join(bars))
     css.append(f".ann{{animation:pop {P}s ease 1.6s infinite both}}")
 
-    cap, cy = caption(L, "Fig. 3", s["d_fig_m" if mobile else "d_fig"], L.pad, wy + wh + L.cap * 2.2)
+    cap, cy = caption(L, "Fig. 3", s["d_fig_m" if mobile else "d_fig"], L.pad, wy + wh + L.cap * 3)
     parts.append(cap)
     H = int(cy + L.pad)
     desc = (
@@ -449,10 +451,10 @@ def monitor(lang, theme, mobile):
         f".fin{{animation:fin {P}s linear infinite}}.cur{{animation:blink 1.1s steps(1) infinite}}"
     )
     note = []
-    ny = ty + th + L.cap * 1.9
+    ny = ty + th + L.small * 2.4
     for i, line in enumerate(s["m_note_m" if mobile else "m_note"]):
-        note.append(text(SERIF_IT, line, tx, ny + i * L.cap * 1.2, L.cap, "fa")[0])
-        last = ny + i * L.cap * 1.2
+        note.append(text(MONO, line, tx, ny + i * L.small * 1.5, L.small, "fa")[0])
+        last = ny + i * L.small * 1.5
     parts.append("".join(note))
     H = int(max(last, left_end) + L.pad)
     desc = (
