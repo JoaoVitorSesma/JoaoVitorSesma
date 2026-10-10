@@ -240,14 +240,36 @@ def _mix(a, b, k):
 MASCOT = "silver"  # one of creatures.CREATURES: silver, egg, mecha, blob, hedgehog
 
 
+def _motion(travel, period, roll):
+    """Keyframe stops (seconds, x) for one full back-and-forth cycle, plus the
+    phase intervals (start, end, phase) of the forward half."""
+    half = period / 2
+    if not roll:
+        return [(0.0, 0.0), (half, travel), (period, 0.0)], [(0.0, half, "walk")]
+    # fractions of the half period, and speed relative to walking
+    plan = [("walk", 0.30, 1.0), ("crouch", 0.03, 0.3), ("curl", 0.03, 0.3), ("ball", 0.26, 3.0),
+            ("curl", 0.03, 0.3), ("crouch", 0.03, 0.3), ("walk", 0.32, 1.0)]
+    unit = travel / sum(f * v for _, f, v in plan)
+    stops, phases, t, x = [(0.0, 0.0)], [], 0.0, 0.0
+    for phase, f, v in plan:
+        dt = f * half
+        phases.append((t, t + dt, phase))
+        t, x = t + dt, x + f * v * unit
+        stops.append((t, x))
+    back = [(half + t_, travel - x_) for t_, x_ in stops[1:]]
+    return stops + back, phases
+
+
 def strip(theme, mobile, mascot=None):
-    """A thin band where the pixel dragon walks back and forth over a row of
-    contribution-style cells that light up under its feet."""
+    """A thin band where the mascot crosses a row of contribution-style cells
+    that light up under it, turning round at each end."""
     t = THEMES[theme]
-    W, period = (720, 22.0) if mobile else (1200, 32.0)
-    canvas(W, mobile)
+    canvas(720 if mobile else 1200, mobile)
+    name = mascot or MASCOT
+    pal, frames, gw, gh = creatures.get(name)
+    roll = creatures.CREATURES[name].get("roll")
+    W, period = (720, 24.0) if mobile else (1200, 34.0)
     px, cell, pitch = 3, 10, 14
-    pal, frames, gw, gh = creatures.get(mascot or MASCOT)
     sw, sh = gw * px, gh * px
     top = 8
     cells_y = top + sh + 4
@@ -255,10 +277,19 @@ def strip(theme, mobile, mascot=None):
     travel = W - sw
     half = period / 2
     fade = 2.6
+    stops, phases = _motion(travel, period, roll)
 
-    # deterministic pseudo-random base levels (decorative, not real activity)
-    seed = 7
-    levels = []
+    def pass_times(cx):
+        """Moments when the mascot's centre crosses x = cx."""
+        target, out = cx - sw / 2, []
+        for (t0, x0), (t1, x1) in zip(stops, stops[1:]):
+            lo, hi = min(x0, x1), max(x0, x1)
+            if lo <= target <= hi and x1 != x0:
+                out.append(round(t0 + (target - x0) / (x1 - x0) * (t1 - t0), 3) % period)
+        out = sorted(set(out))
+        return [v for i, v in enumerate(out) if i == 0 or v - out[i - 1] > 0.05] or [0.0]
+
+    seed, levels = 7, []
     n = (W + pitch - cell) // pitch
     for _ in range(n):
         seed = (seed * 1103515245 + 12345) & 0x7FFFFFFF
@@ -270,8 +301,7 @@ def strip(theme, mobile, mascot=None):
     x0 = (W - (n * pitch - (pitch - cell))) / 2
     for i, lv in enumerate(levels):
         cx = x0 + i * pitch + cell / 2
-        frac = min(max((cx - sw / 2) / travel, 0), 1)
-        flashes = sorted({round(frac * half, 3), round(period - frac * half, 3) % period})
+        flashes = pass_times(min(max(cx, sw / 2), W - sw / 2))
         base, hot = t["cells"][lv], t["cells"][4]
 
         def col(tt):
@@ -296,25 +326,64 @@ def strip(theme, mobile, mascot=None):
         )
 
     rest_x = round(travel * 0.42)
-    fa = creatures.frame_rects(pal, frames[0], px)
-    fb = creatures.frame_rects(pal, frames[1], px)
+    walk_kf = "".join(f"{tt / period * 100:.3f}%{{transform:translate({xx:.1f}px,{top}px)}}" for tt, xx in stops)
     css.append(
         f".walk{{transform:translate({rest_x}px,{top}px);animation:walk {period}s linear infinite}}"
-        f"@keyframes walk{{0%{{transform:translate(0,{top}px)}}50%{{transform:translate({travel}px,{top}px)}}"
-        f"100%{{transform:translate(0,{top}px)}}}}"
+        f"@keyframes walk{{{walk_kf}}}"
         ".flip{transform-box:fill-box;transform-origin:center;"
         f"animation:flip {period}s steps(1) infinite}}"
         "@keyframes flip{0%{transform:scaleX(1)}50%{transform:scaleX(-1)}100%{transform:scaleX(-1)}}"
         ".fa{animation:fa .44s steps(1) infinite}.fb{opacity:0;animation:fb .44s steps(1) infinite}"
         "@keyframes fa{0%{opacity:1}50%{opacity:0}}@keyframes fb{0%{opacity:0}50%{opacity:1}}"
     )
-    body = (
-        "".join(rects)
-        + f'<g class="walk"><g class="flip"><g class="fa">{fa}</g><g class="fb">{fb}</g></g></g>'
-    )
+    rf = lambda k: creatures.frame_rects(pal, frames[k], px)
+    if not roll:
+        body = f'<g class="fa">{rf(0)}</g><g class="fb">{rf(1)}</g>'
+    else:
+        # which pose is visible when: crouch/curl split their phases in two
+        groups = {"walk": [], "crouch": [], "curl": [], "ball": []}
+        for s0, s1, ph in phases:
+            for off in (0.0, half):
+                groups[ph].append((s0 + off, s1 + off))
+
+        def vis(cls, spans, base_on):
+            merged = []
+            for a_, b_ in sorted(spans):
+                if merged and a_ <= merged[-1][1] + 1e-6:
+                    merged[-1] = (merged[-1][0], max(merged[-1][1], b_))
+                else:
+                    merged.append((a_, b_))
+            kf = [] if merged and merged[0][0] <= 0 else ["0%{opacity:0}"]
+            for a_, b_ in merged:
+                pa, pb = a_ / period * 100, b_ / period * 100
+                if pa > 0:
+                    kf.append(f"{pa - .001:.3f}%{{opacity:0}}")
+                kf.append(f"{pa:.3f}%{{opacity:1}}{pb:.3f}%{{opacity:1}}")
+                if pb < 100:
+                    kf.append(f"{pb + .001:.3f}%{{opacity:0}}")
+            if not (merged and merged[-1][1] >= period):
+                kf.append("100%{opacity:0}")
+            return (f".{cls}{{opacity:{1 if base_on else 0};animation:{cls} {period}s linear infinite}}"
+                    f"@keyframes {cls}{{{''.join(kf)}}}")
+
+        css.append(vis("gw", groups["walk"], True))
+        css.append(vis("gc", groups["crouch"], False))
+        css.append(vis("gu", groups["curl"], False))
+        css.append(vis("gb", groups["ball"], False))
+        css.append(".spin{transform-box:fill-box;transform-origin:center;animation:spin .5s steps(4) infinite}"
+                   "@keyframes spin{to{transform:rotate(360deg)}}")
+        w0, w1 = roll["walk"]
+        c0, c1 = roll["curl"]
+        body = (
+            f'<g class="gw"><g class="fa">{rf(w0)}</g><g class="fb">{rf(w1)}</g></g>'
+            f'<g class="gc">{rf(c0)}</g><g class="gu">{rf(c1)}</g>'
+            f'<g class="gb"><g class="spin">{rf(roll["ball"])}</g></g>'
+        )
     return svg(
-        W, H, "Walking dragon", "A small pixel-art dragon walking across a row of contribution squares.",
-        body, "".join(css),
+        W, H, "Walking mascot",
+        "A small pixel-art hedgehog walking across a row of contribution squares, curling up and rolling along part of the way."
+        if roll else "A small pixel-art creature walking across a row of contribution squares.",
+        "".join(rects) + f'<g class="walk"><g class="flip">{body}</g></g>', "".join(css),
     )
 
 
