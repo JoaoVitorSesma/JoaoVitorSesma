@@ -116,6 +116,11 @@ def canvas(W, mobile):
     return lambda v: v * k
 
 
+def scale(k):
+    """Start an SVG drawn at k SVG units per rendered CSS px."""
+    _track.update(k=k, min=None, min_text="")
+
+
 def smallest():
     return _track["min"], _track["min_text"]
 
