@@ -1,0 +1,64 @@
+{
+ "source": "Predição_da_Sobrevida_em_Pacientes_com_Câncer_Colorretal_COX.ipynb, cell 41 output (lifelines CoxPHFitter summary, exp(coef) and 95% CI)",
+ "n_obs": 37499,
+ "events": 22078,
+ "c_index": 0.747,
+ "rows": [
+  {
+   "var": "PRESENCA_META",
+   "en": "metastasis",
+   "pt": "metástase",
+   "hr": 2.18,
+   "lo": 2.09,
+   "hi": 2.28
+  },
+  {
+   "var": "NENHUM",
+   "en": "no treatment",
+   "pt": "sem tratamento",
+   "hr": 1.73,
+   "lo": 1.59,
+   "hi": 1.89
+  },
+  {
+   "var": "PRESENCA_REC",
+   "en": "recurrence",
+   "pt": "recidiva",
+   "hr": 1.2,
+   "lo": 1.15,
+   "hi": 1.24
+  },
+  {
+   "var": "EC",
+   "en": "stage (per level)",
+   "pt": "estádio (por nível)",
+   "hr": 1.12,
+   "lo": 1.11,
+   "hi": 1.12
+  },
+  {
+   "var": "HORMONIO",
+   "en": "hormone therapy",
+   "pt": "hormonioterapia",
+   "hr": 0.66,
+   "lo": 0.56,
+   "hi": 0.78
+  },
+  {
+   "var": "QUIMIO",
+   "en": "chemotherapy",
+   "pt": "quimioterapia",
+   "hr": 0.59,
+   "lo": 0.57,
+   "hi": 0.61
+  },
+  {
+   "var": "CIRURGIA",
+   "en": "surgery",
+   "pt": "cirurgia",
+   "hr": 0.55,
+   "lo": 0.53,
+   "hi": 0.57
+  }
+ ]
+}
