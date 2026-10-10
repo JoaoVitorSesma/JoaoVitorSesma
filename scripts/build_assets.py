@@ -240,24 +240,38 @@ def _mix(a, b, k):
 MASCOT = "hedgehog"  # one of creatures.CREATURES: silver, egg, mecha, blob, hedgehog
 
 
-def _motion(travel, period, roll):
-    """Keyframe stops (seconds, x) for one full back-and-forth cycle, plus the
-    phase intervals (start, end, phase) of the forward half."""
-    half = period / 2
-    if not roll:
-        return [(0.0, 0.0), (half, travel), (period, 0.0)], [(0.0, half, "walk")]
-    # fractions of the half period, and speed relative to walking
-    plan = [("walk", 0.30, 1.0), ("crouch", 0.03, 0.3), ("curl", 0.03, 0.3), ("ball", 0.26, 3.0),
-            ("curl", 0.03, 0.3), ("crouch", 0.03, 0.3), ("walk", 0.32, 1.0)]
-    unit = travel / sum(f * v for _, f, v in plan)
-    stops, phases, t, x = [(0.0, 0.0)], [], 0.0, 0.0
-    for phase, f, v in plan:
-        dt = f * half
-        phases.append((t, t + dt, phase))
-        t, x = t + dt, x + f * v * unit
-        stops.append((t, x))
-    back = [(half + t_, travel - x_) for t_, x_ in stops[1:]]
-    return stops + back, phases
+# Each trip across the strip: direction (+1 right, -1 left) and whether it rolls.
+# The first trip always rolls; later ones mix plain walks in.
+TRIPS = [(+1, True), (-1, False), (+1, False), (-1, True)]
+# Roll trip: (phase, share of the trip's duration, speed relative to walking)
+ROLL_PLAN = [("walk", 0.30, 1.0), ("crouch", 0.03, 0.3), ("curl", 0.03, 0.3), ("ball", 0.26, 3.0),
+             ("curl", 0.03, 0.3), ("crouch", 0.03, 0.3), ("walk", 0.32, 1.0)]
+
+
+def _motion(travel, walk_time, roll):
+    """Keyframes for a full cycle at a constant walking speed.
+
+    walk_time is how long a plain walking trip takes. Returns
+    (period, stops [(t, x)], spans {phase: [(t0, t1)]}, trips [(t0, direction)]).
+    """
+    trips = TRIPS if roll else [(+1, False), (-1, False)]
+    speed = travel / walk_time
+    roll_time = travel / (speed * sum(f * v for _, f, v in ROLL_PLAN))
+    t, stops, spans, starts = 0.0, [(0.0, 0.0)], {"walk": [], "crouch": [], "curl": [], "ball": []}, []
+    for direction, rolls in trips:
+        starts.append((t, direction))
+        x_from = 0.0 if direction > 0 else travel
+        plan = ROLL_PLAN if rolls else [("walk", 1.0, 1.0)]
+        dur = roll_time if rolls else walk_time
+        x = x_from
+        for phase, f, v in plan:
+            dt = f * dur
+            spans[phase].append((t, t + dt))
+            t += dt
+            x += direction * speed * v * dt
+            stops.append((t, min(max(x, 0.0), travel)))
+        stops[-1] = (t, travel if direction > 0 else 0.0)
+    return t, stops, spans, starts
 
 
 def strip(theme, mobile, mascot=None):
@@ -268,16 +282,15 @@ def strip(theme, mobile, mascot=None):
     name = mascot or MASCOT
     pal, frames, gw, gh = creatures.get(name)
     roll = creatures.CREATURES[name].get("roll")
-    W, period = (720, 24.0) if mobile else (1200, 34.0)
+    W, walk_time = (720, 14.0) if mobile else (1200, 20.0)
     px, cell, pitch = 3, 10, 14
     sw, sh = gw * px, gh * px
     top = 8
     cells_y = top + sh + 4
     H = cells_y + cell + 4
     travel = W - sw
-    half = period / 2
     fade = 2.6
-    stops, phases = _motion(travel, period, roll)
+    period, stops, spans, trips = _motion(travel, walk_time, roll)
 
     def pass_times(cx):
         """Moments when the mascot's centre crosses x = cx."""
@@ -332,7 +345,9 @@ def strip(theme, mobile, mascot=None):
         f"@keyframes walk{{{walk_kf}}}"
         ".flip{transform-box:fill-box;transform-origin:center;"
         f"animation:flip {period}s steps(1) infinite}}"
-        "@keyframes flip{0%{transform:scaleX(1)}50%{transform:scaleX(-1)}100%{transform:scaleX(-1)}}"
+        "@keyframes flip{"
+        + "".join(f"{t0 / period * 100:.3f}%{{transform:scaleX({d})}}" for t0, d in trips)
+        + f"100%{{transform:scaleX({trips[-1][1]})}}}}"
         ".fa{animation:fa .44s steps(1) infinite}.fb{opacity:0;animation:fb .44s steps(1) infinite}"
         "@keyframes fa{0%{opacity:1}50%{opacity:0}}@keyframes fb{0%{opacity:0}50%{opacity:1}}"
     )
@@ -341,10 +356,7 @@ def strip(theme, mobile, mascot=None):
         body = f'<g class="fa">{rf(0)}</g><g class="fb">{rf(1)}</g>'
     else:
         # which pose is visible when: crouch/curl split their phases in two
-        groups = {"walk": [], "crouch": [], "curl": [], "ball": []}
-        for s0, s1, ph in phases:
-            for off in (0.0, half):
-                groups[ph].append((s0 + off, s1 + off))
+        groups = spans
 
         def vis(cls, spans, base_on):
             merged = []
