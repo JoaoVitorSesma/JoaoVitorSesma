@@ -11,7 +11,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/strip/walk-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/strip/walk-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/strip/walk-dark.svg">
-  <img src="./assets/strip/walk-light.svg" width="100%" alt="A small pixel-art dragon walking across a row of contribution squares.">
+  <img src="./assets/strip/walk-light.svg" width="100%" alt="A small pixel-art hedgehog walking across a row of contribution squares, curling into a ball and rolling part of the way.">
 </picture>
 
 I'm a Computer Engineering student at **Instituto Mauá de Tecnologia**. I take messy health records, model what they say about survival, and turn the results into tools people can actually use. I also build the automation that keeps those tools running.
