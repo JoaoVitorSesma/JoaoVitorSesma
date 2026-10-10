@@ -24,6 +24,10 @@ STR = {
         cmd="whoami",
         tagline="Health data, survival models and the tools people use.",
         meta_m=["Computer Engineering", "Instituto Mauá de Tecnologia · Brazil"],
+        meta_line="Computer Engineering · IMT · Brazil",
+        stats=[("37,621", "patients modeled"), ("55,647", "records visualized"), ("96", "automated checks a day")],
+        cta_main="Open to internships · Email me",
+        cta_alt="See projects",
         now_label="now",
         now="modeling recurrence with Cox and machine learning",
         months="months",
@@ -32,7 +36,8 @@ STR = {
         fig1_b="FOSP · n = 37,621 · 2000–2023",
         hero_title="João Vitor Sesma",
         hero_desc="João Vitor Sesma. Health data, survival models and the tools people use. "
-        "Computer Engineering at Instituto Mauá de Tecnologia, Brazil. Currently modeling "
+        "Computer Engineering at Instituto Mauá de Tecnologia, Brazil. 37,621 patients modeled, "
+        "55,647 records visualized, 96 automated checks a day. Currently modeling "
         "recurrence with Cox and machine learning. Figure: Kaplan–Meier survival curve for "
         "colorectal cancer, FOSP, 37,621 patients, median survival 44 months.",
     ),
@@ -40,6 +45,10 @@ STR = {
         cmd="whoami",
         tagline="Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam.",
         meta_m=["Engenharia de Computação", "Instituto Mauá de Tecnologia · Brasil"],
+        meta_line="Engenharia de Computação · IMT · Brasil",
+        stats=[("37.621", "pacientes modelados"), ("55.647", "registros visualizados"), ("96", "verificações automáticas por dia")],
+        cta_main="Aberto a estágio · Fale comigo",
+        cta_alt="Ver projetos",
         now_label="agora",
         now="modelando recidiva com Cox e machine learning",
         months="meses",
@@ -48,7 +57,8 @@ STR = {
         fig1_b="FOSP · n = 37.621 · 2000–2023",
         hero_title="João Vitor Sesma",
         hero_desc="João Vitor Sesma. Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. "
-        "Engenharia de Computação no Instituto Mauá de Tecnologia, Brasil. Agora modelando "
+        "Engenharia de Computação no Instituto Mauá de Tecnologia, Brasil. 37.621 pacientes modelados, "
+        "55.647 registros visualizados, 96 verificações automáticas por dia. Agora modelando "
         "recidiva com Cox e machine learning. Figura: curva de Kaplan–Meier do câncer "
         "colorretal, FOSP, 37.621 pacientes, sobrevida mediana de 44 meses.",
     ),
@@ -111,9 +121,9 @@ def km_figure(lang, t, x0, y0, w, h, delay, r, tick):
         f'<animateMotion dur="11s" begin="{delay + 4.2:.2f}s" repeatCount="indefinite" path="{d}"/></circle>'
     )
     css = (
-        f".km{{stroke-dasharray:1;animation:draw 3.4s cubic-bezier(.3,.7,.2,1) {delay:.2f}s both}}"
+        f".km{{stroke-dasharray:1;animation:draw 3s cubic-bezier(.3,.7,.2,1) {delay:.2f}s both}}"
         "@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}"
-        f".med{{animation:fade .8s ease {delay + 3.3:.2f}s both}}"
+        f".med{{animation:fade .6s ease {delay + 2.6:.2f}s both}}"
         f".axes{{animation:fade .6s ease {delay - .5:.2f}s both}}"
     )
     return "".join(parts), css, ty
@@ -136,6 +146,45 @@ def type_line(font, s, x, y, size, cls, start, cps, uid):
     return body, css, w, start + dur
 
 
+def odometer(s, x, y, size, color, start, uid, font=None):
+    """Draw a number whose digits roll into place like an odometer.
+
+    The resting transform is the final digit, so with reduced motion the
+    number simply shows its value. Returns (svg, css, width)."""
+    font = font or MONO_MD
+    adv = font.width("0", size)
+    lh = size * 1.25
+    defs, body, css = [], [], []
+    for d in "0123456789":
+        path, _ = text(font, d, 0, 0, size, "")
+        defs.append(path.replace('<path class=""', f'<path id="{uid}d{d}"'))
+    cx = x
+    digits = [i for i, ch in enumerate(s) if ch.isdigit()]
+    for i, ch in enumerate(s):
+        if not ch.isdigit():
+            el, w = text(font, ch, cx, y, size, "fg")
+            body.append(el.replace('class="fg"', f'fill="{color}"'))
+            cx += w
+            continue
+        k = digits.index(i)
+        steps = 10 + 3 * k  # later columns spin further, like a real counter
+        target = int(ch)
+        seq = [(target - steps + j) % 10 for j in range(steps + 1)]
+        uses = "".join(f'<use href="#{uid}d{n}" x="{cx:.1f}" y="{y + j * lh:.1f}"/>' for j, n in enumerate(seq))
+        body.append(
+            f'<clipPath id="{uid}k{k}"><rect x="{cx - 1:.1f}" y="{y - size * 0.86:.1f}" width="{adv + 2:.1f}" height="{size * 0.98:.1f}"/></clipPath>'
+            f'<g clip-path="url(#{uid}k{k})"><g class="{uid}c{k}" fill="{color}">{uses}</g></g>'
+        )
+        end = -steps * lh
+        css.append(
+            f".{uid}c{k}{{transform:translateY({end:.1f}px);"
+            f"animation:{uid}r{k} {1.1 + 0.15 * k:.2f}s cubic-bezier(.15,.75,.25,1) {start:.2f}s both}}"
+            f"@keyframes {uid}r{k}{{from{{transform:translateY(0)}}to{{transform:translateY({end:.1f}px)}}}}"
+        )
+        cx += adv
+    return f'<defs>{"".join(defs)}</defs>' + "".join(body), "".join(css), cx - x
+
+
 COMMON_KEYS = (
     "@keyframes type{from{transform:scaleX(0)}to{transform:scaleX(1)}}"
     "@keyframes fade{from{opacity:0}to{opacity:1}}"
@@ -146,45 +195,61 @@ COMMON_KEYS = (
 
 
 def hero(lang, theme, mobile):
+    """Hero laid out for a 10-second read: name at once, one line on what,
+    three numbers as proof, then the figure draws while they are read."""
     t, s = THEMES[theme], STR[lang]
     parts, css = [], [base_css(t), COMMON_KEYS]
     W = 720 if mobile else 1200
     r = canvas(W, mobile)
     x = r(10) if mobile else r(4)
-    # sizes in rendered px
     prompt, tag, meta, tick, cap = (13, 15, 13, 12.5, 13) if mobile else (13, 16, 13.5, 12.5, 13.5)
     prompt, tag, meta, tick, cap = r(prompt), r(tag), r(meta), r(tick), r(cap)
+    num, lab = r(22), r(12.5)
     col_w = (W - 2 * x) if mobile else r(440)
 
+    # 0.0 s: prompt types while the name is already rising
     y = r(30)
     p1, w1 = text(MONO, "~/joao $ ", x, y, prompt, "mu")
     parts.append(p1)
-    b, c, _, t_end = type_line(MONO, s["cmd"], x + w1, y, prompt, "gr", 0.4, 9, "ty0")
-    parts.append(b)
-    css.append(c)
+    b_, c_, _, _ = type_line(MONO, s["cmd"], x + w1, y, prompt, "gr", 0.1, 12, "ty0")
+    parts.append(b_)
+    css.append(c_)
 
-    # name: as large as the column allows, capped
     name_size = min(r(52), col_w / SANS_BD.width("João Vitor Sesma", 1) * 0.98)
     y += name_size * 1.05
     n1, _ = text(SANS_BD, "João Vitor Sesma", x, y, name_size, "fg", tracking=-name_size * 0.01)
     parts.append(f'<g class="name">{n1}</g>')
-    css.append(f".name{{animation:rise .9s cubic-bezier(.2,.8,.2,1) {t_end + .15:.2f}s both}}")
+    css.append(".name{animation:rise .7s cubic-bezier(.2,.8,.2,1) .15s both}")
 
-    start = t_end + 0.5
+    # 0.45 s: what I do
     y += tag * 1.9
     tl = []
     for line in wrap(SANS, s["tagline"], tag, col_w):
         tl.append(text(SANS, line, x, y, tag, "fg")[0])
         y += tag * 1.4
+    y += meta * 0.1
+    tl.append(text(SANS, s["meta_line"], x, y, meta, "mu")[0])
     parts.append(f'<g class="tag">{"".join(tl)}</g>')
-    css.append(f".tag{{animation:rise .8s cubic-bezier(.2,.8,.2,1) {start:.2f}s both}}")
-    start += 0.6
-    y += meta * 0.5
+    css.append(".tag{animation:rise .7s cubic-bezier(.2,.8,.2,1) .45s both}")
+
+    # 0.9 s: proof, one number per project, rolling in
+    y += num * 1.9
+    colw = col_w / 3
+    st = []
+    for i, (value, label) in enumerate(s["stats"]):
+        sx = x + i * colw
+        body, c, _ = odometer(value, sx, y, num, t["fg"], 0.9 + i * 0.15, f"o{i}")
+        st.append(body)
+        css.append(c)
+        for j, line in enumerate(wrap(SANS, label, lab, colw - r(10))):
+            st.append(text(SANS, line, sx, y + lab * (1.6 + 1.3 * j), lab, "mu")[0])
+    parts.append(f'<g class="stats">{"".join(st)}</g>')
+    css.append(".stats{animation:fade .4s ease .8s both}")
+    longest = max(len(wrap(SANS, label, lab, colw - r(10))) for _, label in s["stats"])
+    y += lab * (1.6 + 1.3 * (longest - 1)) + meta * 2.3
+
+    # 2.2 s: what I'm doing now
     g = []
-    for line in s["meta_m"]:
-        g.append(text(SANS, line, x, y, meta, "mu")[0])
-        y += meta * 1.5
-    y += meta * 0.6
     cy = y - meta * 0.33
     dot = r(4)
     g.append(
@@ -200,11 +265,12 @@ def hero(lang, theme, mobile):
             y += meta * 1.4
         g.append(text(SANS, line, nx, y, meta, "fg")[0])
     parts.append(f'<g class="meta">{"".join(g)}</g>')
-    css.append(f".meta{{animation:fade .8s ease {start + .1:.2f}s both}}")
-    css.append(f".pl{{animation:pulse 2.4s ease-out {start + .5:.2f}s infinite}}")
+    css.append(".meta{animation:fade .6s ease 2.2s both}")
+    css.append(".pl{animation:pulse 2.4s ease-out 2.8s infinite}")
     left_bottom = y
 
-    fig_delay = start + 0.2
+    # 0.6 s on: the figure draws beside the text, done by about 4.5 s
+    fig_delay = 1.0
     if mobile:
         fx = x + tick * 2.4
         fy = y + r(40)
@@ -223,7 +289,7 @@ def hero(lang, theme, mobile):
     parts.append(body)
     parts.append(f'<g class="cap">{f1}{f2}{f3}</g>')
     css.append(c)
-    css.append(f".cap{{animation:fade 1s ease {fig_delay + .4:.2f}s both}}")
+    css.append(".cap{animation:fade .8s ease 1.4s both}")
     H = int(max(cap_y + cap * 1.5, left_bottom) + r(14))
     return svg(W, H, s["hero_title"], s["hero_desc"], "".join(parts), "".join(css))
 
@@ -423,6 +489,35 @@ def lang_pill(lang, active, theme):
             f'<style>{base_css(t)}</style>{frame}{el}</svg>')
 
 
+CTA_GREEN = {"dark": "#238636", "light": "#1f883d"}
+
+
+def cta_pill(label, primary, theme):
+    """Call-to-action button: solid green for the main action, outline for the second."""
+    t, k = THEMES[theme], 2
+    scale(k)
+    fs, h, pad = 14 * k, 34 * k, 15 * k
+    font = SANS_BD
+    lx = pad
+    dot = ""
+    if primary:
+        r_ = 3.5 * k
+        dot = f'<circle cx="{pad + r_:.1f}" cy="{h / 2:.1f}" r="{r_:.1f}" fill="#ffffff"/>'
+        lx = pad + r_ * 2 + 8 * k
+    w = lx + font.width(label, fs) + pad
+    if primary:
+        frame = f'<rect width="{w:.1f}" height="{h}" rx="{h / 2}" fill="{CTA_GREEN[theme]}"/>'
+        el, _ = text(font, label, lx, h / 2 + fs * 0.36, fs, "fg")
+        el = el.replace('class="fg"', 'fill="#ffffff"')
+    else:
+        frame = (f'<rect x="{k / 2}" y="{k / 2}" width="{w - k:.1f}" height="{h - k}" rx="{(h - k) / 2}" '
+                 f'fill="none" stroke="{t["line"]}" stroke-width="{k}"/>')
+        el, _ = text(font, label, lx, h / 2 + fs * 0.36, fs, "fg")
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w / k:.0f}" height="{h / k:.0f}" '
+            f'viewBox="0 0 {w:.0f} {h:.0f}" role="img" aria-label="{label}"><title>{label}</title>'
+            f'<style>{base_css(t)}</style>{frame}{dot}{el}</svg>')
+
+
 def lang_globe(theme):
     t, k = THEMES[theme], 2
     s, r = 30 * k, 7.5 * k
@@ -462,6 +557,11 @@ def main():
         for lang in LANGS:
             for active in (True, False):
                 write(OUT / "lang" / f"{lang}-{'active' if active else 'idle'}-{theme}.svg", lang_pill(lang, active, theme))
+
+    for lang in STR:
+        for theme in THEMES:
+            write(OUT / "cta" / f"main-{lang}-{theme}.svg", cta_pill(STR[lang]["cta_main"], True, theme))
+            write(OUT / "cta" / f"alt-{lang}-{theme}.svg", cta_pill(STR[lang]["cta_alt"], False, theme))
 
     print("smallest text as rendered on GitHub (px):")
     for size, name, sample in sorted(report)[:6]:
