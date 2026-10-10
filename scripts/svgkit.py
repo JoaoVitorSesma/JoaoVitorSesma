@@ -80,7 +80,28 @@ MONO = Font("jetbrains-mono-latin-400-normal.ttf")
 MONO_MD = Font("jetbrains-mono-latin-500-normal.ttf")
 
 
+# README column width in CSS px: ~795 on desktop (measured on the live profile),
+# ~340 on a phone. Sizes below are given in rendered px and converted per canvas.
+DISPLAY = {False: 795, True: 340}
+MIN_PX = 12.0
+_track = {"k": 1.0, "min": None, "min_text": ""}
+
+
+def canvas(W, mobile):
+    """Start a new SVG. Returns r(px): rendered CSS px -> SVG units."""
+    k = W / DISPLAY[mobile]
+    _track.update(k=k, min=None, min_text="")
+    return lambda v: v * k
+
+
+def smallest():
+    return _track["min"], _track["min_text"]
+
+
 def text(font, s, x, y, size, cls, tracking=0.0, anchor="start", extra=""):
+    shown = size / _track["k"]
+    if _track["min"] is None or shown < _track["min"]:
+        _track.update(min=shown, min_text=s)
     d, w = font.path(s, x, y, size, tracking, anchor)
     return f'<path class="{cls}" d="{d}"{extra}/>', w
 
