@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 
 import cards
-import sprite
+import creatures
 from svgkit import MIN_PX, MONO, MONO_MD, SANS, SANS_BD, THEMES, base_css, canvas, smallest, svg, text, wrap
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -237,14 +237,18 @@ def _mix(a, b, k):
     return "#" + "".join(f"{round(x + (y - x) * k):02x}" for x, y in zip(a, b))
 
 
-def strip(theme, mobile):
+MASCOT = "silver"  # one of creatures.CREATURES: silver, egg, mecha, blob
+
+
+def strip(theme, mobile, mascot=None):
     """A thin band where the pixel dragon walks back and forth over a row of
     contribution-style cells that light up under its feet."""
     t = THEMES[theme]
     W, period = (720, 22.0) if mobile else (1200, 32.0)
     canvas(W, mobile)
     px, cell, pitch = 3, 10, 14
-    sw, sh = sprite.W * px, sprite.H * px
+    pal, frames, gw, gh = creatures.get(mascot or MASCOT)
+    sw, sh = gw * px, gh * px
     top = 8
     cells_y = top + sh + 4
     H = cells_y + cell + 4
@@ -282,18 +286,18 @@ def strip(theme, mobile):
         for f in flashes:
             for d in (-0.05, 0.0, fade):
                 marks.add(round((f + d) % period, 3))
-        frames = "".join(
+        steps = "".join(
             f"{m / period * 100:.2f}%{{fill:{col(m if m < period else 0)}}}" for m in sorted(marks)
         )
-        css.append(f"@keyframes c{i}{{{frames}}}.c{i}{{animation:c{i} {period}s linear infinite}}")
+        css.append(f"@keyframes c{i}{{{steps}}}.c{i}{{animation:c{i} {period}s linear infinite}}")
         rects.append(
             f'<rect class="c{i}" x="{x0 + i * pitch:.1f}" y="{cells_y}" width="{cell}" '
             f'height="{cell}" rx="2" fill="{base}"/>'
         )
 
     rest_x = round(travel * 0.42)
-    fa = sprite.frame_rects(sprite.WALK_A, px)
-    fb = sprite.frame_rects(sprite.WALK_B, px)
+    fa = creatures.frame_rects(pal, frames[0], px)
+    fb = creatures.frame_rects(pal, frames[1], px)
     css.append(
         f".walk{{transform:translate({rest_x}px,{top}px);animation:walk {period}s linear infinite}}"
         f"@keyframes walk{{0%{{transform:translate(0,{top}px)}}50%{{transform:translate({travel}px,{top}px)}}"
