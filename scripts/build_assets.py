@@ -11,7 +11,7 @@ from pathlib import Path
 
 import cards
 import creatures
-from svgkit import MIN_PX, MONO, MONO_MD, SANS, SANS_BD, THEMES, base_css, canvas, smallest, svg, text, wrap
+from svgkit import MIN_PX, MONO, MONO_MD, SANS, SANS_BD, THEMES, base_css, canvas, scale, smallest, svg, text, wrap
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = Path(__file__).parent / "data"
@@ -399,6 +399,41 @@ def strip(theme, mobile, mascot=None):
     )
 
 
+LANGS = {"en": "English", "pt": "Português"}
+
+
+def lang_pill(lang, active, theme):
+    """Language button: filled pill for the current language, outline for the other."""
+    t, k = THEMES[theme], 2
+    scale(k)
+    fs, h, pad = 13.5 * k, 30 * k, 13 * k
+    font = SANS_BD if active else SANS
+    label = LANGS[lang]
+    w = pad * 2 + font.width(label, fs)
+    if active:
+        frame = (f'<rect x="{k / 2}" y="{k / 2}" width="{w - k:.1f}" height="{h - k}" rx="{(h - k) / 2}" '
+                 f'fill="{t["ac"]}" fill-opacity=".14" stroke="{t["ac"]}" stroke-width="{k}"/>')
+    else:
+        frame = (f'<rect x="{k / 2}" y="{k / 2}" width="{w - k:.1f}" height="{h - k}" rx="{(h - k) / 2}" '
+                 f'fill="none" stroke="{t["line"]}" stroke-width="{k}"/>')
+    el, _ = text(font, label, pad, h / 2 + fs * 0.36, fs, "fg" if active else "mu")
+    title = f"{label} (current)" if active else label
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w / k:.0f}" height="{h / k:.0f}" '
+            f'viewBox="0 0 {w:.0f} {h:.0f}" role="img" aria-label="{title}"><title>{title}</title>'
+            f'<style>{base_css(t)}</style>{frame}{el}</svg>')
+
+
+def lang_globe(theme):
+    t, k = THEMES[theme], 2
+    s, r = 30 * k, 7.5 * k
+    c = s / 2
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="22" height="30" viewBox="{c - 11 * k} 0 {22 * k} {s}" '
+            f'role="img" aria-label="Language"><title>Language</title>'
+            f'<g fill="none" stroke="{t["mu"]}" stroke-width="{1.4 * k}">'
+            f'<circle cx="{c}" cy="{c}" r="{r}"/><ellipse cx="{c}" cy="{c}" rx="{r * 0.45}" ry="{r}"/>'
+            f'<path d="M{c - r} {c} H{c + r}"/></g></svg>')
+
+
 def main():
     report, failures = [], []
 
@@ -421,6 +456,12 @@ def main():
                 for kind, build in cards.BUILDERS.items():
                     write(OUT / "work" / f"{kind}-{sfx}", build(lang, theme, mobile))
                 write(OUT / "hero" / f"hero-{sfx}", hero(lang, theme, mobile))
+
+    for theme in THEMES:
+        write(OUT / "lang" / f"globe-{theme}.svg", lang_globe(theme))
+        for lang in LANGS:
+            for active in (True, False):
+                write(OUT / "lang" / f"{lang}-{'active' if active else 'idle'}-{theme}.svg", lang_pill(lang, active, theme))
 
     print("smallest text as rendered on GitHub (px):")
     for size, name, sample in sorted(report)[:6]:

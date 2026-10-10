@@ -1,4 +1,8 @@
-<p align="right"><sub><b>English</b> · <a href="./README.pt-BR.md">Português</a></sub></p>
+<p align="right">
+  <a href="https://github.com/JoaoVitorSesma"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/lang/globe-dark.svg"><img src="./assets/lang/globe-light.svg" alt="Language" height="30" width="22"></picture></a>
+  <a href="https://github.com/JoaoVitorSesma"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/lang/en-active-dark.svg"><img src="./assets/lang/en-active-light.svg" alt="English, current language" height="30" width="72"></picture></a>
+  <a href="./README.pt-BR.md"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/lang/pt-idle-dark.svg"><img src="./assets/lang/pt-idle-light.svg" alt="Português" height="30" width="86"></picture></a>
+</p>
 
 <picture>
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark-mobile.svg">
