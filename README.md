@@ -8,7 +8,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/hero/hero-en-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark.svg">
-  <img src="./assets/hero/hero-en-light.svg" width="100%" alt="JVM.Sesma, written in contribution squares. João Vitor Morimoto Sesma. Health data, survival models and the tools people use. Drawn to AI for healthcare, data analysis and automation. Now building ML and deep learning models for medical diagnosis. Learning LLMs, building and using them, and computer vision.">
+  <img src="./assets/hero/hero-en-light.svg" width="100%" alt="João Vitor Morimoto Sesma. Health data, survival models and the tools people use. Drawn to AI for healthcare, data analysis and automation. Now building ML and deep learning models for medical diagnosis. Learning LLMs, building and using them, and computer vision.">
 </picture>
 
 <p>

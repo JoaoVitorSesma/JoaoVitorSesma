@@ -10,7 +10,6 @@ from pathlib import Path
 
 import cards
 import creatures
-import signature
 from svgkit import MIN_PX, MONO, MONO_MD, SANS, SANS_BD, THEMES, base_css, canvas, scale, smallest, svg, text, wrap
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -31,7 +30,7 @@ STR = {
         cta_main="Get in touch · Email me",
         cta_alt="See projects",
         hero_title="João Vitor Morimoto Sesma",
-        hero_desc="JVM.Sesma, written in contribution squares. João Vitor Morimoto Sesma. "
+        hero_desc="João Vitor Morimoto Sesma. "
         "Health data, survival models and the tools people use. Drawn to AI for healthcare, data "
         "analysis and automation. Now building ML and deep learning models for medical diagnosis. "
         "Learning LLMs, building and using them, and computer vision.",
@@ -48,7 +47,7 @@ STR = {
         cta_main="Fale comigo · E-mail",
         cta_alt="Ver projetos",
         hero_title="João Vitor Morimoto Sesma",
-        hero_desc="JVM.Sesma, escrito em quadradinhos de contribuição. João Vitor Morimoto Sesma. "
+        hero_desc="João Vitor Morimoto Sesma. "
         "Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. Interesses: IA para "
         "saúde, análise de dados e automação. Agora construindo modelos de ML e deep learning para "
         "diagnóstico médico. Aprendendo LLMs, construindo e usando, e visão computacional.",
@@ -83,7 +82,7 @@ COMMON_KEYS = (
 
 
 def hero(lang, theme, mobile):
-    """Who I am in a few seconds: signature, name, one line, and the whoami
+    """Who I am in a few seconds: name, one line, and the whoami
     answers the profile sidebar does not already show."""
     t, s = THEMES[theme], STR[lang]
     parts, css = [], [base_css(t), COMMON_KEYS]
@@ -92,12 +91,7 @@ def hero(lang, theme, mobile):
     x = r(10) if mobile else r(4)
     full = W - 2 * x
 
-    # 0.3-2 s: the signature writes itself across the top
-    pitch = full / len(signature.grid()[0])
-    body, c, _, sh = signature.draw(t, x, r(6), pitch, dark=theme == "dark")
-    parts.append(body)
-    css.append(c)
-    y = r(6) + sh + r(22)
+    y = r(18)
 
     # 0.1 s: prompt types, name rises right away
     p1, w1 = text(MONO, "~/joao $ ", x, y, r(13), "mu")
