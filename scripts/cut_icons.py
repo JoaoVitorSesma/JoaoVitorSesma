@@ -1,14 +1,11 @@
-"""Cut the hero's pipeline icons out of my icon artwork.
+"""Cut the hero's pipeline icons out of my icon renders.
 
     python scripts/cut_icons.py
 
-Light theme: scripts/icons/source.png, a sheet with the three icons on white
-cards. Dark theme: scripts/icons/source-<name>-dark.png, one render per icon on
-a near-black background, drawn for dark mode.
-
-Each icon is cropped above its label and its background colour is turned into
-transparency (colour-to-alpha), so it sits on GitHub's own background.
-Outputs scripts/icons/<name>-<theme>.png.
+One render per icon and theme, scripts/icons/source-<name>-<theme>.png, each on
+a plain background with its label underneath. Each icon is cropped above its
+label and its background is turned into transparency (colour-to-alpha), so it
+sits on GitHub's own background. Outputs scripts/icons/<name>-<theme>.png.
 """
 
 from pathlib import Path
@@ -19,13 +16,9 @@ from PIL import Image
 HERE = Path(__file__).parent / "icons"
 NAMES = ("infra", "models", "ui")
 
-# light sheet: column per icon, and the band above the labels
-SHEET_COLS = {"infra": (66, 352), "models": (370, 656), "ui": (675, 973)}
-SHEET_ROWS = (18, 220)
-
-# dark renders: the part of each image above its label, as a fraction of height
-DARK_TOP = {"infra": 0.78, "models": 0.77, "ui": 0.79}
-DARK_MAX_H = 240  # px kept: about 3x the size the icon is shown at
+# the part of each render above its label, as a fraction of its height
+TOP = {"infra": 0.78, "models": 0.77, "ui": 0.79}
+MAX_H = 240  # px kept: about 3x the size the icon is shown at
 
 
 def to_alpha(rgb, bg):
@@ -70,21 +63,22 @@ def save(im, name, theme):
 
 
 def main():
-    sheet = np.asarray(Image.open(HERE / "source.png").convert("RGB"))
-    y0, y1 = SHEET_ROWS
-    bg = sheet[y0 + 4, SHEET_COLS["infra"][0] + 4]
-    for name, (x0, x1) in SHEET_COLS.items():
-        save(trim(to_alpha(sheet[y0:y1, x0:x1], bg)), name, "light")
-
-    for name in NAMES:
-        src = np.asarray(Image.open(HERE / f"source-{name}-dark.png").convert("RGB"))
-        h = src.shape[0]
-        bg = np.median(np.concatenate([src[:8, :8].reshape(-1, 3), src[:8, -8:].reshape(-1, 3)]), axis=0)
-        rgba = keep_icon(to_alpha(src[: int(h * DARK_TOP[name])], bg))
-        im = trim(rgba, pad=10)
-        if im.height > DARK_MAX_H:
-            im = im.resize((round(im.width * DARK_MAX_H / im.height), DARK_MAX_H), Image.LANCZOS)
-        save(im, name, "dark")
+    for theme in ("light", "dark"):
+        for name in NAMES:
+            src = np.asarray(Image.open(HERE / f"source-{name}-{theme}.png").convert("RGB"))
+            h = src.shape[0]
+            if theme == "light":
+                # the light renders sit on a soft off-white wash, brighter in the
+                # middle; keying against pure white keeps only what is darker
+                bg = np.array([255, 255, 255])
+            else:
+                corners = [src[:8, :8], src[:8, -8:], src[-8:, :8], src[-8:, -8:]]
+                bg = np.median(np.concatenate([c.reshape(-1, 3) for c in corners]), axis=0)
+            rgba = keep_icon(to_alpha(src[: int(h * TOP[name])], bg))
+            im = trim(rgba, pad=10)
+            if im.height > MAX_H:
+                im = im.resize((round(im.width * MAX_H / im.height), MAX_H), Image.LANCZOS)
+            save(im, name, theme)
 
 
 if __name__ == "__main__":
