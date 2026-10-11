@@ -94,85 +94,22 @@ COMMON_KEYS = (
 
 ORANGE = {"light": "#bc4c00", "dark": "#f0883e"}
 
-# Faces and glass for the three pipeline icons, lit from the top left.
-ICON = {
-    "light": dict(top="#f6f8fa", left="#d6dde4", right="#b4bec8", edge="#8c959f", slot="#57606a",
-                  glass0="#ffffff", glass1="#dcf5e3", panel="#ffffff", bar="#d0d7de",
-                  shadow=0.10, glow=0.0, sheen=0.55, arrow="#1a7f37"),
-    "dark": dict(top="#4a525c", left="#353c44", right="#272d34", edge="#6e7681", slot="#0d1117",
-                 glass0="#1d2d25", glass1="#10241b", panel="#1c2128", bar="#3d444d",
-                 shadow=0.0, glow=0.30, sheen=0.10, arrow="#9198a1"),
+# The three pipeline icons are cut from scripts/icons/source.png by cut_icons.py
+# and embedded as PNG: an <img> SVG on GitHub cannot load anything external.
+ICON_DIR = Path(__file__).parent / "icons"
+ICON_NAMES = ("infra", "models", "ui")
+ICON_STYLE = {
+    "light": dict(arrow="#1a7f37", glow=0.13),
+    "dark": dict(arrow="#9198a1", glow=0.30),
 }
 
 
-def _pts(points, sc, cx, cy):
-    return " ".join(f"{cx + px * sc:.1f},{cy + py * sc:.1f}" for px, py in points)
-
-
-def _server(t, p, sc, cx, cy):
-    """Three stacked rack units in isometric view."""
-    out = []
-    for yo in (14, -8, -30):  # bottom first so upper units overlap lower ones
-        top = [(0, -24 + yo), (44, -2 + yo), (0, 20 + yo), (-44, -2 + yo)]
-        left = [(-44, -2 + yo), (0, 20 + yo), (0, 38 + yo), (-44, 16 + yo)]
-        right = [(0, 20 + yo), (44, -2 + yo), (44, 16 + yo), (0, 38 + yo)]
-        for face, fill in ((left, "left"), (right, "right"), (top, "top")):
-            out.append(f'<polygon points="{_pts(face, sc, cx, cy)}" fill="{p[fill]}" '
-                       f'stroke="{p["edge"]}" stroke-width="{0.8 * sc:.2f}" stroke-linejoin="round"/>')
-        mid = lambda x: -2 + (x + 44) * 0.5 + yo + 9  # noqa: E731  left face, half height
-        for i, x in enumerate((-36, -29)):
-            col = ORANGE_T if (yo == 14 and i == 1) else t["gr"]
-            out.append(f'<circle cx="{cx + x * sc:.1f}" cy="{cy + mid(x) * sc:.1f}" r="{2.4 * sc:.1f}" fill="{col}"/>')
-        out.append(f'<line x1="{cx - 20 * sc:.1f}" y1="{cy + mid(-20) * sc:.1f}" x2="{cx - 6 * sc:.1f}" '
-                   f'y2="{cy + mid(-6) * sc:.1f}" stroke="{p["slot"]}" stroke-width="{2.2 * sc:.1f}" stroke-linecap="round"/>')
-        for dx in (0, 7):
-            ry = lambda x: 20 - x * 0.5 + yo + 6 + dx * 0.7  # noqa: E731  right face vents
-            out.append(f'<line x1="{cx + 12 * sc:.1f}" y1="{cy + ry(12) * sc:.1f}" x2="{cx + 34 * sc:.1f}" '
-                       f'y2="{cy + ry(34) * sc:.1f}" stroke="{p["edge"]}" stroke-width="{1.2 * sc:.1f}" stroke-linecap="round"/>')
-    return "".join(out)
-
-
-def _model(t, p, sc, cx, cy, uid):
-    """A glass hexagon holding a small network."""
-    import math
-    hexp = [(46 * math.cos(math.radians(-90 + 60 * k)), 46 * math.sin(math.radians(-90 + 60 * k))) for k in range(6)]
-    out = [f'<linearGradient id="{uid}g" x1="0" y1="0" x2="1" y2="1">'
-           f'<stop offset="0" stop-color="{p["glass0"]}"/><stop offset="1" stop-color="{p["glass1"]}"/></linearGradient>',
-           f'<polygon points="{_pts(hexp, sc, cx, cy)}" fill="url(#{uid}g)" stroke="{t["gr"]}" '
-           f'stroke-opacity=".55" stroke-width="{1.6 * sc:.2f}" stroke-linejoin="round"/>',
-           f'<polygon points="{_pts([hexp[5], hexp[0], (6, -30), (-30, -10)], sc, cx, cy)}" fill="#ffffff" opacity="{p["sheen"]}"/>']
-    ring = [(22 * math.cos(math.radians(-90 + 60 * k)), 22 * math.sin(math.radians(-90 + 60 * k))) for k in range(6)]
-    for i, (rx, ry) in enumerate(ring):
-        nx, ny = ring[(i + 1) % 6]
-        for a, b in (((0, 0), (rx, ry)), ((rx, ry), (nx, ny))):
-            out.append(f'<line x1="{cx + a[0] * sc:.1f}" y1="{cy + a[1] * sc:.1f}" x2="{cx + b[0] * sc:.1f}" '
-                       f'y2="{cy + b[1] * sc:.1f}" stroke="{t["ac"]}" stroke-opacity=".55" stroke-width="{1.2 * sc:.2f}"/>')
-    for i, (rx, ry) in enumerate(ring):
-        out.append(f'<circle cx="{cx + rx * sc:.1f}" cy="{cy + ry * sc:.1f}" r="{4.4 * sc:.1f}" '
-                   f'fill="{t["gr"] if i % 2 else t["ac"]}"/>')
-    out.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{6.8 * sc:.1f}" fill="{t["gr"]}"/>')
-    return "".join(out)
-
-
-def _interface(t, p, sc, cx, cy):
-    """An app window with a sidebar and a bar chart, turned slightly toward the viewer."""
-    def R(x, y, w, h, rx, fill, extra=""):
-        return (f'<rect x="{cx + x * sc:.1f}" y="{cy + y * sc:.1f}" width="{w * sc:.1f}" height="{h * sc:.1f}" '
-                f'rx="{rx * sc:.1f}" fill="{fill}"{extra}/>')
-    g = [R(-50, -38, 100, 76, 7, p["panel"], f' stroke="{p["edge"]}" stroke-width="{1 * sc:.2f}"'),
-         R(-50, -38, 100, 12, 7, p["bar"]), R(-50, -31, 100, 5, 0, p["bar"])]
-    for i, col in enumerate((t["hot"], t["warn"], t["gr"])):
-        g.append(f'<circle cx="{cx + (-42 + 7 * i) * sc:.1f}" cy="{cy - 32 * sc:.1f}" r="{2.1 * sc:.1f}" fill="{col}"/>')
-    for i in range(3):
-        g.append(R(-42, -18 + 12 * i, 30 - 8 * (i == 2), 7, 3.5, t["gr"] if i == 0 else p["bar"]))
-    g.append(f'<line x1="{cx - 6 * sc:.1f}" y1="{cy + 28 * sc:.1f}" x2="{cx + 44 * sc:.1f}" y2="{cy + 28 * sc:.1f}" '
-             f'stroke="{p["edge"]}" stroke-width="{1 * sc:.2f}"/>')
-    for i, (h, col) in enumerate(((16, t["ac"]), (28, t["gr"]), (40, ORANGE_T), (24, t["gr"]))):
-        g.append(R(-2 + 12 * i, 28 - h, 8, h, 1.6, col))
-    shadow = (f'<rect x="{cx - 44 * sc:.1f}" y="{cy - 30 * sc:.1f}" width="{100 * sc:.1f}" height="{76 * sc:.1f}" '
-              f'rx="{7 * sc:.1f}" fill="{t["fg"]}" opacity="{p["shadow"]}"/>') if p["shadow"] else ""
-    return (f'<g transform="translate({cx:.1f} {cy:.1f}) skewY(-7) translate({-cx:.1f} {-cy:.1f})">'
-            f'{shadow}{"".join(g)}</g>')
+def _icon(name, theme):
+    import base64
+    from PIL import Image
+    path = ICON_DIR / f"{name}-{theme}.png"
+    w, h = Image.open(path).size
+    return base64.b64encode(path.read_bytes()).decode(), w, h
 
 
 def _arrow(fill, x1, x2, y, sc):
@@ -181,56 +118,71 @@ def _arrow(fill, x1, x2, y, sc):
             f'L{x2 - hl:.1f} {y + hw:.1f} V{y + h:.1f} H{x1:.1f} Z" fill="{fill}"/>')
 
 
-ORANGE_T = None  # set per build, the accent orange of the current theme
-
-
 def pipeline(t, theme, s, x0, y0, w, r, mobile):
     """Infrastructure -> models -> interfaces, with clinical validation feeding back."""
-    global ORANGE_T
-    ORANGE_T = ORANGE[theme]
-    p = ICON[theme]
+    st, orange = ICON_STYLE[theme], ORANGE[theme]
     col = w / 3
-    sc = col * 0.58 / 100
     cxs = [x0 + col * (i + 0.5) for i in range(3)]
+    icons = [_icon(n, theme) for n in ICON_NAMES]
+    # one scale for all three, so they keep the proportions they have on the sheet
+    f = col * 0.60 / 140
+    # the light crops are the icon alone; use their heights for layout in both themes
+    body_h = [_icon(n, "light")[2] * f for n in ICON_NAMES]
     fs_arc, fs_name, fs_cap = r(12), r(14), r(12)
-    yl = y0 + fs_arc
-    cy = yl + r(14) + 60 * sc
     parts, css = [], []
 
-    # feedback arc: interfaces back into models
-    ys, ye, ya = cy - 44 * sc, cy - 50 * sc, yl + r(14)
-    arc = (f'<path class="arc" d="M{cxs[2]:.1f} {ys:.1f} C{cxs[2]:.1f} {ya:.1f} {cxs[1]:.1f} {ya:.1f} {cxs[1]:.1f} {ye:.1f}" '
-           f'fill="none" stroke="{ORANGE_T}" stroke-width="{r(1.4):.1f}" stroke-dasharray="{r(4):.1f} {r(4):.1f}"/>'
-           f'<path d="M{cxs[1] - r(4.5):.1f} {ye - r(7):.1f} L{cxs[1]:.1f} {ye:.1f} L{cxs[1] + r(4.5):.1f} {ye - r(7):.1f}" '
-           f'fill="none" stroke="{ORANGE_T}" stroke-width="{r(1.6):.1f}" stroke-linecap="round" stroke-linejoin="round"/>')
-    lab = text(MONO, s["loop"], (cxs[1] + cxs[2]) / 2, yl, fs_arc, "or", anchor="middle")[0]
+    # vertical rhythm: label, arc, icons, names
+    yl = y0 + fs_arc
+    apex = yl + r(9)
+    gap = r(5)  # air between the arc's ends and the icons
+    cy = apex + r(20) + max(body_h) / 2
+    tops = [cy - h / 2 for h in body_h]
+
+    # feedback arc: leaves the top of interfaces, lands on top of models.
+    # Both control points sit straight above the ends, so the curve leaves and
+    # arrives vertically and runs straight into the arrowhead.
+    ah, aw = r(7), r(4.5)
+    sx, sy = cxs[2], tops[2] - gap
+    ex, tip = cxs[1], tops[1] - gap
+    ey = tip - ah
+    ya = (apex - 0.125 * (sy + ey)) / 0.75
+    d = f"M{sx:.1f} {sy:.1f} C{sx:.1f} {ya:.1f} {ex:.1f} {ya:.1f} {ex:.1f} {ey:.1f}"
+    arc = (
+        # pathLength 101 with 3/2 dashes: twenty whole dashes plus one, so both
+        # ends of the line are drawn and it meets the arrowhead without a gap
+        f'<path d="{d}" pathLength="101" fill="none" stroke="{orange}" stroke-width="{r(1.5):.1f}" '
+        f'stroke-dasharray="3 2" stroke-linecap="round"/>'
+        f'<path d="M{ex:.1f} {tip:.1f} L{ex - aw:.1f} {ey:.1f} Q{ex:.1f} {ey + ah * 0.28:.1f} {ex + aw:.1f} {ey:.1f} Z" '
+        f'fill="{orange}"/>'
+        f'<circle class="pk" r="{r(2.6):.1f}" fill="{orange}"/>'
+    )
+    lab = text(MONO, s["loop"], (sx + ex) / 2, yl, fs_arc, "or", anchor="middle")[0]
     parts.append(f'<g class="lp">{arc}{lab}</g>')
     css.append(".lp{animation:fade .6s ease 1.3s both}"
-               f".arc{{animation:flow 1.6s linear 1.9s infinite}}"
-               f"@keyframes flow{{to{{stroke-dashoffset:{-r(8):.1f}}}}}")
+               f".pk{{opacity:0;offset-path:path('{d}');offset-rotate:0deg;"
+               "animation:travel 2.6s cubic-bezier(.45,0,.55,1) 2s infinite}"
+               "@keyframes travel{0%{offset-distance:0%;opacity:0}15%,85%{opacity:1}"
+               "100%{offset-distance:100%;opacity:0}}")
 
-    # glow behind the icons on dark, a soft floor shadow on light
-    if p["glow"]:
-        parts.append(f'<radialGradient id="hglow"><stop offset="0" stop-color="{t["gr"]}" stop-opacity="{p["glow"]}"/>'
-                     f'<stop offset="1" stop-color="{t["gr"]}" stop-opacity="0"/></radialGradient>')
-    icons = [_server(t, p, sc, cxs[0], cy), _model(t, p, sc, cxs[1], cy, "hm"), _interface(t, p, sc, cxs[2], cy)]
-    for i, ic in enumerate(icons):
-        under = ""
-        if p["glow"] and i < 2:
-            under = f'<circle cx="{cxs[i]:.1f}" cy="{cy:.1f}" r="{62 * sc:.1f}" fill="url(#hglow)"/>'
-        elif not p["glow"]:
-            under = (f'<ellipse cx="{cxs[i]:.1f}" cy="{cy + 56 * sc:.1f}" rx="{40 * sc:.1f}" ry="{6 * sc:.1f}" '
-                     f'fill="{t["fg"]}" opacity=".07"/>')
-        parts.append(f'<g class="ic{i}">{under}{ic}</g>')
+    # soft glow behind every icon
+    parts.append(f'<radialGradient id="hglow"><stop offset="0" stop-color="{t["gr"]}" stop-opacity="{st["glow"]}"/>'
+                 f'<stop offset=".55" stop-color="{t["gr"]}" stop-opacity="{st["glow"] * 0.45:.3f}"/>'
+                 f'<stop offset="1" stop-color="{t["gr"]}" stop-opacity="0"/></radialGradient>')
+    for i, (b64, pw, ph) in enumerate(icons):
+        iw, ih = pw * f, ph * f
+        glow = f'<circle cx="{cxs[i]:.1f}" cy="{cy:.1f}" r="{col * 0.44:.1f}" fill="url(#hglow)"/>'
+        img = (f'<image x="{cxs[i] - iw / 2:.1f}" y="{cy - ih / 2:.1f}" width="{iw:.1f}" height="{ih:.1f}" '
+               f'href="data:image/png;base64,{b64}"/>')
+        parts.append(f'<g class="ic{i}">{glow}{img}</g>')
         css.append(f".ic{i}{{animation:rise .6s cubic-bezier(.2,.8,.2,1) {0.5 + 0.2 * i:.1f}s both}}")
 
     for i in range(2):
-        a = _arrow(p["arrow"], cxs[i] + 55 * sc, cxs[i + 1] - 55 * sc, cy, sc)
+        a = _arrow(st["arrow"], cxs[i] + col * 0.36, cxs[i + 1] - col * 0.36, cy, col * 0.0055)
         parts.append(f'<g class="aw{i}">{a}</g>')
         css.append(f".aw{i}{{animation:fade .4s ease {0.8 + 0.2 * i:.1f}s both}}")
 
     # names and captions; a caption too wide for its column splits at the dot
-    yn = cy + 62 * sc + fs_name * 1.3
+    yn = cy + max(body_h) / 2 + fs_name * 1.5
     bottom = yn
     for i, (name, cap) in enumerate(s["stages"]):
         g = [text(SANS, name, cxs[i], yn, fs_name, "fg", anchor="middle")[0]]
