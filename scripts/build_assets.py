@@ -99,8 +99,8 @@ ORANGE = {"light": "#bc4c00", "dark": "#f0883e"}
 ICON_DIR = Path(__file__).parent / "icons"
 ICON_NAMES = ("infra", "models", "ui")
 ICON_STYLE = {
-    "light": dict(arrow="#1a7f37", glow=0.13),
-    "dark": dict(arrow="#9198a1", glow=0.30),
+    "light": dict(arrow="#1a7f37", glow=0.0),
+    "dark": dict(arrow="#9198a1", glow=0.0),
 }
 
 
@@ -169,8 +169,12 @@ def pipeline(t, theme, s, x0, y0, w, r, mobile):
                  f'<stop offset=".55" stop-color="{t["gr"]}" stop-opacity="{st["glow"] * 0.45:.3f}"/>'
                  f'<stop offset="1" stop-color="{t["gr"]}" stop-opacity="0"/></radialGradient>')
     for i, (b64, pw, ph) in enumerate(icons):
-        iw, ih = pw * f, ph * f
-        glow = f'<circle cx="{cxs[i]:.1f}" cy="{cy:.1f}" r="{col * 0.44:.1f}" fill="url(#hglow)"/>'
+        # every icon is shown as tall as its light-sheet version, whatever its
+        # source resolution, so both themes share one layout
+        ih = body_h[i]
+        iw = ih * pw / ph
+        glow = (f'<circle cx="{cxs[i]:.1f}" cy="{cy:.1f}" r="{col * 0.44:.1f}" fill="url(#hglow)"/>'
+                if st["glow"] else "")
         img = (f'<image x="{cxs[i] - iw / 2:.1f}" y="{cy - ih / 2:.1f}" width="{iw:.1f}" height="{ih:.1f}" '
                f'href="data:image/png;base64,{b64}"/>')
         parts.append(f'<g class="ic{i}">{glow}{img}</g>')
