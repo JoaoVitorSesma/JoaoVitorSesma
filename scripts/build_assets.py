@@ -30,7 +30,7 @@ STR = {
         cta_main="Get in touch · Email me",
         cta_alt="See projects",
         # Hero: the sidebar already says who I am, so the hero only makes the claim.
-        kicker="END-TO-END AI",
+        kicker="FULL-STACK AI",
         head=[[("From the cluster", "fg")], [("to ", "fg"), ("the clinic.", "or")]],
         sub="Infrastructure, models and the interfaces people actually use. I work across all three.",
         loop="clinical validation",
@@ -52,7 +52,7 @@ STR = {
         stats=[("37.621", "pacientes modelados"), ("55.647", "registros visualizados"), ("96", "verificações automáticas por dia")],
         cta_main="Fale comigo · E-mail",
         cta_alt="Ver projetos",
-        kicker="IA DE PONTA A PONTA",
+        kicker="IA FULL-STACK",
         head=[[("Do cluster", "fg")], [("à ", "fg"), ("clínica.", "or")]],
         sub="Infraestrutura, modelos e as interfaces que as pessoas usam de fato. Atuo nas três.",
         loop="validação clínica",
