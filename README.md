@@ -8,7 +8,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/hero/hero-en-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark.svg">
-  <img src="./assets/hero/hero-en-light.svg" width="100%" alt="João Vitor Sesma. Health data, survival models and the tools people use. Computer Engineering at Instituto Mauá de Tecnologia, Brazil. 37,621 patients modeled, 55,647 records visualized, 96 automated checks a day. Beside the name, a Kaplan–Meier curve from his colorectal cancer research draws itself: 37,621 patients, median survival 44 months.">
+  <img src="./assets/hero/hero-en-light.svg" width="100%" alt="JVM.Sesma, written in contribution squares. João Vitor Morimoto Sesma. Health data, survival models and the tools people use. Drawn to health data, survival analysis and automation. Now modeling cancer recurrence with Cox and machine learning. Learning Flutter and Dart. Looking for internships in data, health analytics and automation.">
 </picture>
 
 <p>
@@ -23,9 +23,14 @@
   <img src="./assets/strip/walk-light.svg" width="100%" alt="A small pixel-art hedgehog walking across a row of contribution squares, curling into a ball and rolling part of the way.">
 </picture>
 
-I'm a Computer Engineering student at **Instituto Mauá de Tecnologia**. I take messy health records, model what they say about survival, and turn the results into tools people can actually use. I also build the automation that keeps those tools running.
-
 ## Selected work
+
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/work/numbers-en-dark-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/work/numbers-en-light-mobile.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/work/numbers-en-dark.svg">
+  <img src="./assets/work/numbers-en-light.svg" width="100%" alt="37,621 patients modeled, 55,647 records visualized, 96 automated checks a day">
+</picture>
 
 <a href="https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC">
 <picture>
@@ -63,17 +68,12 @@ I'm a Computer Engineering student at **Instituto Mauá de Tecnologia**. I take 
 **Codex reset monitor.** Watches public sources, classifies reset announcements with deterministic rules, deduplicates across sources and alerts Discord.<br>
 <sub>Python · GitHub Actions · Cloudflare Workers · pytest · [Repository](https://github.com/JoaoVitorSesma/codex-reset-monitor)</sub>
 
-## Now
-
-- **Research:** modeling cancer **recurrence**, comparing Cox regression with machine learning.
-- **Coursework:** learning Flutter and Dart in [ECM252 at IMT](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter).
-
 ## Toolbox
 
 **Data & research:** Python · pandas · NumPy · lifelines · Jupyter<br>
 **Apps & visualization:** Streamlit · Plotly · GeoPandas · Folium<br>
 **Automation:** GitHub Actions · Cloudflare Workers · Discord webhooks<br>
-**Learning:** Flutter · Dart
+**Learning:** [Flutter · Dart](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter)
 
 ## Let's talk
 

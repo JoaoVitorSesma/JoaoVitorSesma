@@ -233,7 +233,7 @@ def research(lang, theme, mobile):
         st, y = stats(L, s["r_stats"], L.pad, y + r(18), (L.W - 2 * L.pad) / 2)
         parts.append(st)
         fb, fc, end = forest(L, lang, t, L.pad, y + r(22), L.W - 2 * L.pad)
-        cap, cy = caption(L, "Fig. 2", s["r_fig"], L.pad, end + L.cap * 3, L.W - 2 * L.pad)
+        cap, cy = caption(L, "Fig. 1", s["r_fig"], L.pad, end + L.cap * 3, L.W - 2 * L.pad)
     else:
         bl, y = body_lines(L, s["r_body"], y + r(8), col)
         parts.append(bl)
@@ -241,7 +241,7 @@ def research(lang, theme, mobile):
         parts.append(st)
         fx = r(400)
         fb, fc, end = forest(L, lang, t, fx, L.pad + r(4), L.W - L.pad - fx)
-        cap, cy = caption(L, "Fig. 2", s["r_fig"], fx + r(40), end + L.cap * 3, L.W - L.pad - fx - r(40))
+        cap, cy = caption(L, "Fig. 1", s["r_fig"], fx + r(40), end + L.cap * 3, L.W - L.pad - fx - r(40))
         cy = max(cy, y)
     parts += [fb, cap]
     css.append(fc)
@@ -350,7 +350,7 @@ def dashboard(lang, theme, mobile):
     parts.append("".join(bars))
     css.append(f".ann{{animation:pop {P}s ease 1.6s infinite both}}")
 
-    cap, cy = caption(L, "Fig. 3", s["d_fig"], L.pad, wy + wh + L.cap * 3, L.W - 2 * L.pad)
+    cap, cy = caption(L, "Fig. 2", s["d_fig"], L.pad, wy + wh + L.cap * 3, L.W - 2 * L.pad)
     parts.append(cap)
     H = int(cy + L.pad)
     desc = (
