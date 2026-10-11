@@ -1,4 +1,4 @@
-"""Build every README asset: hero, walking strip and project cards.
+"""Build every README asset: hero, numbers, walking strip, project cards and buttons.
 
     python scripts/build_assets.py
 
@@ -6,127 +6,56 @@ Outputs go to assets/ in English and Portuguese, light and dark, desktop and
 mobile. Data comes from scripts/data (see assets/SOURCES.md).
 """
 
-import json
 from pathlib import Path
 
 import cards
 import creatures
+import signature
 from svgkit import MIN_PX, MONO, MONO_MD, SANS, SANS_BD, THEMES, base_css, canvas, scale, smallest, svg, text, wrap
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA = Path(__file__).parent / "data"
 OUT = ROOT / "assets"
 
-KM = json.loads((DATA / "km_curve.json").read_text())
 
 STR = {
     "en": dict(
         cmd="whoami",
+        name="João Vitor Morimoto Sesma",
+        name_lines=["João Vitor", "Morimoto Sesma"],
         tagline="Health data, survival models and the tools people use.",
-        meta_m=["Computer Engineering", "Instituto Mauá de Tecnologia · Brazil"],
-        meta_line="Computer Engineering · IMT · Brazil",
+        # Only what the profile sidebar does not already show (name aside).
+        rows=[("drawn to", "health data, survival analysis and automation"),
+              ("now", "modeling cancer recurrence with Cox and machine learning"),
+              ("learning", "Flutter and Dart"),
+              ("looking for", "internships in data, health analytics and automation")],
         stats=[("37,621", "patients modeled"), ("55,647", "records visualized"), ("96", "automated checks a day")],
         cta_main="Open to internships · Email me",
         cta_alt="See projects",
-        now_label="now",
-        now="modeling recurrence with Cox and machine learning",
-        months="months",
-        median="median 44 months",
-        fig1_a=" Colorectal cancer survival",
-        fig1_b="FOSP · n = 37,621 · 2000–2023",
-        hero_title="João Vitor Sesma",
-        hero_desc="João Vitor Sesma. Health data, survival models and the tools people use. "
-        "Computer Engineering at Instituto Mauá de Tecnologia, Brazil. 37,621 patients modeled, "
-        "55,647 records visualized, 96 automated checks a day. Currently modeling "
-        "recurrence with Cox and machine learning. Figure: Kaplan–Meier survival curve for "
-        "colorectal cancer, FOSP, 37,621 patients, median survival 44 months.",
+        hero_title="João Vitor Morimoto Sesma",
+        hero_desc="JVM.Sesma, written in contribution squares. João Vitor Morimoto Sesma. "
+        "Health data, survival models and the tools people use. Drawn to health data, survival "
+        "analysis and automation. Now modeling cancer recurrence with Cox and machine learning. "
+        "Learning Flutter and Dart. Looking for internships in data, health analytics and automation.",
     ),
     "pt": dict(
         cmd="whoami",
+        name="João Vitor Morimoto Sesma",
+        name_lines=["João Vitor", "Morimoto Sesma"],
         tagline="Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam.",
-        meta_m=["Engenharia de Computação", "Instituto Mauá de Tecnologia · Brasil"],
-        meta_line="Engenharia de Computação · IMT · Brasil",
+        rows=[("interesses", "dados de saúde, análise de sobrevida e automação"),
+              ("agora", "modelando recidiva de câncer com Cox e machine learning"),
+              ("aprendendo", "Flutter e Dart"),
+              ("procuro", "estágio em dados, saúde e automação")],
         stats=[("37.621", "pacientes modelados"), ("55.647", "registros visualizados"), ("96", "verificações automáticas por dia")],
         cta_main="Aberto a estágio · Fale comigo",
         cta_alt="Ver projetos",
-        now_label="agora",
-        now="modelando recidiva com Cox e machine learning",
-        months="meses",
-        median="mediana 44 meses",
-        fig1_a=" Sobrevida no câncer colorretal",
-        fig1_b="FOSP · n = 37.621 · 2000–2023",
-        hero_title="João Vitor Sesma",
-        hero_desc="João Vitor Sesma. Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. "
-        "Engenharia de Computação no Instituto Mauá de Tecnologia, Brasil. 37.621 pacientes modelados, "
-        "55.647 registros visualizados, 96 verificações automáticas por dia. Agora modelando "
-        "recidiva com Cox e machine learning. Figura: curva de Kaplan–Meier do câncer "
-        "colorretal, FOSP, 37.621 pacientes, sobrevida mediana de 44 meses.",
+        hero_title="João Vitor Morimoto Sesma",
+        hero_desc="JVM.Sesma, escrito em quadradinhos de contribuição. João Vitor Morimoto Sesma. "
+        "Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. Interesses: dados "
+        "de saúde, análise de sobrevida e automação. Agora modelando recidiva de câncer com Cox e "
+        "machine learning. Aprendendo Flutter e Dart. Procuro estágio em dados, saúde e automação.",
     ),
 }
-
-
-def rdp(points, eps):
-    """Ramer–Douglas–Peucker simplification."""
-    if len(points) < 3:
-        return points
-    (x1, y1), (x2, y2) = points[0], points[-1]
-    dx, dy = x2 - x1, y2 - y1
-    norm = (dx * dx + dy * dy) ** 0.5 or 1
-    idx, dmax = 0, 0.0
-    for i, (x, y) in enumerate(points[1:-1], 1):
-        d = abs(dy * x - dx * y + x2 * y1 - y2 * x1) / norm
-        if d > dmax:
-            idx, dmax = i, d
-    if dmax > eps:
-        return rdp(points[: idx + 1], eps)[:-1] + rdp(points[idx:], eps)
-    return [points[0], points[-1]]
-
-
-def km_figure(lang, t, x0, y0, w, h, delay, r, tick):
-    """Kaplan–Meier plot drawn in place. `tick` is the label size in SVG units."""
-    s = STR[lang]
-    sx = lambda m: x0 + m / 300 * w
-    sy = lambda p: y0 + (1 - p) * h
-    pts = [(sx(max(m, 0)), sy(p)) for m, p in KM]
-    pts = rdp(pts, 0.35)
-    d = "M" + " L".join(f"{x:.1f} {y:.1f}" for x, y in pts)
-    sw = r(1)
-    parts = [f'<g class="axes"><path class="ln" stroke-width="{sw:.2f}" d="M{x0} {y0 - r(4):.1f} V{y0 + h} H{x0 + w}"/>']
-    for p in (1.0, 0.5, 0.0):
-        parts.append(text(MONO, f"{p:.1f}", x0 - r(7), sy(p) + tick * 0.35, tick, "fa", anchor="end")[0])
-        if p != 0.0:
-            parts.append(
-                f'<path class="ln" stroke-dasharray="{r(1.5):.1f} {r(3):.1f}" stroke-width="{sw:.2f}" '
-                f'd="M{x0} {sy(p):.1f} H{x0 + w}"/>'
-            )
-    ty = y0 + h + tick * 1.45
-    for m in (0, 60, 120, 180):
-        parts.append(text(MONO, str(m), sx(m), ty, tick, "fa", anchor="middle")[0])
-    parts.append(text(MONO, s["months"], x0 + w, ty, tick, "fa", anchor="end")[0] + "</g>")
-    mx, my = sx(44), sy(0.5)
-    parts.append(
-        f'<g class="med"><path stroke="{t["ac"]}" stroke-width="{r(1.1):.2f}" stroke-dasharray="{r(2.5):.1f} {r(2.5):.1f}" '
-        f'fill="none" d="M{x0} {my:.1f} H{mx:.1f} V{y0 + h}"/>'
-        f'<circle cx="{mx:.1f}" cy="{my:.1f}" r="{r(3.5):.1f}" fill="{t["ac"]}"/>'
-        + text(MONO_MD, s["median"], mx + r(8), my - r(8), tick, "ac")[0]
-        + "</g>"
-    )
-    parts.append(
-        f'<path class="km" pathLength="1" d="{d}" fill="none" stroke="{t["fg"]}" '
-        f'stroke-width="{r(2):.2f}" stroke-linejoin="round" stroke-linecap="round"/>'
-    )
-    parts.append(
-        f'<circle class="probe" r="{r(3.8):.1f}" fill="{t["ac"]}" opacity="0">'
-        f'<set attributeName="opacity" to="1" begin="{delay + 4.2:.2f}s"/>'
-        f'<animateMotion dur="11s" begin="{delay + 4.2:.2f}s" repeatCount="indefinite" path="{d}"/></circle>'
-    )
-    css = (
-        f".km{{stroke-dasharray:1;animation:draw 3s cubic-bezier(.3,.7,.2,1) {delay:.2f}s both}}"
-        "@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}"
-        f".med{{animation:fade .6s ease {delay + 2.6:.2f}s both}}"
-        f".axes{{animation:fade .6s ease {delay - .5:.2f}s both}}"
-    )
-    return "".join(parts), css, ty
 
 
 def type_line(font, s, x, y, size, cls, start, cps, uid):
@@ -146,45 +75,6 @@ def type_line(font, s, x, y, size, cls, start, cps, uid):
     return body, css, w, start + dur
 
 
-def odometer(s, x, y, size, color, start, uid, font=None):
-    """Draw a number whose digits roll into place like an odometer.
-
-    The resting transform is the final digit, so with reduced motion the
-    number simply shows its value. Returns (svg, css, width)."""
-    font = font or MONO_MD
-    adv = font.width("0", size)
-    lh = size * 1.25
-    defs, body, css = [], [], []
-    for d in "0123456789":
-        path, _ = text(font, d, 0, 0, size, "")
-        defs.append(path.replace('<path class=""', f'<path id="{uid}d{d}"'))
-    cx = x
-    digits = [i for i, ch in enumerate(s) if ch.isdigit()]
-    for i, ch in enumerate(s):
-        if not ch.isdigit():
-            el, w = text(font, ch, cx, y, size, "fg")
-            body.append(el.replace('class="fg"', f'fill="{color}"'))
-            cx += w
-            continue
-        k = digits.index(i)
-        steps = 10 + 3 * k  # later columns spin further, like a real counter
-        target = int(ch)
-        seq = [(target - steps + j) % 10 for j in range(steps + 1)]
-        uses = "".join(f'<use href="#{uid}d{n}" x="{cx:.1f}" y="{y + j * lh:.1f}"/>' for j, n in enumerate(seq))
-        body.append(
-            f'<clipPath id="{uid}k{k}"><rect x="{cx - 1:.1f}" y="{y - size * 0.86:.1f}" width="{adv + 2:.1f}" height="{size * 0.98:.1f}"/></clipPath>'
-            f'<g clip-path="url(#{uid}k{k})"><g class="{uid}c{k}" fill="{color}">{uses}</g></g>'
-        )
-        end = -steps * lh
-        css.append(
-            f".{uid}c{k}{{transform:translateY({end:.1f}px);"
-            f"animation:{uid}r{k} {1.1 + 0.15 * k:.2f}s cubic-bezier(.15,.75,.25,1) {start:.2f}s both}}"
-            f"@keyframes {uid}r{k}{{from{{transform:translateY(0)}}to{{transform:translateY({end:.1f}px)}}}}"
-        )
-        cx += adv
-    return f'<defs>{"".join(defs)}</defs>' + "".join(body), "".join(css), cx - x
-
-
 COMMON_KEYS = (
     "@keyframes type{from{transform:scaleX(0)}to{transform:scaleX(1)}}"
     "@keyframes fade{from{opacity:0}to{opacity:1}}"
@@ -195,103 +85,104 @@ COMMON_KEYS = (
 
 
 def hero(lang, theme, mobile):
-    """Hero laid out for a 10-second read: name at once, one line on what,
-    three numbers as proof, then the figure draws while they are read."""
+    """Who I am in a few seconds: signature, name, one line, and the whoami
+    answers the profile sidebar does not already show."""
     t, s = THEMES[theme], STR[lang]
     parts, css = [], [base_css(t), COMMON_KEYS]
     W = 720 if mobile else 1200
     r = canvas(W, mobile)
     x = r(10) if mobile else r(4)
-    prompt, tag, meta, tick, cap = (13, 15, 13, 12.5, 13) if mobile else (13, 16, 13.5, 12.5, 13.5)
-    prompt, tag, meta, tick, cap = r(prompt), r(tag), r(meta), r(tick), r(cap)
-    num, lab = r(22), r(12.5)
-    col_w = (W - 2 * x) if mobile else r(440)
+    full = W - 2 * x
 
-    # 0.0 s: prompt types while the name is already rising
-    y = r(30)
-    p1, w1 = text(MONO, "~/joao $ ", x, y, prompt, "mu")
+    # 0.3-2 s: the signature writes itself across the top
+    pitch = full / len(signature.grid()[0])
+    body, c, _, sh = signature.draw(t, x, r(6), pitch, dark=theme == "dark")
+    parts.append(body)
+    css.append(c)
+    y = r(6) + sh + r(22)
+
+    # 0.1 s: prompt types, name rises right away
+    p1, w1 = text(MONO, "~/joao $ ", x, y, r(13), "mu")
     parts.append(p1)
-    b_, c_, _, _ = type_line(MONO, s["cmd"], x + w1, y, prompt, "gr", 0.1, 12, "ty0")
+    b_, c_, _, _ = type_line(MONO, s["cmd"], x + w1, y, r(13), "gr", 0.1, 12, "ty0")
     parts.append(b_)
     css.append(c_)
-
-    name_size = min(r(52), col_w / SANS_BD.width("João Vitor Sesma", 1) * 0.98)
-    y += name_size * 1.05
-    n1, _ = text(SANS_BD, "João Vitor Sesma", x, y, name_size, "fg", tracking=-name_size * 0.01)
-    parts.append(f'<g class="name">{n1}</g>')
+    lines = s["name_lines"] if mobile else [s["name"]]
+    size = min(r(46), min(full / SANS_BD.width(l, 1) for l in lines) * 0.98)
+    g = []
+    for i, line in enumerate(lines):
+        y += size * (1.12 if i == 0 else 1.08)
+        g.append(text(SANS_BD, line, x, y, size, "fg", tracking=-size * 0.01)[0])
+    parts.append(f'<g class="name">{"".join(g)}</g>')
     css.append(".name{animation:rise .7s cubic-bezier(.2,.8,.2,1) .15s both}")
 
-    # 0.45 s: what I do
-    y += tag * 1.9
+    # 0.4 s: one line on what I do
+    tag = r(15 if mobile else 16)
+    y += tag * 1.8
     tl = []
-    for line in wrap(SANS, s["tagline"], tag, col_w):
+    for line in wrap(SANS, s["tagline"], tag, full):
         tl.append(text(SANS, line, x, y, tag, "fg")[0])
         y += tag * 1.4
-    y += meta * 0.1
-    tl.append(text(SANS, s["meta_line"], x, y, meta, "mu")[0])
     parts.append(f'<g class="tag">{"".join(tl)}</g>')
-    css.append(".tag{animation:rise .7s cubic-bezier(.2,.8,.2,1) .45s both}")
+    css.append(".tag{animation:rise .7s cubic-bezier(.2,.8,.2,1) .4s both}")
 
-    # 0.9 s: proof, one number per project, rolling in
-    y += num * 1.9
-    colw = col_w / 3
-    st = []
-    for i, (value, label) in enumerate(s["stats"]):
-        sx = x + i * colw
-        body, c, _ = odometer(value, sx, y, num, t["fg"], 0.9 + i * 0.15, f"o{i}")
-        st.append(body)
-        css.append(c)
-        for j, line in enumerate(wrap(SANS, label, lab, colw - r(10))):
-            st.append(text(SANS, line, sx, y + lab * (1.6 + 1.3 * j), lab, "mu")[0])
-    parts.append(f'<g class="stats">{"".join(st)}</g>')
-    css.append(".stats{animation:fade .4s ease .8s both}")
-    longest = max(len(wrap(SANS, label, lab, colw - r(10))) for _, label in s["stats"])
-    y += lab * (1.6 + 1.3 * (longest - 1)) + meta * 2.3
-
-    # 2.2 s: what I'm doing now
-    g = []
-    cy = y - meta * 0.33
-    dot = r(4)
-    g.append(
-        f'<circle cx="{x + dot:.1f}" cy="{cy:.1f}" r="{dot:.1f}" fill="{t["gr"]}"/>'
-        f'<circle class="pl" cx="{x + dot:.1f}" cy="{cy:.1f}" r="{dot:.1f}" fill="{t["gr"]}"/>'
-    )
-    lx = x + dot * 2 + meta * 0.6
-    lbl, wl = text(MONO_MD, s["now_label"], lx, y, meta, "gr")
-    g.append(lbl)
-    nx = lx + wl + meta * 0.6
-    for i, line in enumerate(wrap(SANS, s["now"], meta, x + col_w - nx)):
-        if i:
-            y += meta * 1.4
-        g.append(text(SANS, line, nx, y, meta, "fg")[0])
-    parts.append(f'<g class="meta">{"".join(g)}</g>')
-    css.append(".meta{animation:fade .6s ease 2.2s both}")
-    css.append(".pl{animation:pulse 2.4s ease-out 2.8s infinite}")
-    left_bottom = y
-
-    # 0.6 s on: the figure draws beside the text, done by about 4.5 s
-    fig_delay = 1.0
-    if mobile:
-        fx = x + tick * 2.4
-        fy = y + r(40)
-        fw, fh = W - x - fx, r(150)
-        cap_x = x
-    else:
-        fx, fy = r(500), r(34)
-        fw, fh = W - x - fx, r(165)
-        cap_x = fx - tick * 2.4
-    body, c, ty = km_figure(lang, t, fx, fy, fw, fh, fig_delay, r, tick)
-    cap_y = ty + cap * 2.6
-    f1, wf = text(MONO_MD, "FIG. 1", cap_x, cap_y, tick, "ac")
-    indent = wf + cap * 0.8
-    f2, _ = text(SANS, s["fig1_a"].strip(), cap_x + indent, cap_y, cap, "mu")
-    f3, _ = text(MONO, s["fig1_b"], cap_x + indent, cap_y + cap * 1.5, tick, "fa")
-    parts.append(body)
-    parts.append(f'<g class="cap">{f1}{f2}{f3}</g>')
-    css.append(c)
-    css.append(".cap{animation:fade .8s ease 1.4s both}")
-    H = int(max(cap_y + cap * 1.5, left_bottom) + r(14))
+    # 0.7 s on: whoami answers, one by one
+    fs = r(13 if mobile else 13.5)
+    y += fs * 0.8
+    cols = 1 if mobile else 2
+    gap = r(28)
+    col_w = (full - gap * (cols - 1)) / cols
+    keyw = max(MONO.width(k, fs) for k, _ in s["rows"]) + r(16)
+    rows = s["rows"]
+    per_col = -(-len(rows) // cols)
+    # rows are laid out as a grid: entry k sits in column k // per_col, line k % per_col,
+    # and every grid line is as tall as its tallest entry, so the columns stay aligned
+    wrapped = [wrap(SANS, v, fs, col_w - keyw) for _, v in rows]
+    cy = y + fs * 1.2
+    for line_i in range(per_col):
+        members = [ci * per_col + line_i for ci in range(cols) if ci * per_col + line_i < len(rows)]
+        for idx in members:
+            k, _ = rows[idx]
+            cx = x + (idx // per_col) * (col_w + gap)
+            is_now = idx == 1
+            row = [text(MONO, k, cx, cy, fs, "gr" if is_now else "ac")[0]]
+            if is_now:
+                dx = cx + MONO.width(k, fs) + r(8)
+                dy = cy - fs * 0.33
+                row.append(f'<circle cx="{dx:.1f}" cy="{dy:.1f}" r="{r(3):.1f}" fill="{t["gr"]}"/>'
+                           f'<circle class="pl" cx="{dx:.1f}" cy="{dy:.1f}" r="{r(3):.1f}" fill="{t["gr"]}"/>')
+            for j, line in enumerate(wrapped[idx]):
+                row.append(text(SANS, line, cx + keyw, cy + j * fs * 1.35, fs, "fg")[0])
+            parts.append(f'<g class="r{idx}">{"".join(row)}</g>')
+            css.append(f".r{idx}{{animation:rise .45s ease {0.7 + idx * 0.2:.2f}s both}}")
+        tallest = max(len(wrapped[idx]) for idx in members)
+        cy += fs * 1.35 * (tallest - 1) + fs * 1.8
+    bottoms = [cy - fs * 0.8]
+    css.append(".pl{animation:pulse 2.4s ease-out 1.6s infinite}")
+    H = int(max(bottoms) + r(12))
     return svg(W, H, s["hero_title"], s["hero_desc"], "".join(parts), "".join(css))
+
+
+def numbers(lang, theme, mobile):
+    """The three project numbers, static, opening the Selected work section."""
+    t, s = THEMES[theme], STR[lang]
+    W = 720 if mobile else 1200
+    r = canvas(W, mobile)
+    x = r(4)
+    colw = (W - 2 * x) / 3
+    num, lab = r(22), r(12.5)
+    parts = []
+    y = num * 1.1
+    rows = 1
+    for i, (v, label) in enumerate(s["stats"]):
+        parts.append(text(MONO_MD, v, x + i * colw, y, num, "fg")[0])
+        lines = wrap(SANS, label, lab, colw - r(10))
+        rows = max(rows, len(lines))
+        for j, line in enumerate(lines):
+            parts.append(text(SANS, line, x + i * colw, y + lab * (1.6 + 1.3 * j), lab, "mu")[0])
+    H = int(y + lab * (1.6 + 1.3 * (rows - 1)) + r(8))
+    alt = ", ".join(f"{v} {label}" for v, label in s["stats"])
+    return svg(W, H, alt, alt, "".join(parts), base_css(t))
 
 
 def _hex(c):
@@ -551,6 +442,7 @@ def main():
                 for kind, build in cards.BUILDERS.items():
                     write(OUT / "work" / f"{kind}-{sfx}", build(lang, theme, mobile))
                 write(OUT / "hero" / f"hero-{sfx}", hero(lang, theme, mobile))
+                write(OUT / "work" / f"numbers-{sfx}", numbers(lang, theme, mobile))
 
     for theme in THEMES:
         write(OUT / "lang" / f"globe-{theme}.svg", lang_globe(theme))

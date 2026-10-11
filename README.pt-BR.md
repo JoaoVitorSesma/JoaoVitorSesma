@@ -8,7 +8,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero/hero-pt-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/hero/hero-pt-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/hero/hero-pt-dark.svg">
-  <img src="./assets/hero/hero-pt-light.svg" width="100%" alt="João Vitor Sesma. Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. Engenharia de Computação no Instituto Mauá de Tecnologia, Brasil. 37.621 pacientes modelados, 55.647 registros visualizados, 96 verificações automáticas por dia. Ao lado do nome, uma curva de Kaplan–Meier da sua pesquisa sobre câncer colorretal se desenha: 37.621 pacientes, sobrevida mediana de 44 meses.">
+  <img src="./assets/hero/hero-pt-light.svg" width="100%" alt="JVM.Sesma, escrito em quadradinhos de contribuição. João Vitor Morimoto Sesma. Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. Interesses: dados de saúde, análise de sobrevida e automação. Agora modelando recidiva de câncer com Cox e machine learning. Aprendendo Flutter e Dart. Procuro estágio em dados, saúde e automação.">
 </picture>
 
 <p>
@@ -23,9 +23,14 @@
   <img src="./assets/strip/walk-light.svg" width="100%" alt="Um pequeno ouriço em pixel art andando sobre uma fileira de quadradinhos de contribuição, que se enrola em bola e rola parte do caminho.">
 </picture>
 
-Sou estudante de Engenharia de Computação no **Instituto Mauá de Tecnologia**. Pego registros de saúde bagunçados, modelo o que eles dizem sobre sobrevida e transformo os resultados em ferramentas que as pessoas realmente usam. Também construo a automação que mantém essas ferramentas funcionando.
-
 ## Projetos
+
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/work/numbers-pt-dark-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/work/numbers-pt-light-mobile.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/work/numbers-pt-dark.svg">
+  <img src="./assets/work/numbers-pt-light.svg" width="100%" alt="37.621 pacientes modelados, 55.647 registros visualizados, 96 verificações automáticas por dia">
+</picture>
 
 <a href="https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC">
 <picture>
@@ -63,17 +68,12 @@ Sou estudante de Engenharia de Computação no **Instituto Mauá de Tecnologia**
 **Monitor de resets do Codex.** Acompanha fontes públicas, classifica anúncios de reset com regras determinísticas, deduplica entre fontes e avisa no Discord.<br>
 <sub>Python · GitHub Actions · Cloudflare Workers · pytest · [Repositório](https://github.com/JoaoVitorSesma/codex-reset-monitor)</sub>
 
-## Agora
-
-- **Pesquisa:** modelando **recidiva** do câncer, comparando regressão de Cox com machine learning.
-- **Disciplina:** aprendendo Flutter e Dart na [ECM252 do IMT](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter).
-
 ## Ferramentas
 
 **Dados e pesquisa:** Python · pandas · NumPy · lifelines · Jupyter<br>
 **Aplicações e visualização:** Streamlit · Plotly · GeoPandas · Folium<br>
 **Automação:** GitHub Actions · Cloudflare Workers · webhooks do Discord<br>
-**Aprendendo:** Flutter · Dart
+**Aprendendo:** [Flutter · Dart](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter)
 
 ## Vamos conversar
 
