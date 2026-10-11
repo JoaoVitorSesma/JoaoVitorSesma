@@ -8,7 +8,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/hero/hero-en-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark.svg">
-  <img src="./assets/hero/hero-en-light.svg" width="100%" alt="From the cluster to the clinic. Infrastructure, models and the interfaces people actually use: clusters and data feed models such as LLMs and vision, which feed apps and dashboards, with clinical validation flowing back into the models.">
+  <img src="./assets/hero/hero-en-light.svg" width="100%" alt="From the cluster to the people. Infrastructure, models and the interfaces people actually use: clusters and data feed models such as LLMs and vision, which feed apps and dashboards, with user feedback flowing back into the models.">
 </picture>
 
 <picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/now-en-dark.svg"><img src="./assets/status/now-en-light.svg" alt="Now:" height="24" width="108" align="absmiddle"></picture>&nbsp; Building ML and deep learning models on ECG data, with medical validation in the loop.

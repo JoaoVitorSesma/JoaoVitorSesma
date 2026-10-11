@@ -31,15 +31,15 @@ STR = {
         cta_alt="See projects",
         # Hero: the sidebar already says who I am, so the hero only makes the claim.
         kicker="FULL-STACK AI",
-        head=[[("From the cluster", "fg")], [("to ", "fg"), ("the clinic.", "or")]],
+        head=[[("From the cluster", "fg")], [("to ", "fg"), ("the people.", "or")]],
         sub="Infrastructure, models and the interfaces people actually use. I work across all three.",
-        loop="clinical validation",
+        loop="user feedback",
         stages=[("Infrastructure", "clusters · data"), ("Models", "LLMs · vision"),
                 ("Interfaces", "apps · dashboards")],
-        hero_title="From the cluster to the clinic.",
-        hero_desc="From the cluster to the clinic. Infrastructure, models and the interfaces people "
+        hero_title="From the cluster to the people.",
+        hero_desc="From the cluster to the people. Infrastructure, models and the interfaces people "
         "actually use: clusters and data feed models such as LLMs and vision, which feed apps and "
-        "dashboards, with clinical validation flowing back into the models.",
+        "dashboards, with user feedback flowing back into the models.",
     ),
     "pt": dict(
         cmd="whoami",
@@ -53,15 +53,15 @@ STR = {
         cta_main="Fale comigo · E-mail",
         cta_alt="Ver projetos",
         kicker="IA FULL-STACK",
-        head=[[("Do cluster", "fg")], [("à ", "fg"), ("clínica.", "or")]],
+        head=[[("Do cluster", "fg")], [("às ", "fg"), ("pessoas.", "or")]],
         sub="Infraestrutura, modelos e as interfaces que as pessoas usam de fato. Atuo nas três.",
-        loop="validação clínica",
+        loop="feedback de uso",
         stages=[("Infraestrutura", "clusters · dados"), ("Modelos", "LLMs · visão"),
                 ("Interfaces", "apps · dashboards")],
-        hero_title="Do cluster à clínica.",
-        hero_desc="Do cluster à clínica. Infraestrutura, modelos e as interfaces que as pessoas usam "
+        hero_title="Do cluster às pessoas.",
+        hero_desc="Do cluster às pessoas. Infraestrutura, modelos e as interfaces que as pessoas usam "
         "de fato: clusters e dados alimentam modelos como LLMs e visão computacional, que alimentam "
-        "apps e dashboards, com a validação clínica voltando para os modelos.",
+        "apps e dashboards, com o feedback de uso voltando para os modelos.",
     ),
 }
 
@@ -119,7 +119,7 @@ def _arrow(fill, x1, x2, y, sc):
 
 
 def pipeline(t, theme, s, x0, y0, w, r, mobile):
-    """Infrastructure -> models -> interfaces, with clinical validation feeding back."""
+    """Infrastructure -> models -> interfaces, with user feedback flowing back."""
     st, orange = ICON_STYLE[theme], ORANGE[theme]
     col = w / 3
     cxs = [x0 + col * (i + 0.5) for i in range(3)]
