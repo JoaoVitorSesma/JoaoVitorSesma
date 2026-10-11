@@ -11,9 +11,9 @@
   <img src="./assets/hero/hero-en-light.svg" width="100%" alt="From the cluster to the clinic. Infrastructure, models and the interfaces people actually use: clusters and data feed models such as LLMs and vision, which feed apps and dashboards, with clinical validation flowing back into the models.">
 </picture>
 
-**Now** · Building ML and deep learning models on ECG data, with medical validation in the loop.
+<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/now-en-dark.svg"><img src="./assets/status/now-en-light.svg" alt="Now:" height="24" width="108" align="absmiddle"></picture>&nbsp; Building ML and deep learning models on ECG data, with medical validation in the loop.
 
-**Exploring** · LLM internals, computer vision and compute clusters.
+<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/exploring-en-dark.svg"><img src="./assets/status/exploring-en-light.svg" alt="Exploring:" height="24" width="108" align="absmiddle"></picture>&nbsp; LLM internals, computer vision and compute clusters.
 
 <p>
   <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-en-dark.svg"><img src="./assets/cta/main-en-light.svg" alt="Get in touch. Email me" height="34" width="200"></picture></a>

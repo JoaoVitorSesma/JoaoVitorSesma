@@ -11,9 +11,9 @@
   <img src="./assets/hero/hero-pt-light.svg" width="100%" alt="Do cluster à clínica. Infraestrutura, modelos e as interfaces que as pessoas usam de fato: clusters e dados alimentam modelos como LLMs e visão computacional, que alimentam apps e dashboards, com a validação clínica voltando para os modelos.">
 </picture>
 
-**Agora** · Construindo modelos de ML e deep learning com dados de ECG, com validação médica no processo.
+<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/now-pt-dark.svg"><img src="./assets/status/now-pt-light.svg" alt="Agora:" height="24" width="116" align="absmiddle"></picture>&nbsp; Construindo modelos de ML e deep learning com dados de ECG, com validação médica no processo.
 
-**Explorando** · Funcionamento interno de LLMs, visão computacional e clusters de computação.
+<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/exploring-pt-dark.svg"><img src="./assets/status/exploring-pt-light.svg" alt="Explorando:" height="24" width="116" align="absmiddle"></picture>&nbsp; Funcionamento interno de LLMs, visão computacional e clusters de computação.
 
 <p>
   <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-pt-dark.svg"><img src="./assets/cta/main-pt-light.svg" alt="Fale comigo por e-mail" height="34" width="180"></picture></a>
