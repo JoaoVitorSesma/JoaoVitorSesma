@@ -470,6 +470,40 @@ def lang_pill(lang, active, theme):
             f'<style>{base_css(t)}</style>{frame}{el}</svg>')
 
 
+STATUS = {"en": {"now": "NOW", "exploring": "EXPLORING"},
+          "pt": {"now": "AGORA", "exploring": "EXPLORANDO"}}
+
+
+def status_tag(kind, lang, theme):
+    """Coloured label that opens the Now / Exploring lines under the hero. Markdown
+    text cannot be coloured on GitHub, so the label is an image and the line stays text.
+    Both tags of a language share one width, so the text after them lines up."""
+    t, k = THEMES[theme], 2
+    scale(k)
+    fs, h, pad, r_ = 12 * k, 24 * k, 10 * k, 3.5 * k
+    col = t["gr"] if kind == "now" else t["ac"]
+    lx = pad + r_ * 2 + 7 * k
+    w = lx + max(MONO_MD.width(v, fs, 0.6 * k) for v in STATUS[lang].values()) + pad
+    label = STATUS[lang][kind]
+    frame = (f'<rect x="{k / 2}" y="{k / 2}" width="{w - k:.1f}" height="{h - k}" rx="{(h - k) / 2}" '
+             f'fill="{col}" fill-opacity=".13" stroke="{col}" stroke-opacity=".55" stroke-width="{k}"/>')
+    cx, cy = pad + r_, h / 2
+    if kind == "now":  # a live dot, like a status light
+        dot = (f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r_:.1f}" fill="{col}"/>'
+               f'<circle class="pl" cx="{cx:.1f}" cy="{cy:.1f}" r="{r_:.1f}" fill="{col}"/>')
+        anim = ("@keyframes pulse{0%{r:7;opacity:.55}70%,100%{r:20;opacity:0}}"
+                ".pl{animation:pulse 2.4s ease-out .6s infinite}")
+    else:  # an open ring: still forming
+        dot = (f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r_ - k * 0.6:.1f}" fill="none" '
+               f'stroke="{col}" stroke-width="{k * 1.2:.1f}"/>')
+        anim = ""
+    el, _ = text(MONO_MD, label, lx, h / 2 + fs * 0.36, fs, "fg", tracking=0.6 * k)
+    el = el.replace('class="fg"', f'fill="{col}"')
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w / k:.0f}" height="{h / k:.0f}" '
+            f'viewBox="0 0 {w:.0f} {h:.0f}" role="img" aria-label="{label}"><title>{label}</title>'
+            f'<style>{base_css(t)}{anim}</style>{frame}{dot}{el}</svg>')
+
+
 CTA_GREEN = {"dark": "#238636", "light": "#1f883d"}
 
 
@@ -544,6 +578,8 @@ def main():
         for theme in THEMES:
             write(OUT / "cta" / f"main-{lang}-{theme}.svg", cta_pill(STR[lang]["cta_main"], True, theme))
             write(OUT / "cta" / f"alt-{lang}-{theme}.svg", cta_pill(STR[lang]["cta_alt"], False, theme))
+            for kind in STATUS[lang]:
+                write(OUT / "status" / f"{kind}-{lang}-{theme}.svg", status_tag(kind, lang, theme))
 
     print("smallest text as rendered on GitHub (px):")
     for size, name, sample in sorted(report)[:6]:
