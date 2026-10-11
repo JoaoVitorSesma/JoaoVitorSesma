@@ -8,11 +8,11 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero/hero-pt-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/hero/hero-pt-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/hero/hero-pt-dark.svg">
-  <img src="./assets/hero/hero-pt-light.svg" width="100%" alt="JVM.Sesma, escrito em quadradinhos de contribuição. João Vitor Morimoto Sesma. Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. Interesses: dados de saúde, análise de sobrevida e automação. Agora modelando recidiva de câncer com Cox e machine learning. Aprendendo Flutter e Dart. Procuro estágio em dados, saúde e automação.">
+  <img src="./assets/hero/hero-pt-light.svg" width="100%" alt="JVM.Sesma, escrito em quadradinhos de contribuição. João Vitor Morimoto Sesma. Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. Interesses: IA para saúde, análise de dados e automação. Agora construindo modelos de ML e deep learning para diagnóstico médico. Aprendendo LLMs, construindo e usando, e visão computacional.">
 </picture>
 
 <p>
-  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-pt-dark.svg"><img src="./assets/cta/main-pt-light.svg" alt="Aberto a estágio. Fale comigo" height="34" width="247"></picture></a>
+  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-pt-dark.svg"><img src="./assets/cta/main-pt-light.svg" alt="Fale comigo por e-mail" height="34" width="180"></picture></a>
   <a href="#projetos"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/alt-pt-dark.svg"><img src="./assets/cta/alt-pt-light.svg" alt="Ver projetos" height="34" width="109"></picture></a>
 </p>
 
@@ -73,10 +73,10 @@
 **Dados e pesquisa:** Python · pandas · NumPy · lifelines · Jupyter<br>
 **Aplicações e visualização:** Streamlit · Plotly · GeoPandas · Folium<br>
 **Automação:** GitHub Actions · Cloudflare Workers · webhooks do Discord<br>
-**Aprendendo:** [Flutter · Dart](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter)
+**Disciplina:** [Flutter · Dart](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter)
 
 ## Vamos conversar
 
-Aberto a estágios em **ciência de dados, análise em saúde e automação**. [Me mande um e-mail](mailto:jv0707204@gmail.com)
+Quer conversar sobre **dados, IA ou saúde**? [Me mande um e-mail](mailto:jv0707204@gmail.com)
 
 <sub>Todas as figuras desta página são desenhadas a partir dos dados dos próprios projetos por [`scripts/build_assets.py`](./scripts/build_assets.py); fontes em [`assets/SOURCES.md`](./assets/SOURCES.md). As animações param quando o sistema pede movimento reduzido. Tipografia em Atkinson Hyperlegible, desenhada pelo Braille Institute para leitores com baixa visão.</sub>

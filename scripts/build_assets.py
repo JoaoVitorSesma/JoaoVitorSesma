@@ -24,36 +24,34 @@ STR = {
         name_lines=["João Vitor", "Morimoto Sesma"],
         tagline="Health data, survival models and the tools people use.",
         # Only what the profile sidebar does not already show (name aside).
-        rows=[("drawn to", "health data, survival analysis and automation"),
-              ("now", "modeling cancer recurrence with Cox and machine learning"),
-              ("learning", "Flutter and Dart"),
-              ("looking for", "internships in data, health analytics and automation")],
+        rows=[("drawn to", "AI for healthcare, data analysis and automation"),
+              ("now", "building ML and deep learning models for medical diagnosis"),
+              ("learning", "LLMs (building and using them) and computer vision")],
         stats=[("37,621", "patients modeled"), ("55,647", "records visualized"), ("96", "automated checks a day")],
-        cta_main="Open to internships · Email me",
+        cta_main="Get in touch · Email me",
         cta_alt="See projects",
         hero_title="João Vitor Morimoto Sesma",
         hero_desc="JVM.Sesma, written in contribution squares. João Vitor Morimoto Sesma. "
-        "Health data, survival models and the tools people use. Drawn to health data, survival "
-        "analysis and automation. Now modeling cancer recurrence with Cox and machine learning. "
-        "Learning Flutter and Dart. Looking for internships in data, health analytics and automation.",
+        "Health data, survival models and the tools people use. Drawn to AI for healthcare, data "
+        "analysis and automation. Now building ML and deep learning models for medical diagnosis. "
+        "Learning LLMs, building and using them, and computer vision.",
     ),
     "pt": dict(
         cmd="whoami",
         name="João Vitor Morimoto Sesma",
         name_lines=["João Vitor", "Morimoto Sesma"],
         tagline="Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam.",
-        rows=[("interesses", "dados de saúde, análise de sobrevida e automação"),
-              ("agora", "modelando recidiva de câncer com Cox e machine learning"),
-              ("aprendendo", "Flutter e Dart"),
-              ("procuro", "estágio em dados, saúde e automação")],
+        rows=[("interesses", "IA para saúde, análise de dados e automação"),
+              ("agora", "construindo modelos de ML e deep learning para diagnóstico médico"),
+              ("aprendendo", "LLMs (construindo e usando) e visão computacional")],
         stats=[("37.621", "pacientes modelados"), ("55.647", "registros visualizados"), ("96", "verificações automáticas por dia")],
-        cta_main="Aberto a estágio · Fale comigo",
+        cta_main="Fale comigo · E-mail",
         cta_alt="Ver projetos",
         hero_title="João Vitor Morimoto Sesma",
         hero_desc="JVM.Sesma, escrito em quadradinhos de contribuição. João Vitor Morimoto Sesma. "
-        "Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. Interesses: dados "
-        "de saúde, análise de sobrevida e automação. Agora modelando recidiva de câncer com Cox e "
-        "machine learning. Aprendendo Flutter e Dart. Procuro estágio em dados, saúde e automação.",
+        "Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. Interesses: IA para "
+        "saúde, análise de dados e automação. Agora construindo modelos de ML e deep learning para "
+        "diagnóstico médico. Aprendendo LLMs, construindo e usando, e visão computacional.",
     ),
 }
 
@@ -129,11 +127,11 @@ def hero(lang, theme, mobile):
     # 0.7 s on: whoami answers, one by one
     fs = r(13 if mobile else 13.5)
     y += fs * 0.8
-    cols = 1 if mobile else 2
+    rows = s["rows"]
+    cols = 1 if mobile or len(rows) <= 3 else 2  # a short list reads best as one column
     gap = r(28)
     col_w = (full - gap * (cols - 1)) / cols
-    keyw = max(MONO.width(k, fs) for k, _ in s["rows"]) + r(16)
-    rows = s["rows"]
+    keyw = max(MONO.width(k, fs) for k, _ in rows) + r(16)
     per_col = -(-len(rows) // cols)
     # rows are laid out as a grid: entry k sits in column k // per_col, line k % per_col,
     # and every grid line is as tall as its tallest entry, so the columns stay aligned
