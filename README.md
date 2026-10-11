@@ -8,11 +8,11 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/hero/hero-en-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark.svg">
-  <img src="./assets/hero/hero-en-light.svg" width="100%" alt="JVM.Sesma, written in contribution squares. João Vitor Morimoto Sesma. Health data, survival models and the tools people use. Drawn to health data, survival analysis and automation. Now modeling cancer recurrence with Cox and machine learning. Learning Flutter and Dart. Looking for internships in data, health analytics and automation.">
+  <img src="./assets/hero/hero-en-light.svg" width="100%" alt="JVM.Sesma, written in contribution squares. João Vitor Morimoto Sesma. Health data, survival models and the tools people use. Drawn to AI for healthcare, data analysis and automation. Now building ML and deep learning models for medical diagnosis. Learning LLMs, building and using them, and computer vision.">
 </picture>
 
 <p>
-  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-en-dark.svg"><img src="./assets/cta/main-en-light.svg" alt="Open to internships. Email me" height="34" width="249"></picture></a>
+  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-en-dark.svg"><img src="./assets/cta/main-en-light.svg" alt="Get in touch. Email me" height="34" width="200"></picture></a>
   <a href="#selected-work"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/alt-en-dark.svg"><img src="./assets/cta/alt-en-light.svg" alt="See projects" height="34" width="111"></picture></a>
 </p>
 
@@ -73,10 +73,10 @@
 **Data & research:** Python · pandas · NumPy · lifelines · Jupyter<br>
 **Apps & visualization:** Streamlit · Plotly · GeoPandas · Folium<br>
 **Automation:** GitHub Actions · Cloudflare Workers · Discord webhooks<br>
-**Learning:** [Flutter · Dart](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter)
+**Coursework:** [Flutter · Dart](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter)
 
 ## Let's talk
 
-Open to internships in **data science, health analytics and automation**. [Send me an email](mailto:jv0707204@gmail.com)
+Want to talk about **data, AI or healthcare**? [Send me an email](mailto:jv0707204@gmail.com)
 
 <sub>Every figure on this page is drawn from the projects' own data by [`scripts/build_assets.py`](./scripts/build_assets.py); sources in [`assets/SOURCES.md`](./assets/SOURCES.md). Animations stop when your system asks for reduced motion. Set in Atkinson Hyperlegible, designed by the Braille Institute for readers with low vision.</sub>
