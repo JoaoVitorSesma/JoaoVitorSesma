@@ -8,8 +8,12 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/hero/hero-en-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/hero/hero-en-dark.svg">
-  <img src="./assets/hero/hero-en-light.svg" width="100%" alt="João Vitor Morimoto Sesma. Health data, survival models and the tools people use. Drawn to AI for healthcare, data analysis and automation. Now building ML and deep learning models for medical diagnosis. Learning LLMs, building and using them, and computer vision.">
+  <img src="./assets/hero/hero-en-light.svg" width="100%" alt="From the cluster to the clinic. Infrastructure, models and the interfaces people actually use: clusters and data feed models such as LLMs and vision, which feed apps and dashboards, with clinical validation flowing back into the models.">
 </picture>
+
+**Now** · Building ML and deep learning models on ECG data, with medical validation in the loop.
+
+**Exploring** · LLM internals, computer vision and compute clusters.
 
 <p>
   <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-en-dark.svg"><img src="./assets/cta/main-en-light.svg" alt="Get in touch. Email me" height="34" width="200"></picture></a>

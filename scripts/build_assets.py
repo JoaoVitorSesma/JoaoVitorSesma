@@ -29,11 +29,17 @@ STR = {
         stats=[("37,621", "patients modeled"), ("55,647", "records visualized"), ("96", "automated checks a day")],
         cta_main="Get in touch · Email me",
         cta_alt="See projects",
-        hero_title="João Vitor Morimoto Sesma",
-        hero_desc="João Vitor Morimoto Sesma. "
-        "Health data, survival models and the tools people use. Drawn to AI for healthcare, data "
-        "analysis and automation. Now building ML and deep learning models for medical diagnosis. "
-        "Learning LLMs, building and using them, and computer vision.",
+        # Hero: the sidebar already says who I am, so the hero only makes the claim.
+        kicker="END-TO-END AI",
+        head=[[("From the cluster", "fg")], [("to ", "fg"), ("the clinic.", "or")]],
+        sub="Infrastructure, models and the interfaces people actually use. I work across all three.",
+        loop="clinical validation",
+        stages=[("Infrastructure", "clusters · data"), ("Models", "LLMs · vision"),
+                ("Interfaces", "apps · dashboards")],
+        hero_title="From the cluster to the clinic.",
+        hero_desc="From the cluster to the clinic. Infrastructure, models and the interfaces people "
+        "actually use: clusters and data feed models such as LLMs and vision, which feed apps and "
+        "dashboards, with clinical validation flowing back into the models.",
     ),
     "pt": dict(
         cmd="whoami",
@@ -46,11 +52,16 @@ STR = {
         stats=[("37.621", "pacientes modelados"), ("55.647", "registros visualizados"), ("96", "verificações automáticas por dia")],
         cta_main="Fale comigo · E-mail",
         cta_alt="Ver projetos",
-        hero_title="João Vitor Morimoto Sesma",
-        hero_desc="João Vitor Morimoto Sesma. "
-        "Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam. Interesses: IA para "
-        "saúde, análise de dados e automação. Agora construindo modelos de ML e deep learning para "
-        "diagnóstico médico. Aprendendo LLMs, construindo e usando, e visão computacional.",
+        kicker="IA DE PONTA A PONTA",
+        head=[[("Do cluster", "fg")], [("à ", "fg"), ("clínica.", "or")]],
+        sub="Infraestrutura, modelos e as interfaces que as pessoas usam de fato. Atuo nas três.",
+        loop="validação clínica",
+        stages=[("Infraestrutura", "clusters · dados"), ("Modelos", "LLMs · visão"),
+                ("Interfaces", "apps · dashboards")],
+        hero_title="Do cluster à clínica.",
+        hero_desc="Do cluster à clínica. Infraestrutura, modelos e as interfaces que as pessoas usam "
+        "de fato: clusters e dados alimentam modelos como LLMs e visão computacional, que alimentam "
+        "apps e dashboards, com a validação clínica voltando para os modelos.",
     ),
 }
 
@@ -81,78 +92,213 @@ COMMON_KEYS = (
 )
 
 
+ORANGE = {"light": "#bc4c00", "dark": "#f0883e"}
+
+# Faces and glass for the three pipeline icons, lit from the top left.
+ICON = {
+    "light": dict(top="#f6f8fa", left="#d6dde4", right="#b4bec8", edge="#8c959f", slot="#57606a",
+                  glass0="#ffffff", glass1="#dcf5e3", panel="#ffffff", bar="#d0d7de",
+                  shadow=0.10, glow=0.0, sheen=0.55, arrow="#1a7f37"),
+    "dark": dict(top="#4a525c", left="#353c44", right="#272d34", edge="#6e7681", slot="#0d1117",
+                 glass0="#1d2d25", glass1="#10241b", panel="#1c2128", bar="#3d444d",
+                 shadow=0.0, glow=0.30, sheen=0.10, arrow="#9198a1"),
+}
+
+
+def _pts(points, sc, cx, cy):
+    return " ".join(f"{cx + px * sc:.1f},{cy + py * sc:.1f}" for px, py in points)
+
+
+def _server(t, p, sc, cx, cy):
+    """Three stacked rack units in isometric view."""
+    out = []
+    for yo in (14, -8, -30):  # bottom first so upper units overlap lower ones
+        top = [(0, -24 + yo), (44, -2 + yo), (0, 20 + yo), (-44, -2 + yo)]
+        left = [(-44, -2 + yo), (0, 20 + yo), (0, 38 + yo), (-44, 16 + yo)]
+        right = [(0, 20 + yo), (44, -2 + yo), (44, 16 + yo), (0, 38 + yo)]
+        for face, fill in ((left, "left"), (right, "right"), (top, "top")):
+            out.append(f'<polygon points="{_pts(face, sc, cx, cy)}" fill="{p[fill]}" '
+                       f'stroke="{p["edge"]}" stroke-width="{0.8 * sc:.2f}" stroke-linejoin="round"/>')
+        mid = lambda x: -2 + (x + 44) * 0.5 + yo + 9  # noqa: E731  left face, half height
+        for i, x in enumerate((-36, -29)):
+            col = ORANGE_T if (yo == 14 and i == 1) else t["gr"]
+            out.append(f'<circle cx="{cx + x * sc:.1f}" cy="{cy + mid(x) * sc:.1f}" r="{2.4 * sc:.1f}" fill="{col}"/>')
+        out.append(f'<line x1="{cx - 20 * sc:.1f}" y1="{cy + mid(-20) * sc:.1f}" x2="{cx - 6 * sc:.1f}" '
+                   f'y2="{cy + mid(-6) * sc:.1f}" stroke="{p["slot"]}" stroke-width="{2.2 * sc:.1f}" stroke-linecap="round"/>')
+        for dx in (0, 7):
+            ry = lambda x: 20 - x * 0.5 + yo + 6 + dx * 0.7  # noqa: E731  right face vents
+            out.append(f'<line x1="{cx + 12 * sc:.1f}" y1="{cy + ry(12) * sc:.1f}" x2="{cx + 34 * sc:.1f}" '
+                       f'y2="{cy + ry(34) * sc:.1f}" stroke="{p["edge"]}" stroke-width="{1.2 * sc:.1f}" stroke-linecap="round"/>')
+    return "".join(out)
+
+
+def _model(t, p, sc, cx, cy, uid):
+    """A glass hexagon holding a small network."""
+    import math
+    hexp = [(46 * math.cos(math.radians(-90 + 60 * k)), 46 * math.sin(math.radians(-90 + 60 * k))) for k in range(6)]
+    out = [f'<linearGradient id="{uid}g" x1="0" y1="0" x2="1" y2="1">'
+           f'<stop offset="0" stop-color="{p["glass0"]}"/><stop offset="1" stop-color="{p["glass1"]}"/></linearGradient>',
+           f'<polygon points="{_pts(hexp, sc, cx, cy)}" fill="url(#{uid}g)" stroke="{t["gr"]}" '
+           f'stroke-opacity=".55" stroke-width="{1.6 * sc:.2f}" stroke-linejoin="round"/>',
+           f'<polygon points="{_pts([hexp[5], hexp[0], (6, -30), (-30, -10)], sc, cx, cy)}" fill="#ffffff" opacity="{p["sheen"]}"/>']
+    ring = [(22 * math.cos(math.radians(-90 + 60 * k)), 22 * math.sin(math.radians(-90 + 60 * k))) for k in range(6)]
+    for i, (rx, ry) in enumerate(ring):
+        nx, ny = ring[(i + 1) % 6]
+        for a, b in (((0, 0), (rx, ry)), ((rx, ry), (nx, ny))):
+            out.append(f'<line x1="{cx + a[0] * sc:.1f}" y1="{cy + a[1] * sc:.1f}" x2="{cx + b[0] * sc:.1f}" '
+                       f'y2="{cy + b[1] * sc:.1f}" stroke="{t["ac"]}" stroke-opacity=".55" stroke-width="{1.2 * sc:.2f}"/>')
+    for i, (rx, ry) in enumerate(ring):
+        out.append(f'<circle cx="{cx + rx * sc:.1f}" cy="{cy + ry * sc:.1f}" r="{4.4 * sc:.1f}" '
+                   f'fill="{t["gr"] if i % 2 else t["ac"]}"/>')
+    out.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{6.8 * sc:.1f}" fill="{t["gr"]}"/>')
+    return "".join(out)
+
+
+def _interface(t, p, sc, cx, cy):
+    """An app window with a sidebar and a bar chart, turned slightly toward the viewer."""
+    def R(x, y, w, h, rx, fill, extra=""):
+        return (f'<rect x="{cx + x * sc:.1f}" y="{cy + y * sc:.1f}" width="{w * sc:.1f}" height="{h * sc:.1f}" '
+                f'rx="{rx * sc:.1f}" fill="{fill}"{extra}/>')
+    g = [R(-50, -38, 100, 76, 7, p["panel"], f' stroke="{p["edge"]}" stroke-width="{1 * sc:.2f}"'),
+         R(-50, -38, 100, 12, 7, p["bar"]), R(-50, -31, 100, 5, 0, p["bar"])]
+    for i, col in enumerate((t["hot"], t["warn"], t["gr"])):
+        g.append(f'<circle cx="{cx + (-42 + 7 * i) * sc:.1f}" cy="{cy - 32 * sc:.1f}" r="{2.1 * sc:.1f}" fill="{col}"/>')
+    for i in range(3):
+        g.append(R(-42, -18 + 12 * i, 30 - 8 * (i == 2), 7, 3.5, t["gr"] if i == 0 else p["bar"]))
+    g.append(f'<line x1="{cx - 6 * sc:.1f}" y1="{cy + 28 * sc:.1f}" x2="{cx + 44 * sc:.1f}" y2="{cy + 28 * sc:.1f}" '
+             f'stroke="{p["edge"]}" stroke-width="{1 * sc:.2f}"/>')
+    for i, (h, col) in enumerate(((16, t["ac"]), (28, t["gr"]), (40, ORANGE_T), (24, t["gr"]))):
+        g.append(R(-2 + 12 * i, 28 - h, 8, h, 1.6, col))
+    shadow = (f'<rect x="{cx - 44 * sc:.1f}" y="{cy - 30 * sc:.1f}" width="{100 * sc:.1f}" height="{76 * sc:.1f}" '
+              f'rx="{7 * sc:.1f}" fill="{t["fg"]}" opacity="{p["shadow"]}"/>') if p["shadow"] else ""
+    return (f'<g transform="translate({cx:.1f} {cy:.1f}) skewY(-7) translate({-cx:.1f} {-cy:.1f})">'
+            f'{shadow}{"".join(g)}</g>')
+
+
+def _arrow(fill, x1, x2, y, sc):
+    h, hl, hw = 3 * sc, 13 * sc, 9 * sc
+    return (f'<path d="M{x1:.1f} {y - h:.1f} H{x2 - hl:.1f} V{y - hw:.1f} L{x2:.1f} {y:.1f} '
+            f'L{x2 - hl:.1f} {y + hw:.1f} V{y + h:.1f} H{x1:.1f} Z" fill="{fill}"/>')
+
+
+ORANGE_T = None  # set per build, the accent orange of the current theme
+
+
+def pipeline(t, theme, s, x0, y0, w, r, mobile):
+    """Infrastructure -> models -> interfaces, with clinical validation feeding back."""
+    global ORANGE_T
+    ORANGE_T = ORANGE[theme]
+    p = ICON[theme]
+    col = w / 3
+    sc = col * 0.58 / 100
+    cxs = [x0 + col * (i + 0.5) for i in range(3)]
+    fs_arc, fs_name, fs_cap = r(12), r(14), r(12)
+    yl = y0 + fs_arc
+    cy = yl + r(14) + 60 * sc
+    parts, css = [], []
+
+    # feedback arc: interfaces back into models
+    ys, ye, ya = cy - 44 * sc, cy - 50 * sc, yl + r(14)
+    arc = (f'<path class="arc" d="M{cxs[2]:.1f} {ys:.1f} C{cxs[2]:.1f} {ya:.1f} {cxs[1]:.1f} {ya:.1f} {cxs[1]:.1f} {ye:.1f}" '
+           f'fill="none" stroke="{ORANGE_T}" stroke-width="{r(1.4):.1f}" stroke-dasharray="{r(4):.1f} {r(4):.1f}"/>'
+           f'<path d="M{cxs[1] - r(4.5):.1f} {ye - r(7):.1f} L{cxs[1]:.1f} {ye:.1f} L{cxs[1] + r(4.5):.1f} {ye - r(7):.1f}" '
+           f'fill="none" stroke="{ORANGE_T}" stroke-width="{r(1.6):.1f}" stroke-linecap="round" stroke-linejoin="round"/>')
+    lab = text(MONO, s["loop"], (cxs[1] + cxs[2]) / 2, yl, fs_arc, "or", anchor="middle")[0]
+    parts.append(f'<g class="lp">{arc}{lab}</g>')
+    css.append(".lp{animation:fade .6s ease 1.3s both}"
+               f".arc{{animation:flow 1.6s linear 1.9s infinite}}"
+               f"@keyframes flow{{to{{stroke-dashoffset:{-r(8):.1f}}}}}")
+
+    # glow behind the icons on dark, a soft floor shadow on light
+    if p["glow"]:
+        parts.append(f'<radialGradient id="hglow"><stop offset="0" stop-color="{t["gr"]}" stop-opacity="{p["glow"]}"/>'
+                     f'<stop offset="1" stop-color="{t["gr"]}" stop-opacity="0"/></radialGradient>')
+    icons = [_server(t, p, sc, cxs[0], cy), _model(t, p, sc, cxs[1], cy, "hm"), _interface(t, p, sc, cxs[2], cy)]
+    for i, ic in enumerate(icons):
+        under = ""
+        if p["glow"] and i < 2:
+            under = f'<circle cx="{cxs[i]:.1f}" cy="{cy:.1f}" r="{62 * sc:.1f}" fill="url(#hglow)"/>'
+        elif not p["glow"]:
+            under = (f'<ellipse cx="{cxs[i]:.1f}" cy="{cy + 56 * sc:.1f}" rx="{40 * sc:.1f}" ry="{6 * sc:.1f}" '
+                     f'fill="{t["fg"]}" opacity=".07"/>')
+        parts.append(f'<g class="ic{i}">{under}{ic}</g>')
+        css.append(f".ic{i}{{animation:rise .6s cubic-bezier(.2,.8,.2,1) {0.5 + 0.2 * i:.1f}s both}}")
+
+    for i in range(2):
+        a = _arrow(p["arrow"], cxs[i] + 55 * sc, cxs[i + 1] - 55 * sc, cy, sc)
+        parts.append(f'<g class="aw{i}">{a}</g>')
+        css.append(f".aw{i}{{animation:fade .4s ease {0.8 + 0.2 * i:.1f}s both}}")
+
+    # names and captions; a caption too wide for its column splits at the dot
+    yn = cy + 62 * sc + fs_name * 1.3
+    bottom = yn
+    for i, (name, cap) in enumerate(s["stages"]):
+        g = [text(SANS, name, cxs[i], yn, fs_name, "fg", anchor="middle")[0]]
+        lines = [cap] if MONO.width(cap, fs_cap) <= col * 0.94 else cap.split(" · ")
+        yc = yn
+        for line in lines:
+            yc += fs_cap * 1.5
+            g.append(text(MONO, line, cxs[i], yc, fs_cap, "mu", anchor="middle")[0])
+        bottom = max(bottom, yc)
+        parts.append(f'<g class="ic{i}">{"".join(g)}</g>')
+    return parts, css, bottom + fs_cap * 0.4 - y0
+
+
 def hero(lang, theme, mobile):
-    """Who I am in a few seconds: name, one line, and the whoami
-    answers the profile sidebar does not already show."""
+    """The hook in a few seconds: one claim on the left, the pipeline that backs it on the right.
+    Who I am stays in the profile sidebar; what I do now and next follows as text."""
     t, s = THEMES[theme], STR[lang]
-    parts, css = [], [base_css(t), COMMON_KEYS]
+    parts, css = [], [base_css(t), COMMON_KEYS, f".or{{fill:{ORANGE[theme]}}}"]
     W = 720 if mobile else 1200
     r = canvas(W, mobile)
     x = r(10) if mobile else r(4)
     full = W - 2 * x
+    left_w = full if mobile else r(330)
 
-    y = r(18)
+    y = r(16)
+    k_el, _ = text(MONO, s["kicker"], x, y, r(12), "mu", tracking=r(1.0))
+    parts.append(f'<g class="kk">{k_el}<rect x="{x:.1f}" y="{y + r(9):.1f}" width="{r(34):.1f}" '
+                 f'height="{r(1.5):.1f}" fill="{t["fg"]}"/></g>')
+    css.append(".kk{animation:fade .5s ease .05s both}")
 
-    # 0.1 s: prompt types, name rises right away
-    p1, w1 = text(MONO, "~/joao $ ", x, y, r(13), "mu")
-    parts.append(p1)
-    b_, c_, _, _ = type_line(MONO, s["cmd"], x + w1, y, r(13), "gr", 0.1, 12, "ty0")
-    parts.append(b_)
-    css.append(c_)
-    lines = s["name_lines"] if mobile else [s["name"]]
-    size = min(r(46), min(full / SANS_BD.width(l, 1) for l in lines) * 0.98)
+    head = s["head"]
+    size = min(r(46 if mobile else 44),
+               min(left_w / sum(SANS_BD.width(seg, 1, -0.012) for seg, _ in line) for line in head) * 0.98)
+    y += r(22)
     g = []
-    for i, line in enumerate(lines):
-        y += size * (1.12 if i == 0 else 1.08)
-        g.append(text(SANS_BD, line, x, y, size, "fg", tracking=-size * 0.01)[0])
+    for line in head:
+        y += size * 1.04
+        cx = x
+        for seg, cls in line:
+            el, w_ = text(SANS_BD, seg, cx, y, size, cls, tracking=-size * 0.012)
+            g.append(el)
+            cx += w_
     parts.append(f'<g class="name">{"".join(g)}</g>')
     css.append(".name{animation:rise .7s cubic-bezier(.2,.8,.2,1) .15s both}")
 
-    # 0.4 s: one line on what I do
-    tag = r(15 if mobile else 16)
-    y += tag * 1.8
-    tl = []
-    for line in wrap(SANS, s["tagline"], tag, full):
-        tl.append(text(SANS, line, x, y, tag, "fg")[0])
-        y += tag * 1.4
-    parts.append(f'<g class="tag">{"".join(tl)}</g>')
-    css.append(".tag{animation:rise .7s cubic-bezier(.2,.8,.2,1) .4s both}")
+    sub = r(15.5 if mobile else 16)
+    y += sub * 1.9
+    sl = []
+    for line in wrap(SANS, s["sub"], sub, left_w):
+        sl.append(text(SANS, line, x, y, sub, "mu")[0])
+        y += sub * 1.42
+    parts.append(f'<g class="tag">{"".join(sl)}</g>')
+    css.append(".tag{animation:rise .7s cubic-bezier(.2,.8,.2,1) .35s both}")
+    left_bottom = y - sub * 1.42 + sub * 0.4
 
-    # 0.7 s on: whoami answers, one by one
-    fs = r(13 if mobile else 13.5)
-    y += fs * 0.8
-    rows = s["rows"]
-    cols = 1 if mobile or len(rows) <= 3 else 2  # a short list reads best as one column
-    gap = r(28)
-    col_w = (full - gap * (cols - 1)) / cols
-    keyw = max(MONO.width(k, fs) for k, _ in rows) + r(16)
-    per_col = -(-len(rows) // cols)
-    # rows are laid out as a grid: entry k sits in column k // per_col, line k % per_col,
-    # and every grid line is as tall as its tallest entry, so the columns stay aligned
-    wrapped = [wrap(SANS, v, fs, col_w - keyw) for _, v in rows]
-    cy = y + fs * 1.2
-    for line_i in range(per_col):
-        members = [ci * per_col + line_i for ci in range(cols) if ci * per_col + line_i < len(rows)]
-        for idx in members:
-            k, _ = rows[idx]
-            cx = x + (idx // per_col) * (col_w + gap)
-            is_now = idx == 1
-            row = [text(MONO, k, cx, cy, fs, "gr" if is_now else "ac")[0]]
-            if is_now:
-                dx = cx + MONO.width(k, fs) + r(8)
-                dy = cy - fs * 0.33
-                row.append(f'<circle cx="{dx:.1f}" cy="{dy:.1f}" r="{r(3):.1f}" fill="{t["gr"]}"/>'
-                           f'<circle class="pl" cx="{dx:.1f}" cy="{dy:.1f}" r="{r(3):.1f}" fill="{t["gr"]}"/>')
-            for j, line in enumerate(wrapped[idx]):
-                row.append(text(SANS, line, cx + keyw, cy + j * fs * 1.35, fs, "fg")[0])
-            parts.append(f'<g class="r{idx}">{"".join(row)}</g>')
-            css.append(f".r{idx}{{animation:rise .45s ease {0.7 + idx * 0.2:.2f}s both}}")
-        tallest = max(len(wrapped[idx]) for idx in members)
-        cy += fs * 1.35 * (tallest - 1) + fs * 1.8
-    bottoms = [cy - fs * 0.8]
-    css.append(".pl{animation:pulse 2.4s ease-out 1.6s infinite}")
-    H = int(max(bottoms) + r(12))
-    return svg(W, H, s["hero_title"], s["hero_desc"], "".join(parts), "".join(css))
+    if mobile:
+        pp, pc, ph = pipeline(t, theme, s, x, left_bottom + r(26), full, r, mobile)
+        H = left_bottom + r(26) + ph + r(8)
+    else:
+        dx = x + left_w + r(18)
+        dw = W - x - dx
+        _, _, ph = pipeline(t, theme, s, dx, 0, dw, r, mobile)
+        y0 = max(r(2), (left_bottom - ph) / 2 + r(6))
+        pp, pc, ph = pipeline(t, theme, s, dx, y0, dw, r, mobile)
+        H = max(left_bottom, y0 + ph) + r(10)
+    parts += pp
+    css += pc
+    return svg(W, int(H), s["hero_title"], s["hero_desc"], "".join(parts), "".join(css))
 
 
 def numbers(lang, theme, mobile):
