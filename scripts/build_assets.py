@@ -420,15 +420,12 @@ def strip(theme, mobile, mascot=None):
     cells_y = top + sh + (0 if name == "hedgehog" else 4)
     H = cells_y + cell + 4
     travel = W - sw
-    if name == "hedgehog":
-        walk_time = travel / (px / step)
     fade = 2.6
     period, stops, spans, trips = _motion(travel, walk_time, roll)
     if roll:
         # Keep the pose clock aligned with the repeating contact/position clock.
         gait = step * len(roll["walk"])
-        walk_time *= round(period / gait) * gait / period
-        period, stops, spans, trips = _motion(travel, walk_time, roll)
+        step = period / (round(period / gait) * len(roll["walk"]))
     tracks = _contact_tracks(frames, roll, step, px, stops, spans, trips) if roll else None
 
     def pass_times(cx):
@@ -497,7 +494,7 @@ def strip(theme, mobile, mascot=None):
     for i, frame in enumerate(walk_frames):
         keyframes = "".join(f"{j / len(walk_frames) * 100:g}%{{opacity:{int(i == j)}}}"
                             for j in range(len(walk_frames)))
-        css.append(f".wf{i}{{opacity:{int(i == 0)};animation:wf{i} {step * len(walk_frames):g}s steps(1) infinite}}"
+        css.append(f".wf{i}{{opacity:{int(i == 0)};animation:wf{i} {step * len(walk_frames):.12g}s steps(1) infinite}}"
                    f"@keyframes wf{i}{{{keyframes}100%{{opacity:{int(i == 0)}}}}}")
         walking.append(f'<g class="wf{i}">{rf(frame)}</g>')
     walking = "".join(walking)
