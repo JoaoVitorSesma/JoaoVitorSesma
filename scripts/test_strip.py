@@ -56,12 +56,15 @@ class HedgehogStripTests(unittest.TestCase):
         light_palette, light, _, _ = creatures.get('hedgehog', 'light')
         dark_palette, dark, _, _ = creatures.get('hedgehog', 'dark')
         self.assertEqual(light_palette['n'], light_palette['o'])
+        self.assertEqual(light_palette['h'], light_palette['o'])
+        self.assertNotEqual(dark_palette['h'], dark_palette['n'])
         self.assertNotEqual(dark_palette['n'], dark_palette['o'])
         for index in range(6):
-            nose = [(x, y) for y, row in enumerate(light[index]) for x, ch in enumerate(row) if ch == 'n']
+            nose = [(x, y) for y, row in enumerate(light[index]) for x, ch in enumerate(row) if ch in 'nh']
             self.assertGreaterEqual(len(nose), 2)
-            self.assertTrue(all(dark[index][y][x] == 'n' for x, y in nose))
-        self.assertFalse(any('n' in row for row in light[6]))
+            self.assertTrue(all(dark[index][y][x] == light[index][y][x] for x, y in nose))
+            self.assertEqual(sum(row.count('h') for row in dark[index]), 1)
+        self.assertFalse(any(ch in 'nh' for row in light[6] for ch in row))
         self.assertEqual(creatures.CREATURES['hedgehog']['palette']['n'], '#0b1024')
 
     def test_short_paws_remain_attached_to_belly(self):
