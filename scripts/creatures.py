@@ -162,7 +162,7 @@ CREATURES = {
     ),
     # Four compact steps, crouch, curl, and a square rolling sprite.
     "hedgehog": dict(
-        palette={'o':'#0b1024','B':'#1193e5','S':'#22657a','Y':'#fde101','y':'#c9a400','f':'#c9a400','r':'#3f7893'},
+        palette={'o':'#0b1024','B':'#1193e5','S':'#22657a','Y':'#fde101','y':'#c9a400','f':'#c9a400','r':'#3f7893','n':'#0b1024'},
         frames=[
             [
                 ".........o....o............",
@@ -176,8 +176,8 @@ CREATURES = {
                 ".oBBBBBBSSSBBBBoYYyYYYy....",
                 "..oBBBBBBBBBBBBSYYYYYYYyo..",
                 "..oSSSSBBBBBBBBBYYYYooYYo..",
-                "ooSBBSBBBBBBBSYYYYYYooYYYoo",
-                "oBBBBBBBBSSSSYYYYYYYooYYYoo",
+                "ooSBBSBBBBBBBSYYYYYYooYYYnn",
+                "oBBBBBBBBSSSSYYYYYYYooYYYnn",
                 "oooBBBBSSYYYYYYYYYYYYYYYYYo",
                 "..oBBYYYYYYYYYYYYYYYYYYYYy.",
                 "..ooYYYYYYYYYYYYYYYYYYYoo..",
@@ -198,8 +198,8 @@ CREATURES = {
                 ".oBBBBBBSSSBBBBoYYyYYYy....",
                 "..oBBBBBBBBBBBBSYYYYYYYyo..",
                 "..oSSSSBBBBBBBBBYYYYooYYo..",
-                "ooSBBSBBBBBBBSYYYYYYooYYYoo",
-                "oBBBBBBBBSSSSYYYYYYYooYYYoo",
+                "ooSBBSBBBBBBBSYYYYYYooYYYnn",
+                "oBBBBBBBBSSSSYYYYYYYooYYYnn",
                 "oooBBBBSSYYYYYYYYYYYYYYYYYo",
                 "..oBBYYYYYYYYYYYYYYYYYYYYy.",
                 "..ooYYYYYYYYYYYYYYYYYYYoo..",
@@ -220,8 +220,8 @@ CREATURES = {
                 ".oBBBBBBSSSBBBBoYYyYYYy....",
                 "..oBBBBBBBBBBBBSYYYYYYYyo..",
                 "..oSSSSBBBBBBBBBYYYYooYYo..",
-                "ooSBBSBBBBBBBSYYYYYYooYYYoo",
-                "oBBBBBBBBSSSSYYYYYYYooYYYoo",
+                "ooSBBSBBBBBBBSYYYYYYooYYYnn",
+                "oBBBBBBBBSSSSYYYYYYYooYYYnn",
                 "oooBBBBSSYYYYYYYYYYYYYYYYYo",
                 "..oBBYYYYYYYYYYYYYYYYYYYYy.",
                 "..ooYYYYYYYYYYYYYYYYYYYoo..",
@@ -242,8 +242,8 @@ CREATURES = {
                 ".oBBBBBBSSSBBBBoYYyYYYy....",
                 "..oBBBBBBBBBBBBSYYYYYYYyo..",
                 "..oSSSSBBBBBBBBBYYYYooYYo..",
-                "ooSBBSBBBBBBBSYYYYYYooYYYoo",
-                "oBBBBBBBBSSSSYYYYYYYooYYYoo",
+                "ooSBBSBBBBBBBSYYYYYYooYYYnn",
+                "oBBBBBBBBSSSSYYYYYYYooYYYnn",
                 "oooBBBBSSYYYYYYYYYYYYYYYYYo",
                 "..oBBYYYYYYYYYYYYYYYYYYYYy.",
                 "..ooYYYYYYYYYYYYYYYYYYYoo..",
@@ -267,7 +267,7 @@ CREATURES = {
                 "..oBBSSSBBBBBSYYYYYYYYYo...",
                 "ooBBBBBBBBBSYYYYYYYYYYYo...",
                 "oSBBBBBBBYYYYYYYYYYYYoYYo..",
-                ".ooBBBBSYYYYYYYYYYYYYYYYoo.",
+                ".ooBBBBSYYYYYYYYYYYYYYYYnn.",
                 "..SBBSYYYYYYYYYYYYYYYYYYyo.",
                 "..ooSYYYYYYYYYYYYYYYYYYYyo.",
                 ".....oYYYofffoYYofffo......",
@@ -294,7 +294,7 @@ CREATURES = {
                 "...oBBBBSSYYYYYYYYYYYYyo...",
                 "....oooSYooYYYYYYyYYYYoo...",
                 "......oYYYYyYYYyYYoyYyo....",
-                "......ooyYYoyyyyoYooooo....",
+                "......ooyYYoyyyyoYoonno....",
             ],
             [
                 "...........................",
@@ -334,10 +334,12 @@ CREATURES["silver"] = dict(palette=_silver.PALETTE, frames=[_silver.WALK_A, _sil
 def get(name, theme="light"):
     """Return (palette, frames, width, height), padded and shaded for the theme."""
     c = CREATURES[name]
+    palette = c["palette"]
     w = max(len(row) for f in c["frames"] for row in f)
     h = max(len(f) for f in c["frames"])
     frames = [[row.ljust(w, ".") for row in f] + ["." * w] * (h - len(f)) for f in c["frames"]]
     if name == "hedgehog" and theme == "dark":
+        palette = {**palette, "n": "#71839b"}
         # Lighten only exposed spine borders; keep the eye and face navy.
         for frame in frames:
             original = frame[:]
@@ -347,7 +349,7 @@ def get(name, theme="light"):
                                  for xx, yy in ((x - 1, y), (x + 1, y), (x, y - 1))]
                     if ch == "o" and "." in neighbors and any(v in "BS" for v in neighbors) and not any(v in "Yy" for v in neighbors):
                         frame[y] = frame[y][:x] + "r" + frame[y][x + 1:]
-    return c["palette"], frames, w, h
+    return palette, frames, w, h
 
 
 def frame_rects(palette, frame, px, ox=0.0, oy=0.0):
