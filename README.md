@@ -12,8 +12,12 @@
 </picture>
 
 <p>
-<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/now-en-dark.svg"><img src="./assets/status/now-en-light.svg" alt="Now:" height="32" width="108" align="absmiddle"></picture>&nbsp; Building ML and deep learning models on ECG data, with medical validation in the loop.<br>
-<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/exploring-en-dark.svg"><img src="./assets/status/exploring-en-light.svg" alt="Exploring:" height="32" width="108" align="absmiddle"></picture>&nbsp; LLM internals, computer vision and compute clusters.
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/status/notes-en-dark-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/status/notes-en-light-mobile.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/status/notes-en-dark.svg">
+  <img src="./assets/status/notes-en-light.svg" width="100%" alt="Now: Building ML and deep learning models on ECG data, with medical validation in the loop. Exploring: LLM internals, computer vision and compute clusters.">
+</picture>
 </p>
 
 <p>

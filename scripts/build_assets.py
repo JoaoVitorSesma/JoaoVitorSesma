@@ -494,35 +494,71 @@ def lang_pill(lang, active, theme):
 STATUS = {"en": {"now": "NOW", "exploring": "EXPLORING"},
           "pt": {"now": "AGORA", "exploring": "EXPLORANDO"}}
 
+STATUS_COPY = {
+    "en": {
+        "now": "Building ML and deep learning models on ECG data, with medical validation in the loop.",
+        "exploring": "LLM internals, computer vision and compute clusters.",
+    },
+    "pt": {
+        "now": "Construindo modelos de ML e deep learning com dados de ECG, com validação médica no processo.",
+        "exploring": "Funcionamento interno de LLMs, visão computacional e clusters de computação.",
+    },
+}
+STATUS_COLORS = {
+    "dark": dict(now="#77cdbb", exploring="#e5b57a", frame="#8a9baa", divider="#303d49"),
+    "light": dict(now="#197462", exploring="#89571b", frame="#617586", divider="#d1d9e0"),
+}
 
-def status_tag(kind, lang, theme):
-    """Coloured label that opens the Now / Exploring lines under the hero. Markdown
-    text cannot be coloured on GitHub, so the label is an image and the line stays text.
-    Both tags of a language share one width, so the text after them lines up."""
-    t, k = THEMES[theme], 2
-    scale(k)
-    fs, h, pad, r_ = 12 * k, 24 * k, 10 * k, 3.5 * k
-    col = t["gr"] if kind == "now" else t["ac"]
-    lx = pad + r_ * 2 + 7 * k
-    w = lx + max(MONO_MD.width(v, fs, 0.6 * k) for v in STATUS[lang].values()) + pad
-    label = STATUS[lang][kind]
-    frame = (f'<rect x="{k / 2}" y="{k / 2}" width="{w - k:.1f}" height="{h - k}" rx="{(h - k) / 2}" '
-             f'fill="{col}" fill-opacity=".13" stroke="{col}" stroke-opacity=".55" stroke-width="{k}"/>')
-    cx, cy = pad + r_, h / 2
-    if kind == "now":  # a live dot, like a status light
-        dot = (f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r_:.1f}" fill="{col}"/>'
-               f'<circle class="pl" cx="{cx:.1f}" cy="{cy:.1f}" r="{r_:.1f}" fill="{col}"/>')
-        anim = ("@keyframes pulse{0%{r:7;opacity:.55}70%,100%{r:20;opacity:0}}"
-                ".pl{animation:pulse 2.4s ease-out .6s infinite}")
-    else:  # an open ring: still forming
-        dot = (f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r_ - k * 0.6:.1f}" fill="none" '
-               f'stroke="{col}" stroke-width="{k * 1.2:.1f}"/>')
-        anim = ""
-    el, _ = text(MONO_MD, label, lx, h / 2 + fs * 0.36, fs, "fg", tracking=0.6 * k)
-    el = el.replace('class="fg"', f'fill="{col}"')
-    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w / k:.0f}" height="{h / k:.0f}" '
-            f'viewBox="0 0 {w:.0f} {h:.0f}" role="img" aria-label="{label}"><title>{label}</title>'
-            f'<style>{base_css(t)}{anim}</style>{frame}{dot}{el}</svg>')
+
+def _status_instrument(kind, colors):
+    """A processor and a compass share an open instrument frame."""
+    accent = colors[kind]
+    body = (f'<path d="M3 8V3H8M16 3H21V8M21 16V21H16M8 21H3V16" '
+            f'fill="none" stroke="{colors["frame"]}" stroke-width="1.4" stroke-linecap="round"/>')
+    if kind == "now":
+        body += (f'<rect x="8" y="8" width="8" height="8" rx="1.5" fill="none" '
+                 f'stroke="{accent}" stroke-width="1.5"/>'
+                 f'<path d="M10 5V8M14 5V8M10 16V19M14 16V19M5 10H8M5 14H8M16 10H19M16 14H19" '
+                 f'stroke="{accent}" stroke-width="1.2" stroke-linecap="round"/>'
+                 f'<circle cx="12" cy="12" r="1.5" fill="{accent}"/>')
+    else:
+        body += (f'<circle cx="12" cy="12" r="5.3" fill="none" stroke="{accent}" stroke-width="1.3"/>'
+                 f'<path d="M9 15L10.5 10.5L15 9L13.5 13.5Z" fill="{accent}"/>')
+    return body
+
+
+def status_notes(lang, theme, mobile):
+    """Open laboratory notes: side by side on desktop, stacked on phones.
+
+    Keep the approved desktop geometry in rendered pixels. Shared frames and
+    neutral copy connect the two markers; only the instruments and labels differ.
+    Padding is part of the SVG because GitHub strips custom README margins.
+    """
+    t, colors = THEMES[theme], STATUS_COLORS[theme]
+    width = 340 if mobile else 795
+    scale(1)
+    col = width if mobile else (width - 48) / 2
+    parts, bottoms = [], []
+    top = 10
+    for i, kind in enumerate(STATUS[lang]):
+        x = 0 if mobile else i * (col + 48)
+        y = top if mobile or i == 0 else 10
+        parts.append(f'<g transform="translate({x} {y + 4})">{_status_instrument(kind, colors)}</g>')
+        parts.append(text(MONO_MD, STATUS[lang][kind], x + 35, y + 21, 12, "",
+                          tracking=0.7, extra=f' fill="{colors[kind]}"')[0])
+        lines = wrap(SANS, STATUS_COPY[lang][kind], 15, col - 35)
+        for j, line in enumerate(lines):
+            parts.append(text(SANS, line, x + 35, y + 52 + j * 23, 15, "fg")[0])
+        bottom = y + 52 + (len(lines) - 1) * 23 + 10
+        bottoms.append(bottom)
+        if mobile and i == 0:
+            parts.append(f'<path d="M35 {bottom + 16}H{width}" stroke="{colors["divider"]}"/>')
+            top = bottom + 32
+    if not mobile:
+        parts.insert(0, f'<path d="M{col + 24} 16V{max(bottoms) - 8}" stroke="{colors["divider"]}"/>')
+    title = "Now and Exploring" if lang == "en" else "Agora e Explorando"
+    desc = " ".join(f"{STATUS[lang][kind]}: {STATUS_COPY[lang][kind]}" for kind in STATUS[lang])
+    return svg(width, max(bottoms) + 8, title, desc, "".join(parts), base_css(t))
 
 
 CTA_GREEN = {"dark": "#238636", "light": "#1f883d"}
@@ -599,8 +635,9 @@ def main():
         for theme in THEMES:
             write(OUT / "cta" / f"main-{lang}-{theme}.svg", cta_pill(STR[lang]["cta_main"], True, theme))
             write(OUT / "cta" / f"alt-{lang}-{theme}.svg", cta_pill(STR[lang]["cta_alt"], False, theme))
-            for kind in STATUS[lang]:
-                write(OUT / "status" / f"{kind}-{lang}-{theme}.svg", status_tag(kind, lang, theme))
+            for mobile in (False, True):
+                suffix = "-mobile" if mobile else ""
+                write(OUT / "status" / f"notes-{lang}-{theme}{suffix}.svg", status_notes(lang, theme, mobile))
 
     print("smallest text as rendered on GitHub (px):")
     for size, name, sample in sorted(report)[:6]:
