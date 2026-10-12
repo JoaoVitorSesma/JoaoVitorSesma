@@ -308,12 +308,13 @@ MASCOT = "hedgehog"  # one of creatures.CREATURES: silver, egg, mecha, blob, hed
 # Each trip across the strip: direction (+1 right, -1 left) and whether it rolls.
 # The first trip always rolls; later ones mix plain walks in.
 TRIPS = [(+1, True), (-1, False), (+1, False), (-1, True)]
-# Roll trip: (phase, share of the trip's duration, speed relative to walking)
-ROLL_PLAN = [("walk", 0.30, 1.0), ("crouch", 0.03, 0.3), ("curl", 0.03, 0.3), ("ball", 0.26, 3.0),
-             ("curl", 0.03, 0.3), ("crouch", 0.03, 0.3), ("walk", 0.32, 1.0)]
+# Rolling trips finish curled up so the ball itself reaches the boundary.
+# (phase, share of the trip's duration, speed relative to walking)
+ROLL_PLAN = [("walk", 0.30, 1.0), ("crouch", 0.05, 0.3),
+             ("curl", 0.05, 0.3), ("ball", 0.60, 3.0)]
 
 
-def _motion(travel, walk_time, roll):
+def _motion(travel, walk_time, roll, ball_margin=0):
     """Keyframes for a full cycle at a constant walking speed.
 
     walk_time is how long a plain walking trip takes. Returns
@@ -321,21 +322,45 @@ def _motion(travel, walk_time, roll):
     """
     trips = TRIPS if roll else [(+1, False), (-1, False)]
     speed = travel / walk_time
-    roll_time = travel / (speed * sum(f * v for _, f, v in ROLL_PLAN))
-    t, stops, spans, starts = 0.0, [(0.0, 0.0)], {"walk": [], "crouch": [], "curl": [], "ball": []}, []
+    # Start where the last recovery ends, so the loop never teleports.
+    x = (90 - ball_margin if trips[-1][1] else 24) if roll else 0.0
+    t, stops, spans, starts = 0.0, [(0.0, x)], {"walk": [], "crouch": [], "curl": [], "ball": []}, []
+
+    def advance(phase, duration, target):
+        nonlocal t, x
+        spans.setdefault(phase, []).append((t, t + duration))
+        t += duration
+        x = target
+        stops.append((t, x))
+
     for direction, rolls in trips:
         starts.append((t, direction))
-        x_from = 0.0 if direction > 0 else travel
+        end = travel if direction > 0 else 0.0
+        if rolls:
+            end += direction * ball_margin
         plan = ROLL_PLAN if rolls else [("walk", 1.0, 1.0)]
-        dur = roll_time if rolls else walk_time
-        x = x_from
+        dur = abs(end - x) / (speed * sum(f * v for _, f, v in plan))
         for phase, f, v in plan:
             dt = f * dur
-            spans[phase].append((t, t + dt))
-            t += dt
-            x += direction * speed * v * dt
-            stops.append((t, min(max(x, 0.0), travel)))
-        stops[-1] = (t, travel if direction > 0 else 0.0)
+            advance(phase, dt, x + direction * speed * v * dt)
+        x = end
+        stops[-1] = (t, x)
+        if not roll:
+            continue
+        if rolls:
+            advance("ball_impact", .20, x)
+            advance("ball_recoil", .70, x - direction * 90)
+            advance("ball_rest", .25, x)
+            advance("curl", .25, x)
+            advance("crouch", .25, x)
+        else:
+            advance("walk_impact", .25, x)
+            advance("walk_recoil", .50, x - direction * 24)
+        advance("rest", .55, x)
+        advance("shake", .75, x)
+        advance("rest", .15, x)
+        advance("blink", .15, x)
+        advance("rest", .20, x)
     return t, stops, spans, starts
 
 
@@ -356,10 +381,15 @@ def _contact_tracks(frames, roll, step, px, stops, spans, trips):
     tracks = []
     width = len(frames[0][0]) * px
     footprints = [_ground_runs(frame) for frame in frames]
-    phase_frames = {"crouch": roll["curl"][0], "curl": roll["curl"][1], "ball": roll["ball"]}
+    phase_frames = {"crouch": roll["curl"][0], "curl": roll["curl"][1], "ball": roll["ball"],
+                    "ball_impact": roll["ball"], "ball_rest": roll["ball"]}
+    phase_frames.update({p: roll["walk"][0] for p in
+                         ("walk_impact", "walk_recoil", "rest", "shake", "blink")})
     for (a, xa), (b, xb) in zip(stops, stops[1:]):
         mid = (a + b) / 2
         phase = next(p for p, intervals in spans.items() if any(lo <= mid < hi for lo, hi in intervals))
+        if phase == "ball_recoil":
+            continue  # airborne: cells light again on landing, not during the hop
         direction = next(d for t, d in reversed(trips) if t <= mid)
         ticks = [a, b]
         if phase == "walk":
@@ -371,7 +401,7 @@ def _contact_tracks(frames, roll, step, px, stops, spans, trips):
             else:
                 index = phase_frames[phase]
             supports = footprints[index]
-            if phase == "ball":
+            if phase in ("ball", "ball_impact", "ball_rest"):
                 # The tangent remains centered as the square sprite rotates.
                 supports = [(len(frames[index][0]) / 2 - .5, 1)]
             for x, size in supports:
@@ -421,7 +451,11 @@ def strip(theme, mobile, mascot=None):
     H = cells_y + cell + 4
     travel = W - sw
     fade = 2.6
-    period, stops, spans, trips = _motion(travel, walk_time, roll)
+    ball_margin = 0
+    if roll:
+        ball = frames[roll["ball"]]
+        ball_margin = min(x for row in ball for x, ch in enumerate(row) if ch != ".") * px
+    period, stops, spans, trips = _motion(travel, walk_time, roll, ball_margin)
     if roll:
         # Keep the pose clock aligned with the repeating contact/position clock.
         gait = step * len(roll["walk"])
@@ -528,24 +562,66 @@ def strip(theme, mobile, mascot=None):
         css.append(vis("gc", groups["crouch"], False))
         css.append(vis("gu", groups["curl"], False))
         css.append(vis("gb", groups["ball"], False))
+        for cls, phases in (("idle", ("rest",)), ("closed", ("blink", "walk_recoil")),
+                            ("whit", ("walk_impact",)), ("bhit", ("ball_impact",)),
+                            ("bback", ("ball_recoil",)), ("bstop", ("ball_rest",)),
+                            ("shake", ("shake",))):
+            css.append(vis(cls, [span for phase in phases for span in groups[phase]], False))
         ball = frames[roll["ball"]]
         diameter = sum(any(ch != "." for ch in row) for row in ball) * px
         spin_time = pi * diameter / (travel / walk_time * 3)
         css.append(f".spin{{transform-box:fill-box;transform-origin:center;animation:spin {spin_time:g}s steps(4) infinite}}"
                    "@keyframes spin{to{transform:rotate(360deg)}}")
+        css.append(f".backspin{{transform-box:fill-box;transform-origin:center;animation:spin {spin_time:g}s steps(4) infinite reverse}}")
+
+        def reaction(cls, intervals, transforms, origin=""):
+            marks = {0.0: transforms[0][1], period: transforms[0][1]}
+            for a_, b_ in intervals:
+                for share, transform in transforms:
+                    marks[a_ + (b_ - a_) * share] = transform
+            keys = "".join(f"{tt / period * 100:.6f}%{{transform:{value}}}" for tt, value in sorted(marks.items()))
+            css.append(f".{cls}{{{origin}animation:{cls} {period}s linear infinite}}@keyframes {cls}{{{keys}}}")
+
+        reaction("walkhit", groups["walk_impact"],
+                 [(0, "scaleX(1)"), (.5, "scaleX(.93)"), (1, "scaleX(1)")],
+                 f"transform-origin:{sw}px {sh}px;")
+        ball_right = sw - ball_margin
+        reaction("ballhit", groups["ball_impact"],
+                 [(0, "scale(1,1)"), (.5, "scale(.8,1.1)"), (1, "scale(1,1)")],
+                 f"transform-origin:{ball_right}px {sh}px;")
+        reaction("hop", groups["ball_recoil"],
+                 [(0, "translateY(0px)"), (.25, "translateY(-12px)"),
+                  (.5, "translateY(-17px)"), (.75, "translateY(-12px)"), (1, "translateY(0px)")])
+        recovery = creatures.hedgehog_recovery()
+        closed = creatures.frame_rects(pal, recovery["blink"], px)
+        heads = []
+        for cls, pose, slots in (("sl", "left", (0,)), ("sm", "blink", (1, 3)), ("sr", "right", (2,))):
+            keys = "".join(f"{j * 25}%{{opacity:{int(j in slots)}}}" for j in range(4))
+            keys += f"100%{{opacity:{int(0 in slots)}}}"
+            css.append(f".{cls}{{opacity:0;animation:{cls} .25s steps(1) infinite}}@keyframes {cls}{{{keys}}}")
+            offset = -px if pose != "blink" else 0
+            heads.append(f'<g class="{cls}">{creatures.frame_rects(pal, recovery[pose], px, offset)}</g>')
         c0, c1 = roll["curl"]
         body = (
             f'<g class="gw">{walking}</g>'
             f'<g class="gc">{rf(c0)}</g><g class="gu">{rf(c1)}</g>'
             f'<g class="gb"><g class="spin">{rf(roll["ball"])}</g></g>'
+            f'<g class="idle">{rf(walk_frames[0])}</g><g class="closed">{closed}</g>'
+            f'<g class="whit"><g class="walkhit">{closed}</g></g>'
+            f'<g class="bhit"><g class="ballhit">{rf(roll["ball"])}</g></g>'
+            f'<g class="bback"><g class="hop"><g class="backspin">{rf(roll["ball"])}</g></g></g>'
+            f'<g class="bstop">{rf(roll["ball"])}</g><g class="shake">{"".join(heads)}</g>'
         )
     # A larger pause separates contact actions from the project divider.
     top_pad = r_px(12)
     content = "".join(rects) + f'<g class="walk" shape-rendering="crispEdges"><g class="flip">{body}</g></g>'
+    if roll:
+        content += (f'<path d="M0 {top}V{cells_y + cell}M{W} {top}V{cells_y + cell}" '
+                    f'fill="none" stroke="{t["mu"]}" stroke-width="2"/>')
     content = f'<g transform="translate(0 {top_pad:.1f})">{content}</g>'
     return svg(
         W, int(H + top_pad), "Walking mascot",
-        "A small pixel-art hedgehog walking across a row of contribution squares, curling up and rolling along part of the way."
+        "A pixel-art hedgehog alternates walking and rolling, bumps into the edges, recoils, shakes its head and walks back."
         if roll else "A small pixel-art creature walking across a row of contribution squares.",
         content, "".join(css),
     )
