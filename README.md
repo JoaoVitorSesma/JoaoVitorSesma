@@ -29,7 +29,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/strip/walk-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/strip/walk-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/strip/walk-dark.svg">
-  <img src="./assets/strip/walk-light.svg" width="100%" alt="A small pixel-art hedgehog walking across a row of contribution squares, curling into a ball and rolling part of the way.">
+  <img src="./assets/strip/walk-light.svg" width="100%" alt="A pixel-art hedgehog alternates walking and rolling, bumps into the edges, recoils, shakes its head and walks back.">
 </picture>
 
 ## Selected work
