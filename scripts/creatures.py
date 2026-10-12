@@ -1,6 +1,6 @@
 """Original pixel-art creatures for the walking strip.
 
-Each creature has a palette and two frames drawn as character grids
+Each creature has a palette and animation frames drawn as character grids
 ('.' is transparent). Frames face right; the strip mirrors them on the way
 back. Rows are padded to the widest row, so grids can be typed loosely.
 """
@@ -160,20 +160,19 @@ CREATURES = {
             ],
         ],
     ),
-    # A yellow-and-blue hedgehog that walks, curls up and rolls.
-    # Frames: 0-1 walk, 2 crouch, 3 curling, 4 ball.
+    # Four compact steps, crouch, curl, and a square rolling sprite.
     "hedgehog": dict(
-        palette={'o': '#0b1024', 'B': '#1193e5', 'S': '#22657a', 'Y': '#fde101', 'y': '#c9a400'},
+        palette={'o':'#0b1024','B':'#1193e5','S':'#22657a','Y':'#fde101','y':'#c9a400','f':'#c9a400','r':'#3f7893'},
         frames=[
             [
-                "..........ooo.ooo..........",
-                "......ooo.oBo.oBo..........",
-                "......SBSooBBooBBooS.......",
-                "...ooooBBBBBBBBBBSoBSo.....",
-                "..oSBBSSBBBSSBBBBBBBBoo....",
-                "...oSBBSSBBBSSBBBBBBBBo....",
-                "...ooBBBBSBBBBBBooBBBBo....",
-                ".oooSBBBBBBBBBBoYYoBBSo....",
+                ".........o....o............",
+                ".....o...oBo..oBo..........",
+                ".....oBooBBBoBBBoo.........",
+                "..o..oBBBBBBBBBBBBoo.......",
+                "..oBoBBBBSSBBBSSBBBBoo.....",
+                "...oBBBBBBBBBBBBBBBBBBo....",
+                ".o..oBBBBSBBBBBBooBBBBo....",
+                ".oBooBBBBBBBBBBoYYoBBSo....",
                 ".oBBBBBBSSSBBBBoYYyYYYy....",
                 "..oBBBBBBBBBBBBSYYYYYYYyo..",
                 "..oSSSSBBBBBBBBBYYYYooYYo..",
@@ -183,31 +182,75 @@ CREATURES = {
                 "..oBBYYYYYYYYYYYYYYYYYYYYy.",
                 "..ooYYYYYYYYYYYYYYYYYYYoo..",
                 "....oYYYYYYYYYYYYYYyooo....",
-                "....oYYYoooooooYYYoyyo.....",
-                "....oYyoooYo..oYYooYYy.....",
-                "....oYo..oyo..oyyo.oyo.....",
+                "......oYYofffoYYYffo.......",
+                "......oYYoooo.oYYfo........",
+                ".......oo......ooo.........",
             ],
             [
-                "..........ooo.ooo..........",
-                "......ooo.oBoooBo..........",
-                "......BBBooBBSoBBooSo......",
-                "...ooooBBBBBBBBBBSoBSo.....",
-                "..oSBBSSBBBSSBBBBBBBBoo....",
-                "...oSBBSSBBBSSBBBBBBBBo....",
-                "...ooBBBBSBBBBBBSoBBBBo....",
-                ".oooSBBBBBBBBBBoYYoBBSo....",
-                ".oBBBBBBSSSBBBBoYYYYYYyo...",
-                "..oBSBBBBBBBBBBSyYYYYYYyo..",
+                ".........o....o............",
+                ".....o...oBo..oBo..........",
+                ".....oBooBBBoBBBoo.........",
+                "..o..oBBBBBBBBBBBBoo.......",
+                "..oBoBBBBSSBBBSSBBBBoo.....",
+                "...oBBBBBBBBBBBBBBBBBBo....",
+                ".o..oBBBBSBBBBBBooBBBBo....",
+                ".oBooBBBBBBBBBBoYYoBBSo....",
+                ".oBBBBBBSSSBBBBoYYyYYYy....",
+                "..oBBBBBBBBBBBBSYYYYYYYyo..",
                 "..oSSSSBBBBBBBBBYYYYooYYo..",
                 "ooSBBSBBBBBBBSYYYYYYooYYYoo",
-                "oBBBBBBBBSSSSYYYYYYYooYYYyo",
-                "oooBBBSSYYYYYYYYYYYYYYYYYYo",
-                "..SBSYYYYYYYYYYYYYYYYYYYYyo",
-                "..ooYYYYYYYYYYYYYYYYYYYooo.",
+                "oBBBBBBBBSSSSYYYYYYYooYYYoo",
+                "oooBBBBSSYYYYYYYYYYYYYYYYYo",
+                "..oBBYYYYYYYYYYYYYYYYYYYYy.",
+                "..ooYYYYYYYYYYYYYYYYYYYoo..",
                 "....oYYYYYYYYYYYYYYyooo....",
-                "....oYYYooooooooYYYYyo.....",
-                "....oYYooYyo...oYYoYyo.....",
-                "....oYoo.oyo...ooYooo......",
+                ".....oYYYofffoYYofffo......",
+                ".....oYYo.offoYYoooo.......",
+                "......oo...oo.oo...........",
+            ],
+            [
+                ".........o....o............",
+                ".....o...oBo..oBo..........",
+                ".....oBooBBBoBBBoo.........",
+                "..o..oBBBBBBBBBBBBoo.......",
+                "..oBoBBBBSSBBBSSBBBBoo.....",
+                "...oBBBBBBBBBBBBBBBBBBo....",
+                ".o..oBBBBSBBBBBBooBBBBo....",
+                ".oBooBBBBBBBBBBoYYoBBSo....",
+                ".oBBBBBBSSSBBBBoYYyYYYy....",
+                "..oBBBBBBBBBBBBSYYYYYYYyo..",
+                "..oSSSSBBBBBBBBBYYYYooYYo..",
+                "ooSBBSBBBBBBBSYYYYYYooYYYoo",
+                "oBBBBBBBBSSSSYYYYYYYooYYYoo",
+                "oooBBBBSSYYYYYYYYYYYYYYYYYo",
+                "..oBBYYYYYYYYYYYYYYYYYYYYy.",
+                "..ooYYYYYYYYYYYYYYYYYYYoo..",
+                "....oYYYYYYYYYYYYYYyooo....",
+                "......oYYYffoYYYofffo......",
+                ".......oooffoYYo.offo......",
+                "..........oo.oo...oo.......",
+            ],
+            [
+                ".........o....o............",
+                ".....o...oBo..oBo..........",
+                ".....oBooBBBoBBBoo.........",
+                "..o..oBBBBBBBBBBBBoo.......",
+                "..oBoBBBBSSBBBSSBBBBoo.....",
+                "...oBBBBBBBBBBBBBBBBBBo....",
+                ".o..oBBBBSBBBBBBooBBBBo....",
+                ".oBooBBBBBBBBBBoYYoBBSo....",
+                ".oBBBBBBSSSBBBBoYYyYYYy....",
+                "..oBBBBBBBBBBBBSYYYYYYYyo..",
+                "..oSSSSBBBBBBBBBYYYYooYYo..",
+                "ooSBBSBBBBBBBSYYYYYYooYYYoo",
+                "oBBBBBBBBSSSSYYYYYYYooYYYoo",
+                "oooBBBBSSYYYYYYYYYYYYYYYYYo",
+                "..oBBYYYYYYYYYYYYYYYYYYYYy.",
+                "..ooYYYYYYYYYYYYYYYYYYYoo..",
+                "....oYYYYYYYYYYYYYYyooo....",
+                "......oYYYffooYYYffo.......",
+                ".......oYYfo..oooffo.......",
+                "........ooo......oo........",
             ],
             [
                 "...........................",
@@ -227,9 +270,9 @@ CREATURES = {
                 ".ooBBBBSYYYYYYYYYYYYYYYYoo.",
                 "..SBBSYYYYYYYYYYYYYYYYYYyo.",
                 "..ooSYYYYYYYYYYYYYYYYYYYyo.",
-                "...oyYYyoYYYoooYYoooooooo..",
-                "....oyYYYyyo..oYYoyyo......",
-                ".....ooYyoo....oYYooo......",
+                ".....oYYYofffoYYofffo......",
+                ".....oYYo.offoYYoooo.......",
+                "......oo...oo.oo...........",
             ],
             [
                 "...........................",
@@ -254,29 +297,30 @@ CREATURES = {
                 "......ooyYYoyyyyoYooooo....",
             ],
             [
-                "...........oo..oo..........",
-                "..........oSSooSoo.........",
-                ".......oSSoSBSoSBoooo......",
-                ".....oooBBSSBBBBBBoBoo.....",
-                "....oSBBSBBBBSBBBBBBSS.....",
-                ".....oSBSSBBBSBBBSBBBo.....",
-                ".....ooBBSBBBBBBSBBBBoo....",
-                "...oooBBBBBBBBBBBBBBBBoo...",
-                "...oBBBBBBBBBBBBBBBSBBBo...",
-                "...ooBBBBBSSBBBBBBSBBBSo...",
-                "...ooBBSBBBBBBBBBBBBBBoo...",
-                "..ooBBSSBBBBBSBBBBBBBSBo...",
-                "..oBBBBBBBBBSBBBBBBSBBBo...",
-                "..ooSBBBBSBBBBBBBBBBBBSo...",
-                "....ooBBSSBBBBBBSSBBBBo....",
-                "....ooBBBBBSSBBBSSBBBoo....",
-                "....oBBBBBBBSBBBBBBSBB.....",
-                ".....oooBBSBSBSBBBSooo.....",
-                ".......oSBoSBooBooSo.......",
-                ".......oooooooooooo........",
-            ]
+                "...........................",
+                "............o..oo..........",
+                "...........oSooSoo.........",
+                "........oSSoSSoSBooo.......",
+                ".......ooBBSSBBBBBoBo......",
+                "......oBBSBBBSBBBBBBS......",
+                ".......SBSSBBSBBBSBBo......",
+                ".......oBBSBBBBBSBBBoo.....",
+                ".....ooBBBBBBBBBBBBBBoo....",
+                ".....oBBBBBBBBBBBBBSBBo....",
+                ".....ooBSBBBBBBBBBBBBoo....",
+                "....ooBSSBBBBSBBBBBBSBo....",
+                "....oBBBBBBBBBBBBBBSBBo....",
+                "....ooSBBBSBBBBBBBBBBSo....",
+                "......oBBSSBBBBBSSBBBo.....",
+                "......oBBBBBSBBBSSBBoo.....",
+                "......oBBBBBBBBBBBBSB......",
+                ".......ooBBSBBSBBBSoo......",
+                "........oSBoSooBooSo.......",
+                "........ooooooooooo........",
+            ],
         ],
-        roll=dict(walk=[0, 1], curl=[2, 3], ball=4),
+        step=0.22,
+        roll=dict(walk=[0, 1, 2, 3], curl=[4, 5], ball=6),
     ),
 }
 
@@ -287,12 +331,22 @@ import sprite as _silver  # noqa: E402
 CREATURES["silver"] = dict(palette=_silver.PALETTE, frames=[_silver.WALK_A, _silver.WALK_B])
 
 
-def get(name):
-    """Return (palette, frames, width, height) with rows padded to equal width."""
+def get(name, theme="light"):
+    """Return (palette, frames, width, height), padded and shaded for the theme."""
     c = CREATURES[name]
     w = max(len(row) for f in c["frames"] for row in f)
     h = max(len(f) for f in c["frames"])
     frames = [[row.ljust(w, ".") for row in f] + ["." * w] * (h - len(f)) for f in c["frames"]]
+    if name == "hedgehog" and theme == "dark":
+        # Lighten only exposed spine borders; keep the eye and face navy.
+        for frame in frames:
+            original = frame[:]
+            for y, row in enumerate(original[:14]):
+                for x, ch in enumerate(row):
+                    neighbors = [original[yy][xx] if 0 <= xx < w and yy >= 0 else "."
+                                 for xx, yy in ((x - 1, y), (x + 1, y), (x, y - 1))]
+                    if ch == "o" and "." in neighbors and any(v in "BS" for v in neighbors) and not any(v in "Yy" for v in neighbors):
+                        frame[y] = frame[y][:x] + "r" + frame[y][x + 1:]
     return c["palette"], frames, w, h
 
 

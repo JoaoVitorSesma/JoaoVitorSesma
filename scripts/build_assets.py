@@ -6,6 +6,7 @@ Outputs go to assets/ in English and Portuguese, light and dark, desktop and
 mobile. Data comes from scripts/data (see assets/SOURCES.md).
 """
 
+from math import pi
 from pathlib import Path
 
 import cards
@@ -338,23 +339,97 @@ def _motion(travel, walk_time, roll):
     return t, stops, spans, starts
 
 
+def _ground_runs(frame):
+    """Horizontal supports in the bottom row (including the pixel outline)."""
+    runs = []
+    for x, ch in enumerate(frame[-1]):
+        if ch != ".":
+            if runs and runs[-1][0] + runs[-1][1] == x:
+                runs[-1] = (runs[-1][0], runs[-1][1] + 1)
+            else:
+                runs.append((x, 1))
+    return runs
+
+
+def _contact_tracks(frames, roll, step, px, stops, spans, trips):
+    """Time and horizontal bounds of each planted foot, mirrored on return."""
+    tracks = []
+    width = len(frames[0][0]) * px
+    footprints = [_ground_runs(frame) for frame in frames]
+    phase_frames = {"crouch": roll["curl"][0], "curl": roll["curl"][1], "ball": roll["ball"]}
+    for (a, xa), (b, xb) in zip(stops, stops[1:]):
+        mid = (a + b) / 2
+        phase = next(p for p, intervals in spans.items() if any(lo <= mid < hi for lo, hi in intervals))
+        direction = next(d for t, d in reversed(trips) if t <= mid)
+        ticks = [a, b]
+        if phase == "walk":
+            ticks += [i * step for i in range(int(a / step) + 1, int(b / step) + 1) if i * step < b]
+        ticks.sort()
+        for start, end in zip(ticks, ticks[1:]):
+            if phase == "walk":
+                index = roll["walk"][int(((start + end) / 2) / step) % len(roll["walk"])]
+            else:
+                index = phase_frames[phase]
+            supports = footprints[index]
+            if phase == "ball":
+                # The tangent remains centered as the square sprite rotates.
+                supports = [(len(frames[index][0]) / 2 - .5, 1)]
+            for x, size in supports:
+                offset = x * px if direction > 0 else width - (x + size) * px
+                left = lambda tt: xa + (xb - xa) * (tt - a) / (b - a) + offset
+                tracks.append((start, end, left(start), left(end), size * px))
+    return tracks
+
+
+def _cell_contacts(cx, cell, tracks):
+    """Intervals when a planted support overlaps the cell, in either direction."""
+    contacts = []
+    for a, b, xa, xb, width in tracks:
+        low, high = cx - cell / 2 - width, cx + cell / 2
+        if xa == xb:
+            if low <= xa <= high:
+                contacts.append((a, b))
+            continue
+        enter = a + (low - xa) / (xb - xa) * (b - a)
+        leave = a + (high - xa) / (xb - xa) * (b - a)
+        start, end = max(a, min(enter, leave)), min(b, max(enter, leave))
+        if start < end:
+            contacts.append((start, end))
+    merged = []
+    for start, end in sorted(contacts):
+        if merged and start <= merged[-1][1] + 1e-8:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+        else:
+            merged.append((start, end))
+    return merged
+
+
 def strip(theme, mobile, mascot=None):
     """A thin band where the mascot crosses a row of contribution-style cells
     that light up under it, turning round at each end."""
     t = THEMES[theme]
     r_px = canvas(720 if mobile else 1200, mobile)
     name = mascot or MASCOT
-    pal, frames, gw, gh = creatures.get(name)
+    pal, frames, gw, gh = creatures.get(name, theme)
     roll = creatures.CREATURES[name].get("roll")
+    step = creatures.CREATURES[name].get("step", .22)
     W, walk_time = (720, 14.0) if mobile else (1200, 20.0)
     px, cell, pitch = 3, 10, 14
     sw, sh = gw * px, gh * px
     top = 8
-    cells_y = top + sh + 4
+    cells_y = top + sh + (0 if name == "hedgehog" else 4)
     H = cells_y + cell + 4
     travel = W - sw
+    if name == "hedgehog":
+        walk_time = travel / (px / step)
     fade = 2.6
     period, stops, spans, trips = _motion(travel, walk_time, roll)
+    if roll:
+        # Keep the pose clock aligned with the repeating contact/position clock.
+        gait = step * len(roll["walk"])
+        walk_time *= round(period / gait) * gait / period
+        period, stops, spans, trips = _motion(travel, walk_time, roll)
+    tracks = _contact_tracks(frames, roll, step, px, stops, spans, trips) if roll else None
 
     def pass_times(cx):
         """Moments when the mascot's centre crosses x = cx."""
@@ -378,23 +453,26 @@ def strip(theme, mobile, mascot=None):
     x0 = (W - (n * pitch - (pitch - cell))) / 2
     for i, lv in enumerate(levels):
         cx = x0 + i * pitch + cell / 2
-        flashes = pass_times(min(max(cx, sw / 2), W - sw / 2))
+        contacts = (_cell_contacts(cx, cell, tracks) if tracks is not None else
+                    [(f, f) for f in pass_times(min(max(cx, sw / 2), W - sw / 2))])
         base, hot = t["cells"][lv], t["cells"][4]
 
         def col(tt):
             best = 0.0
-            for f in flashes:
-                dt = (tt - f) % period
+            for start, end in contacts:
+                if start <= tt <= end:
+                    return hot
+                dt = (tt - end) % period
                 if dt < fade:
                     best = max(best, 1 - dt / fade)
             return _mix(base, hot, best)
 
         marks = {0.0, period}
-        for f in flashes:
-            for d in (-0.05, 0.0, fade):
-                marks.add(round((f + d) % period, 3))
+        for start, end in contacts:
+            for mark in (start - .01, start, end, end + fade):
+                marks.add(mark % period)
         steps = "".join(
-            f"{m / period * 100:.2f}%{{fill:{col(m if m < period else 0)}}}" for m in sorted(marks)
+            f"{m / period * 100:.6f}%{{fill:{col(m if m < period else 0)}}}" for m in sorted(marks)
         )
         css.append(f"@keyframes c{i}{{{steps}}}.c{i}{{animation:c{i} {period}s linear infinite}}")
         rects.append(
@@ -407,17 +485,24 @@ def strip(theme, mobile, mascot=None):
     css.append(
         f".walk{{transform:translate({rest_x}px,{top}px);animation:walk {period}s linear infinite}}"
         f"@keyframes walk{{{walk_kf}}}"
-        ".flip{transform-box:fill-box;transform-origin:center;"
+        f".flip{{transform-origin:{sw / 2}px {sh / 2}px;"
         f"animation:flip {period}s steps(1) infinite}}"
         "@keyframes flip{"
         + "".join(f"{t0 / period * 100:.3f}%{{transform:scaleX({d})}}" for t0, d in trips)
         + f"100%{{transform:scaleX({trips[-1][1]})}}}}"
-        ".fa{animation:fa .44s steps(1) infinite}.fb{opacity:0;animation:fb .44s steps(1) infinite}"
-        "@keyframes fa{0%{opacity:1}50%{opacity:0}}@keyframes fb{0%{opacity:0}50%{opacity:1}}"
     )
     rf = lambda k: creatures.frame_rects(pal, frames[k], px)
+    walk_frames = roll["walk"] if roll else [0, 1]
+    walking = []
+    for i, frame in enumerate(walk_frames):
+        keyframes = "".join(f"{j / len(walk_frames) * 100:g}%{{opacity:{int(i == j)}}}"
+                            for j in range(len(walk_frames)))
+        css.append(f".wf{i}{{opacity:{int(i == 0)};animation:wf{i} {step * len(walk_frames):g}s steps(1) infinite}}"
+                   f"@keyframes wf{i}{{{keyframes}100%{{opacity:{int(i == 0)}}}}}")
+        walking.append(f'<g class="wf{i}">{rf(frame)}</g>')
+    walking = "".join(walking)
     if not roll:
-        body = f'<g class="fa">{rf(0)}</g><g class="fb">{rf(1)}</g>'
+        body = walking
     else:
         # which pose is visible when: crouch/curl split their phases in two
         groups = spans
@@ -446,12 +531,14 @@ def strip(theme, mobile, mascot=None):
         css.append(vis("gc", groups["crouch"], False))
         css.append(vis("gu", groups["curl"], False))
         css.append(vis("gb", groups["ball"], False))
-        css.append(".spin{transform-box:fill-box;transform-origin:center;animation:spin .5s steps(4) infinite}"
+        ball = frames[roll["ball"]]
+        diameter = sum(any(ch != "." for ch in row) for row in ball) * px
+        spin_time = pi * diameter / (travel / walk_time * 3)
+        css.append(f".spin{{transform-box:fill-box;transform-origin:center;animation:spin {spin_time:g}s steps(4) infinite}}"
                    "@keyframes spin{to{transform:rotate(360deg)}}")
-        w0, w1 = roll["walk"]
         c0, c1 = roll["curl"]
         body = (
-            f'<g class="gw"><g class="fa">{rf(w0)}</g><g class="fb">{rf(w1)}</g></g>'
+            f'<g class="gw">{walking}</g>'
             f'<g class="gc">{rf(c0)}</g><g class="gu">{rf(c1)}</g>'
             f'<g class="gb"><g class="spin">{rf(roll["ball"])}</g></g>'
         )
