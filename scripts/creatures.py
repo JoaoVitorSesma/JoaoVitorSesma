@@ -319,7 +319,7 @@ CREATURES = {
                 "........ooooooooooo........",
             ],
         ],
-        step=0.22,
+        step=0.11,
         roll=dict(walk=[0, 1, 2, 3], curl=[4, 5], ball=6),
     ),
 }
