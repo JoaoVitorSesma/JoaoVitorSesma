@@ -242,7 +242,7 @@ def hero(lang, theme, mobile):
     for line in wrap(SANS, s["sub"], sub, left_w):
         sl.append(text(SANS, line, x, y, sub, "mu")[0])
         y += sub * 1.42
-    parts.append(f'<g class="tag">{"".join(sl)}</g>')
+    tag = f'<g class="tag">{"".join(sl)}</g>'
     css.append(".tag{animation:rise .7s cubic-bezier(.2,.8,.2,1) .35s both}")
     left_bottom = y - sub * 1.42 + sub * 0.4
 
@@ -255,7 +255,12 @@ def hero(lang, theme, mobile):
         _, _, ph = pipeline(t, theme, s, dx, 0, dw, r, mobile)
         y0 = max(r(2), (left_bottom - ph) / 2 + r(6))
         pp, pc, ph = pipeline(t, theme, s, dx, y0, dw, r, mobile)
-        H = max(left_bottom, y0 + ph) + r(10)
+        # Align the paragraph's last baseline with the diagram captions.
+        caption_baseline = y0 + ph - r(12) * 0.4
+        text_baseline = y - sub * 1.42
+        tag = f'<g transform="translate(0 {caption_baseline - text_baseline:.1f})">{tag}</g>'
+        H = max(caption_baseline + sub * 0.4, y0 + ph) + r(10)
+    parts.append(tag)
     parts += pp
     css += pc
     return svg(W, int(H), s["hero_title"], s["hero_desc"], "".join(parts), "".join(css))
