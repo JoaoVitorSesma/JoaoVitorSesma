@@ -11,13 +11,14 @@
   <img src="./assets/hero/hero-pt-light.svg" width="100%" alt="Do cluster às pessoas. Infraestrutura, modelos e as interfaces que as pessoas usam de fato: clusters e dados alimentam modelos como LLMs e visão computacional, que alimentam apps e dashboards, com o feedback de uso voltando para os modelos.">
 </picture>
 
-<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/now-pt-dark.svg"><img src="./assets/status/now-pt-light.svg" alt="Agora:" height="24" width="116" align="absmiddle"></picture>&nbsp; Construindo modelos de ML e deep learning com dados de ECG, com validação médica no processo.
-
-<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/exploring-pt-dark.svg"><img src="./assets/status/exploring-pt-light.svg" alt="Explorando:" height="24" width="116" align="absmiddle"></picture>&nbsp; Funcionamento interno de LLMs, visão computacional e clusters de computação.
+<p>
+<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/now-pt-dark.svg"><img src="./assets/status/now-pt-light.svg" alt="Agora:" height="32" width="116" align="absmiddle"></picture>&nbsp; Construindo modelos de ML e deep learning com dados de ECG, com validação médica no processo.<br>
+<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/exploring-pt-dark.svg"><img src="./assets/status/exploring-pt-light.svg" alt="Explorando:" height="32" width="116" align="absmiddle"></picture>&nbsp; Funcionamento interno de LLMs, visão computacional e clusters de computação.
+</p>
 
 <p>
-  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-pt-dark.svg"><img src="./assets/cta/main-pt-light.svg" alt="Fale comigo por e-mail" height="34" width="180"></picture></a>
-  <a href="#projetos"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/alt-pt-dark.svg"><img src="./assets/cta/alt-pt-light.svg" alt="Ver projetos" height="34" width="109"></picture></a>
+  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-pt-dark.svg"><img src="./assets/cta/main-pt-light.svg" alt="Fale comigo por e-mail" height="42" width="180"></picture></a>
+  <a href="#projetos"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/alt-pt-dark.svg"><img src="./assets/cta/alt-pt-light.svg" alt="Ver projetos" height="42" width="109"></picture></a>
 </p>
 
 <picture>

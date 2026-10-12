@@ -263,7 +263,11 @@ def hero(lang, theme, mobile):
     parts.append(tag)
     parts += pp
     css += pc
-    return svg(W, int(H), s["hero_title"], s["hero_desc"], "".join(parts), "".join(css))
+    # README spacing lives in the SVG because GitHub strips custom margins.
+    # Leave air below the language buttons and above the padded status rows.
+    top_pad = r(8 if mobile else 16)
+    body = f'<g transform="translate(0 {top_pad:.1f})">{"".join(parts)}</g>'
+    return svg(W, int(H + top_pad + r(14)), s["hero_title"], s["hero_desc"], body, "".join(css))
 
 
 def numbers(lang, theme, mobile):
@@ -338,7 +342,7 @@ def strip(theme, mobile, mascot=None):
     """A thin band where the mascot crosses a row of contribution-style cells
     that light up under it, turning round at each end."""
     t = THEMES[theme]
-    canvas(720 if mobile else 1200, mobile)
+    r_px = canvas(720 if mobile else 1200, mobile)
     name = mascot or MASCOT
     pal, frames, gw, gh = creatures.get(name)
     roll = creatures.CREATURES[name].get("roll")
@@ -451,11 +455,15 @@ def strip(theme, mobile, mascot=None):
             f'<g class="gc">{rf(c0)}</g><g class="gu">{rf(c1)}</g>'
             f'<g class="gb"><g class="spin">{rf(roll["ball"])}</g></g>'
         )
+    # A larger pause separates contact actions from the project divider.
+    top_pad = r_px(12)
+    content = "".join(rects) + f'<g class="walk" shape-rendering="crispEdges"><g class="flip">{body}</g></g>'
+    content = f'<g transform="translate(0 {top_pad:.1f})">{content}</g>'
     return svg(
-        W, H, "Walking mascot",
+        W, int(H + top_pad), "Walking mascot",
         "A small pixel-art hedgehog walking across a row of contribution squares, curling up and rolling along part of the way."
         if roll else "A small pixel-art creature walking across a row of contribution squares.",
-        "".join(rects) + f'<g class="walk" shape-rendering="crispEdges"><g class="flip">{body}</g></g>', "".join(css),
+        content, "".join(css),
     )
 
 

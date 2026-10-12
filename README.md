@@ -11,13 +11,14 @@
   <img src="./assets/hero/hero-en-light.svg" width="100%" alt="From the cluster to the people. Infrastructure, models and the interfaces people actually use: clusters and data feed models such as LLMs and vision, which feed apps and dashboards, with user feedback flowing back into the models.">
 </picture>
 
-<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/now-en-dark.svg"><img src="./assets/status/now-en-light.svg" alt="Now:" height="24" width="108" align="absmiddle"></picture>&nbsp; Building ML and deep learning models on ECG data, with medical validation in the loop.
-
-<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/exploring-en-dark.svg"><img src="./assets/status/exploring-en-light.svg" alt="Exploring:" height="24" width="108" align="absmiddle"></picture>&nbsp; LLM internals, computer vision and compute clusters.
+<p>
+<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/now-en-dark.svg"><img src="./assets/status/now-en-light.svg" alt="Now:" height="32" width="108" align="absmiddle"></picture>&nbsp; Building ML and deep learning models on ECG data, with medical validation in the loop.<br>
+<picture><source media="(prefers-color-scheme: dark)" srcset="./assets/status/exploring-en-dark.svg"><img src="./assets/status/exploring-en-light.svg" alt="Exploring:" height="32" width="108" align="absmiddle"></picture>&nbsp; LLM internals, computer vision and compute clusters.
+</p>
 
 <p>
-  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-en-dark.svg"><img src="./assets/cta/main-en-light.svg" alt="Get in touch. Email me" height="34" width="200"></picture></a>
-  <a href="#selected-work"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/alt-en-dark.svg"><img src="./assets/cta/alt-en-light.svg" alt="See projects" height="34" width="111"></picture></a>
+  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-en-dark.svg"><img src="./assets/cta/main-en-light.svg" alt="Get in touch. Email me" height="42" width="200"></picture></a>
+  <a href="#selected-work"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/alt-en-dark.svg"><img src="./assets/cta/alt-en-light.svg" alt="See projects" height="42" width="111"></picture></a>
 </p>
 
 <picture>
