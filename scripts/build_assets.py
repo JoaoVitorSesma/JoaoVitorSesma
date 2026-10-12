@@ -153,13 +153,16 @@ def pipeline(t, theme, s, x0, y0, w, r, mobile):
     ey = tip - ah
     ya = (apex - 0.125 * (sy + ey)) / 0.75
     d = f"M{sx:.1f} {sy:.1f} C{sx:.1f} {ya:.1f} {ex:.1f} {ya:.1f} {ex:.1f} {ey:.1f}"
+    # The small arrowhead needs a bright fill against the dark background.
+    tip_fill = st["top"] if theme == "dark" else "url(#arrow-metal)"
+    tip_edge = st["arrow"] if theme == "dark" else st["edge"]
     arc = (
         f'<path d="{d}" fill="none" stroke="{st["edge"]}" stroke-width="{r(3.6):.1f}" '
         f'stroke-linecap="round"/>'
         f'<path d="{d}" fill="none" stroke="url(#arrow-metal)" stroke-width="{r(2.6):.1f}" '
         f'stroke-linecap="round"/>'
         f'<path d="M{ex:.1f} {tip:.1f} L{ex - aw:.1f} {ey:.1f} Q{ex:.1f} {ey + ah * 0.28:.1f} {ex + aw:.1f} {ey:.1f} Z" '
-        f'fill="url(#arrow-metal)" stroke="{st["edge"]}" stroke-width="{r(0.6):.1f}" stroke-linejoin="round"/>'
+        f'fill="{tip_fill}" stroke="{tip_edge}" stroke-width="{r(0.6):.1f}" stroke-linejoin="round"/>'
     )
     lab = text(MONO, s["loop"], (sx + ex) / 2, yl, fs_arc, "feedback-label", anchor="middle")[0]
     parts.append(f'<g class="lp">{arc}{lab}</g>')
