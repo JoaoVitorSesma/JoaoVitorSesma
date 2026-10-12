@@ -21,7 +21,7 @@
 </p>
 
 <p>
-  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-pt-dark.svg"><img src="./assets/cta/main-pt-light.svg" alt="Fale comigo por e-mail" height="42" width="180"></picture></a>
+  <a href="#vamos-conversar"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-pt-dark.svg"><img src="./assets/cta/main-pt-light.svg" alt="Fale comigo: escolha como enviar um e-mail" height="42" width="125"></picture></a>
   <a href="#projetos"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/alt-pt-dark.svg"><img src="./assets/cta/alt-pt-light.svg" alt="Ver projetos" height="42" width="109"></picture></a>
 </p>
 
@@ -86,6 +86,10 @@
 
 ## Vamos conversar
 
-Quer conversar sobre **dados, IA ou saúde**? [Me mande um e-mail](mailto:jv0707204@gmail.com)
+Quer conversar sobre **dados, IA ou saúde**? Escolha como me escrever:
+
+[Gmail](https://mail.google.com/mail/?view=cm&fs=1&to=jv0707204%40gmail.com) · [Outlook Web](https://outlook.live.com/mail/deeplink/compose?to=jv0707204%40gmail.com&nlp=1) · [Aplicativo de e-mail](mailto:jv0707204@gmail.com)
+
+E-mail: `jv0707204@gmail.com`
 
 <sub>Todas as figuras desta página são desenhadas a partir dos dados dos próprios projetos por [`scripts/build_assets.py`](./scripts/build_assets.py); fontes em [`assets/SOURCES.md`](./assets/SOURCES.md). As animações param quando o sistema pede movimento reduzido. Tipografia em Atkinson Hyperlegible, desenhada pelo Braille Institute para leitores com baixa visão.</sub>
