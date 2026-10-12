@@ -162,7 +162,7 @@ CREATURES = {
     ),
     # Four compact steps, crouch, curl, and a square rolling sprite.
     "hedgehog": dict(
-        palette={'o':'#0b1024','B':'#1193e5','S':'#22657a','Y':'#fde101','y':'#c9a400','f':'#c9a400','r':'#3f7893','n':'#0b1024'},
+        palette={'o':'#0b1024','B':'#1193e5','S':'#22657a','Y':'#fde101','y':'#c9a400','f':'#c9a400','r':'#3f7893','n':'#0b1024','h':'#0b1024'},
         frames=[
             [
                 ".........o....o............",
@@ -176,7 +176,7 @@ CREATURES = {
                 ".oBBBBBBSSSBBBBoYYyYYYy....",
                 "..oBBBBBBBBBBBBSYYYYYYYyo..",
                 "..oSSSSBBBBBBBBBYYYYooYYo..",
-                "ooSBBSBBBBBBBSYYYYYYooYYYnn",
+                "ooSBBSBBBBBBBSYYYYYYooYYYnh",
                 "oBBBBBBBBSSSSYYYYYYYooYYYnn",
                 "oooBBBBSSYYYYYYYYYYYYYYYYYo",
                 "..oBBYYYYYYYYYYYYYYYYYYYYy.",
@@ -198,7 +198,7 @@ CREATURES = {
                 ".oBBBBBBSSSBBBBoYYyYYYy....",
                 "..oBBBBBBBBBBBBSYYYYYYYyo..",
                 "..oSSSSBBBBBBBBBYYYYooYYo..",
-                "ooSBBSBBBBBBBSYYYYYYooYYYnn",
+                "ooSBBSBBBBBBBSYYYYYYooYYYnh",
                 "oBBBBBBBBSSSSYYYYYYYooYYYnn",
                 "oooBBBBSSYYYYYYYYYYYYYYYYYo",
                 "..oBBYYYYYYYYYYYYYYYYYYYYy.",
@@ -220,7 +220,7 @@ CREATURES = {
                 ".oBBBBBBSSSBBBBoYYyYYYy....",
                 "..oBBBBBBBBBBBBSYYYYYYYyo..",
                 "..oSSSSBBBBBBBBBYYYYooYYo..",
-                "ooSBBSBBBBBBBSYYYYYYooYYYnn",
+                "ooSBBSBBBBBBBSYYYYYYooYYYnh",
                 "oBBBBBBBBSSSSYYYYYYYooYYYnn",
                 "oooBBBBSSYYYYYYYYYYYYYYYYYo",
                 "..oBBYYYYYYYYYYYYYYYYYYYYy.",
@@ -242,7 +242,7 @@ CREATURES = {
                 ".oBBBBBBSSSBBBBoYYyYYYy....",
                 "..oBBBBBBBBBBBBSYYYYYYYyo..",
                 "..oSSSSBBBBBBBBBYYYYooYYo..",
-                "ooSBBSBBBBBBBSYYYYYYooYYYnn",
+                "ooSBBSBBBBBBBSYYYYYYooYYYnh",
                 "oBBBBBBBBSSSSYYYYYYYooYYYnn",
                 "oooBBBBSSYYYYYYYYYYYYYYYYYo",
                 "..oBBYYYYYYYYYYYYYYYYYYYYy.",
@@ -267,7 +267,7 @@ CREATURES = {
                 "..oBBSSSBBBBBSYYYYYYYYYo...",
                 "ooBBBBBBBBBSYYYYYYYYYYYo...",
                 "oSBBBBBBBYYYYYYYYYYYYoYYo..",
-                ".ooBBBBSYYYYYYYYYYYYYYYYnn.",
+                ".ooBBBBSYYYYYYYYYYYYYYYYnh.",
                 "..SBBSYYYYYYYYYYYYYYYYYYyo.",
                 "..ooSYYYYYYYYYYYYYYYYYYYyo.",
                 ".....oYYYofffoYYofffo......",
@@ -294,7 +294,7 @@ CREATURES = {
                 "...oBBBBSSYYYYYYYYYYYYyo...",
                 "....oooSYooYYYYYYyYYYYoo...",
                 "......oYYYYyYYYyYYoyYyo....",
-                "......ooyYYoyyyyoYoonno....",
+                "......ooyYYoyyyyoYoonho....",
             ],
             [
                 "...........................",
@@ -339,7 +339,7 @@ def get(name, theme="light"):
     h = max(len(f) for f in c["frames"])
     frames = [[row.ljust(w, ".") for row in f] + ["." * w] * (h - len(f)) for f in c["frames"]]
     if name == "hedgehog" and theme == "dark":
-        palette = {**palette, "n": "#71839b"}
+        palette = {**palette, "n": "#29384c", "h": "#53677e"}
         # Lighten only exposed spine borders; keep the eye and face navy.
         for frame in frames:
             original = frame[:]
