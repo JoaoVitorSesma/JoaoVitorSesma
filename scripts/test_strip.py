@@ -46,10 +46,14 @@ class HedgehogStripTests(unittest.TestCase):
             self.assertAlmostEqual(right[2] + left[2] + right[4], 93)
 
     def test_dark_spine_rim_keeps_face_and_eye(self):
-        _, light, _, _ = creatures.get('hedgehog', 'light')
-        _, dark, _, _ = creatures.get('hedgehog', 'dark')
-        self.assertNotEqual(light[0][:8], dark[0][:8])
-        self.assertEqual([row[15:] for row in light[0][8:]], [row[15:] for row in dark[0][8:]])
+        light_palette, light, _, _ = creatures.get('hedgehog', 'light')
+        dark_palette, dark, _, _ = creatures.get('hedgehog', 'dark')
+        self.assertEqual(light, dark)
+        self.assertEqual(light_palette['r'], light_palette['o'])
+        self.assertNotEqual(dark_palette['r'], dark_palette['o'])
+        self.assertEqual(light_palette['q'], dark_palette['q'])
+        self.assertEqual(dark_palette['q'], dark_palette['o'])
+        self.assertTrue(all(any('q' in row for row in frame) for frame in light))
         self.assertEqual(light[0][10][20:22], 'oo')
 
     def test_dark_nose_is_visible_without_changing_shape(self):
