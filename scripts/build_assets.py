@@ -27,7 +27,7 @@ STR = {
               ("now", "building ML and deep learning models for medical diagnosis"),
               ("learning", "LLMs (building and using them) and computer vision")],
         stats=[("37,621", "patients modeled"), ("55,647", "records visualized"), ("96", "automated checks a day")],
-        cta_main="Get in touch · Email me",
+        cta_main="Get in touch",
         cta_alt="See projects",
         # Hero: the sidebar already says who I am, so the hero only makes the claim.
         kicker="FULL-STACK AI",
@@ -50,7 +50,7 @@ STR = {
               ("agora", "construindo modelos de ML e deep learning para diagnóstico médico"),
               ("aprendendo", "LLMs (construindo e usando) e visão computacional")],
         stats=[("37.621", "pacientes modelados"), ("55.647", "registros visualizados"), ("96", "verificações automáticas por dia")],
-        cta_main="Fale comigo · E-mail",
+        cta_main="Fale comigo",
         cta_alt="Ver projetos",
         kicker="IA FULL-STACK",
         head=[[("Do cluster", "fg")], [("às ", "fg"), ("pessoas.", "or")]],

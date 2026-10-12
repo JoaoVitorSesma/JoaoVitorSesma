@@ -21,7 +21,7 @@
 </p>
 
 <p>
-  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-en-dark.svg"><img src="./assets/cta/main-en-light.svg" alt="Get in touch. Email me" height="42" width="200"></picture></a>
+  <a href="#lets-talk"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-en-dark.svg"><img src="./assets/cta/main-en-light.svg" alt="Get in touch: choose how to email me" height="42" width="126"></picture></a>
   <a href="#selected-work"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/alt-en-dark.svg"><img src="./assets/cta/alt-en-light.svg" alt="See projects" height="42" width="111"></picture></a>
 </p>
 
@@ -86,6 +86,10 @@
 
 ## Let's talk
 
-Want to talk about **data, AI or healthcare**? [Send me an email](mailto:jv0707204@gmail.com)
+Want to talk about **data, AI or healthcare**? Choose how to email me:
+
+[Gmail](https://mail.google.com/mail/?view=cm&fs=1&to=jv0707204%40gmail.com) · [Outlook Web](https://outlook.live.com/mail/deeplink/compose?to=jv0707204%40gmail.com&nlp=1) · [Default email app](mailto:jv0707204@gmail.com)
+
+Email: `jv0707204@gmail.com`
 
 <sub>Every figure on this page is drawn from the projects' own data by [`scripts/build_assets.py`](./scripts/build_assets.py); sources in [`assets/SOURCES.md`](./assets/SOURCES.md). Animations stop when your system asks for reduced motion. Set in Atkinson Hyperlegible, designed by the Braille Institute for readers with low vision.</sub>
