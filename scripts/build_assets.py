@@ -100,8 +100,8 @@ ICON_DIR = Path(__file__).parent / "icons"
 ICON_NAMES = ("infra", "models", "ui")
 ICON_H = {"infra": 1.24, "models": 0.93, "ui": 1.12}  # height, in units of 0.6 column
 ICON_STYLE = {
-    "light": dict(arrow="#1a7f37", glow=0.0),
-    "dark": dict(arrow="#9198a1", glow=0.0),
+    "light": dict(arrow="#54758a", top="#a5becb", bottom="#36566a", edge="#36566a", label="#426779", glow=0.0),
+    "dark": dict(arrow="#86a5b9", top="#c8dde7", bottom="#3c596f", edge="#3c596f", label="#a0b8c7", glow=0.0),
 }
 
 
@@ -113,15 +113,16 @@ def _icon(name, theme):
     return base64.b64encode(path.read_bytes()).decode(), w, h
 
 
-def _arrow(fill, x1, x2, y, sc):
+def _arrow(fill, edge, x1, x2, y, sc):
     h, hl, hw = 3 * sc, 13 * sc, 9 * sc
     return (f'<path d="M{x1:.1f} {y - h:.1f} H{x2 - hl:.1f} V{y - hw:.1f} L{x2:.1f} {y:.1f} '
-            f'L{x2 - hl:.1f} {y + hw:.1f} V{y + h:.1f} H{x1:.1f} Z" fill="{fill}"/>')
+            f'L{x2 - hl:.1f} {y + hw:.1f} V{y + h:.1f} H{x1:.1f} Z" fill="{fill}" '
+            f'stroke="{edge}" stroke-width="{sc * 0.7:.1f}" stroke-linejoin="round"/>')
 
 
 def pipeline(t, theme, s, x0, y0, w, r, mobile):
     """Infrastructure -> models -> interfaces, with user feedback flowing back."""
-    st, orange = ICON_STYLE[theme], ORANGE[theme]
+    st = ICON_STYLE[theme]
     col = w / 3
     cxs = [x0 + col * (i + 0.5) for i in range(3)]
     icons = [_icon(n, theme) for n in ICON_NAMES]
@@ -129,6 +130,12 @@ def pipeline(t, theme, s, x0, y0, w, r, mobile):
     body_h = [col * 0.60 * ICON_H[n] for n in ICON_NAMES]
     fs_arc, fs_name, fs_cap = r(12), r(14), r(12)
     parts, css = [], []
+    # A shared cool metal finish ties the connectors to the rendered icons.
+    parts.append('<defs><linearGradient id="arrow-metal" x1="0" y1="0" x2="0" y2="1">'
+                 f'<stop offset="0" stop-color="{st["top"]}"/>'
+                 f'<stop offset=".45" stop-color="{st["arrow"]}"/>'
+                 f'<stop offset="1" stop-color="{st["bottom"]}"/>'
+                 '</linearGradient></defs>')
 
     # vertical rhythm: label, arc, icons, names
     yl = y0 + fs_arc
@@ -147,21 +154,17 @@ def pipeline(t, theme, s, x0, y0, w, r, mobile):
     ya = (apex - 0.125 * (sy + ey)) / 0.75
     d = f"M{sx:.1f} {sy:.1f} C{sx:.1f} {ya:.1f} {ex:.1f} {ya:.1f} {ex:.1f} {ey:.1f}"
     arc = (
-        # pathLength 101 with 3/2 dashes: twenty whole dashes plus one, so both
-        # ends of the line are drawn and it meets the arrowhead without a gap
-        f'<path d="{d}" pathLength="101" fill="none" stroke="{orange}" stroke-width="{r(1.5):.1f}" '
-        f'stroke-dasharray="3 2" stroke-linecap="round"/>'
+        f'<path d="{d}" fill="none" stroke="{st["edge"]}" stroke-width="{r(3.6):.1f}" '
+        f'stroke-linecap="round"/>'
+        f'<path d="{d}" fill="none" stroke="url(#arrow-metal)" stroke-width="{r(2.6):.1f}" '
+        f'stroke-linecap="round"/>'
         f'<path d="M{ex:.1f} {tip:.1f} L{ex - aw:.1f} {ey:.1f} Q{ex:.1f} {ey + ah * 0.28:.1f} {ex + aw:.1f} {ey:.1f} Z" '
-        f'fill="{orange}"/>'
-        f'<circle class="pk" r="{r(2.6):.1f}" fill="{orange}"/>'
+        f'fill="url(#arrow-metal)" stroke="{st["edge"]}" stroke-width="{r(0.6):.1f}" stroke-linejoin="round"/>'
     )
-    lab = text(MONO, s["loop"], (sx + ex) / 2, yl, fs_arc, "or", anchor="middle")[0]
+    lab = text(MONO, s["loop"], (sx + ex) / 2, yl, fs_arc, "feedback-label", anchor="middle")[0]
     parts.append(f'<g class="lp">{arc}{lab}</g>')
     css.append(".lp{animation:fade .6s ease 1.3s both}"
-               f".pk{{opacity:0;offset-path:path('{d}');offset-rotate:0deg;"
-               "animation:travel 2.6s cubic-bezier(.45,0,.55,1) 2s infinite}"
-               "@keyframes travel{0%{offset-distance:0%;opacity:0}15%,85%{opacity:1}"
-               "100%{offset-distance:100%;opacity:0}}")
+               f".feedback-label{{fill:{st['label']}}}")
 
     # soft glow behind every icon
     parts.append(f'<radialGradient id="hglow"><stop offset="0" stop-color="{t["gr"]}" stop-opacity="{st["glow"]}"/>'
@@ -179,7 +182,7 @@ def pipeline(t, theme, s, x0, y0, w, r, mobile):
         css.append(f".ic{i}{{animation:rise .6s cubic-bezier(.2,.8,.2,1) {0.5 + 0.2 * i:.1f}s both}}")
 
     for i in range(2):
-        a = _arrow(st["arrow"], cxs[i] + col * 0.36, cxs[i + 1] - col * 0.36, cy, col * 0.0055)
+        a = _arrow("url(#arrow-metal)", st["edge"], cxs[i] + col * 0.36, cxs[i + 1] - col * 0.36, cy, col * 0.0055)
         parts.append(f'<g class="aw{i}">{a}</g>')
         css.append(f".aw{i}{{animation:fade .4s ease {0.8 + 0.2 * i:.1f}s both}}")
 
