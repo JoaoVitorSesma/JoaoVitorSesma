@@ -10,7 +10,7 @@ class HedgehogStripTests(unittest.TestCase):
     def test_four_short_steps(self):
         hedgehog = creatures.CREATURES['hedgehog']
         self.assertEqual(len(hedgehog['roll']['walk']), 4)
-        self.assertEqual(hedgehog['step'], .22)
+        self.assertEqual(hedgehog['step'], .11)
         _, frames, width, height = creatures.get('hedgehog')
         self.assertEqual((width, height), (27, 20))
         self.assertEqual(len({tuple(frames[i]) for i in hedgehog['roll']['walk']}), 4)
@@ -71,13 +71,27 @@ class HedgehogStripTests(unittest.TestCase):
         for theme in assets.THEMES:
             for mobile in (False, True):
                 svg = assets.strip(theme, mobile)
-                self.assertIn('animation:wf3 0.88s', svg)
+                gait = float(re.search(r'animation:wf3 ([\d.]+)s', svg)[1])
+                self.assertAlmostEqual(gait, .44, delta=.002)
                 self.assertIn('prefers-reduced-motion', svg)
                 self.assertIn('y="68" width="10"', svg)
                 period = float(re.search(r'animation:walk ([\d.]+)s', svg)[1])
-                self.assertAlmostEqual(period / .88, round(period / .88))
+                self.assertAlmostEqual(period / gait, round(period / gait), delta=.002)
             for mascot in creatures.CREATURES:
                 self.assertIn('<svg', assets.strip(theme, False, mascot))
+
+    def test_original_crossing_time(self):
+        for mobile, expected in ((False, 20), (True, 14)):
+            svg = assets.strip('light', mobile)
+            period = float(re.search(r'animation:walk ([\d.]+)s', svg)[1])
+            keyframes = re.search(r'@keyframes walk\{(.*?)\}\.flip', svg)[1]
+            stops = [(float(t) * period / 100, float(x)) for t, x in
+                     re.findall(r'([\d.]+)%\{transform:translate\(([\d.]+)px', keyframes)]
+            travel = (720 if mobile else 1200) - 81
+            crossings = [b-a for (a, xa), (b, xb) in zip(stops, stops[1:]) if abs(xb-xa) == travel]
+            self.assertEqual(len(crossings), 2)
+            for duration in crossings:
+                self.assertAlmostEqual(duration, expected, delta=.002)
 
     def test_roll_keeps_square_bounds_on_floor(self):
         hedgehog = creatures.CREATURES['hedgehog']
