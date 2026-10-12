@@ -99,18 +99,42 @@ class HedgehogStripTests(unittest.TestCase):
             for mascot in creatures.CREATURES:
                 self.assertIn('<svg', assets.strip(theme, False, mascot))
 
-    def test_original_crossing_time(self):
+    def test_walking_speed_is_preserved_while_stopping_at_edges(self):
         for mobile, expected in ((False, 20), (True, 14)):
-            svg = assets.strip('light', mobile)
-            period = float(re.search(r'animation:walk ([\d.]+)s', svg)[1])
-            keyframes = re.search(r'@keyframes walk\{(.*?)\}\.flip', svg)[1]
-            stops = [(float(t) * period / 100, float(x)) for t, x in
-                     re.findall(r'([\d.]+)%\{transform:translate\(([\d.]+)px', keyframes)]
             travel = (720 if mobile else 1200) - 81
-            crossings = [b-a for (a, xa), (b, xb) in zip(stops, stops[1:]) if abs(xb-xa) == travel]
-            self.assertEqual(len(crossings), 2)
-            for duration in crossings:
-                self.assertAlmostEqual(duration, expected, delta=.002)
+            roll = creatures.CREATURES['hedgehog']['roll']
+            _, stops, spans, _ = assets._motion(travel, expected, roll)
+            for (a, xa), (b, xb) in zip(stops, stops[1:]):
+                if any(lo <= (a+b)/2 < hi for lo, hi in spans['walk']):
+                    self.assertAlmostEqual(abs(xb-xa)/(b-a), travel/expected)
+
+    def test_both_collision_types_recover_before_turning_and_loop_continuously(self):
+        roll = creatures.CREATURES['hedgehog']['roll']
+        period, stops, spans, trips = assets._motion(1119, 20, roll)
+        self.assertEqual(len(spans['walk_impact']), 2)
+        self.assertEqual(len(spans['ball_impact']), 2)
+        self.assertEqual(len(spans['shake']), 4)
+        self.assertAlmostEqual(stops[0][1], stops[-1][1])
+        self.assertEqual(stops[-1][0], period)
+        for a, b in spans['shake']:
+            self.assertAlmostEqual(b-a, .75)
+            self.assertFalse(any(a < turn < b for turn, _ in trips))
+
+    def test_airborne_rebound_does_not_light_cells(self):
+        _, frames, _, _ = creatures.get('hedgehog')
+        roll = creatures.CREATURES['hedgehog']['roll']
+        tracks = assets._contact_tracks(frames, roll, .11, 3,
+                                       [(0, 1119), (.7, 1029)],
+                                       {'ball_recoil': [(0, .7)]}, [(0, 1)])
+        self.assertEqual(tracks, [])
+
+    def test_recovery_keeps_original_side_profile_and_planted_feet(self):
+        _, frames, _, _ = creatures.get('hedgehog')
+        poses = creatures.hedgehog_recovery()
+        self.assertEqual(poses['blink'][17:], frames[0][17:])
+        self.assertEqual(poses['blink'][10][25:27], frames[0][10][25:27])
+        for frame in poses.values():
+            self.assertEqual(sum(row.count('h') for row in frame), 1)
 
     def test_roll_keeps_square_bounds_on_floor(self):
         hedgehog = creatures.CREATURES['hedgehog']

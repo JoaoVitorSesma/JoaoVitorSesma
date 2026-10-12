@@ -345,6 +345,27 @@ def get(name, theme="light"):
     return palette, frames, w, h
 
 
+def hedgehog_recovery():
+    """Blink and shake the existing side-profile head; keep the feet planted."""
+    _, frames, _, _ = get("hedgehog")
+    blink = [list(row) for row in frames[0]]
+    for y in range(9, 12):
+        blink[y][20:22] = "YY"
+    blink[10][20:23] = "ooo"
+    poses = {"blink": ["".join(row) for row in blink]}
+    for name, offset in (("left", -1), ("right", 1)):
+        body = [["."] + row[:] + ["."] for row in blink]
+        for y in range(6, 16):
+            body[y][18:28] = "." * 10
+            if y >= 9:
+                body[y][18:22] = "YYYY"
+            for x in range(17, 27):
+                if blink[y][x] != ".":
+                    body[y][x + 1 + offset] = blink[y][x]
+        poses[name] = ["".join(row) for row in body]
+    return poses
+
+
 def frame_rects(palette, frame, px, ox=0.0, oy=0.0):
     """SVG <rect>s for one frame, merging horizontal runs of a colour."""
     out = []
