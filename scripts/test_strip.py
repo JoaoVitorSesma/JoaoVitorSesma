@@ -121,9 +121,34 @@ class HedgehogStripTests(unittest.TestCase):
             self.assertEqual(sorted(b for _, r, b in trips if r == rolls), [False, True])
         period, stops, spans, starts = assets._motion(1119, 20, 12)
         # Quiet turns stay on the edge: no impact, no recoil, no head shake.
-        self.assertEqual(len(starts), 4)
-        self.assertEqual(len(spans['blink']), 4)
+        self.assertEqual(len(starts), len(assets.SCRIPT) + 2)  # plus a glance back and forth
+        self.assertEqual(len(spans['blink']), 7)
         self.assertEqual(len(spans['ball_slow']), 1)
+        self.assertEqual(len(spans['walk_impact']) + len(spans['ball_impact']), 2)
+
+    def test_stops_halfway_and_glances_back_before_carrying_on(self):
+        travel = 1119
+        period, stops, spans, starts = assets._motion(travel, 20, 12)
+        halfway = travel * .55
+        stay = [(a, b) for (a, xa), (b, xb) in zip(stops, stops[1:]) if xa == xb == halfway]
+        self.assertTrue(stay)
+        a, b = stay[0][0], stay[-1][1]
+        # Faces back once while standing there, then forward again, in place.
+        turns = [(t, d) for t, d in starts if a <= t < b]
+        self.assertEqual([d for _, d in turns], [-1, +1])
+        self.assertAlmostEqual(turns[1][0] - turns[0][0], .9)
+        self.assertEqual(len([s for s in spans['blink'] if a <= s[0] < b]), 2)
+        # Then it walks on to the right edge without hitting it.
+        after = [x for t, x in stops if t > b]
+        self.assertIn(float(travel), after)
+        self.assertAlmostEqual(stops[0][1], stops[-1][1])
+
+    def test_tired_after_rolling_to_a_stop(self):
+        period, stops, spans, _ = assets._motion(1119, 20, 12)
+        rest = spans['ball_slow'][0][1]
+        blinks = [s for s in spans['blink'] if s[0] > rest]
+        self.assertEqual(len(blinks), 2)
+        self.assertAlmostEqual(period - rest, .75 + .6 + .15 + .25 + .15 + .4)
 
     def test_rolling_turn_brakes_before_resting_at_the_edge(self):
         period, stops, spans, _ = assets._motion(1119, 20, 12)

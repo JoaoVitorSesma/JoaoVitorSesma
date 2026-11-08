@@ -371,18 +371,26 @@ RECOVER = (Hold("rest", .55), Hold("shake", .75), Hold("rest", .15),
 BALL_BUMP = Edge((Hold("ball_impact", .20), Recoil("ball_recoil", .70, 90),
                   *UNCURL, *RECOVER), touch="ball")
 WALK_BUMP = Edge((Hold("walk_impact", .25), Recoil("walk_recoil", .50, 24), *RECOVER))
-BALL_TURN = Edge((*UNCURL, *TURN))
+# Out of breath after a roll: a longer rest and two blinks before turning.
+TIRED = (Hold("rest", .6), Hold("blink", .15), Hold("rest", .25),
+         Hold("blink", .15), Hold("rest", .4))
+
+BALL_TURN = Edge((*UNCURL, *TIRED))
 WALK_TURN = Edge(TURN)
+# Halfway across: blink, glance back over the shoulder, blink, carry on.
+LOOK_BACK = Edge((Hold("rest", .4), Hold("blink", .15), Look(.9),
+                  Hold("rest", .3), Hold("blink", .15), Hold("rest", .3)))
 
 # Every edge sees one bump and one quiet turn, and both gaits do each once.
 SCRIPT = (
     Trip(+1, ROLL, BALL_BUMP),
     Trip(-1, WALK, WALK_BUMP),
+    Trip(+1, WALK, LOOK_BACK, to=.55),
     Trip(+1, WALK, WALK_TURN),
     Trip(-1, ROLL_STOP, BALL_TURN),
 )
-# The same routine as (direction, rolls, bumps).
-TRIPS = [(trip.direction, trip.leg.rolls, trip.edge.bumps) for trip in SCRIPT]
+# The trips that reach an edge, as (direction, rolls, bumps).
+TRIPS = [(trip.direction, trip.leg.rolls, trip.edge.bumps) for trip in SCRIPT if trip.to is None]
 
 
 class Pose(NamedTuple):
@@ -727,7 +735,7 @@ def strip(theme, mobile):
     content = f'<g transform="translate(0 {top_pad:.1f})">{content}</g>'
     return svg(
         W, int(H + top_pad), "Walking mascot",
-        "A pixel-art hedgehog alternates walking and rolling; sometimes it bumps into the edge, recoils and shakes its head, other times it just turns around.",
+        "A pixel-art hedgehog alternates walking and rolling; sometimes it bumps into the edge, recoils and shakes its head, other times it just turns around, and once it stops halfway to glance back.",
         content, "".join(css),
     )
 

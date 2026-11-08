@@ -29,7 +29,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/strip/walk-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/strip/walk-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/strip/walk-dark.svg">
-  <img src="./assets/strip/walk-light.svg" width="100%" alt="Um ouriço em pixel art alterna caminhada e rolagem; às vezes esbarra na borda, recua e chacoalha a cabeça, outras vezes só dá meia-volta.">
+  <img src="./assets/strip/walk-light.svg" width="100%" alt="Um ouriço em pixel art alterna caminhada e rolagem; às vezes esbarra na borda, recua e chacoalha a cabeça, outras vezes só dá meia-volta, e uma vez para no meio do caminho para olhar para trás.">
 </picture>
 
 ## Projetos
