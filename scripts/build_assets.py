@@ -304,9 +304,9 @@ def _mix(a, b, k):
 
 
 # The hedgehog's routine is a script: a list of trips, each a leg that crosses
-# the strip followed by what happens at the edge. _motion() only plays it back,
-# so a new behaviour is a new entry here, not new code. Each phase name is a
-# pose that strip() knows how to draw.
+# the strip (or stops part way) followed by what happens where it stops.
+# _motion() only plays it back, so a new behaviour is a new entry here, not new
+# code. Each phase name is drawn by one entry of POSES.
 
 
 class Leg(NamedTuple):
@@ -331,9 +331,15 @@ class Recoil(NamedTuple):
     distance: float
 
 
+class Look(NamedTuple):
+    """Turn to look back without moving, then face the way of travel again."""
+    seconds: float
+    phase: str = "rest"
+
+
 class Edge(NamedTuple):
-    """What happens at the edge. touch="ball" stops where the ball itself, not
-    the sprite's box, meets the edge."""
+    """What happens where the leg stops. touch="ball" stops where the ball
+    itself, not the sprite's box, meets the edge."""
     beats: tuple
     touch: str = "body"
 
@@ -346,6 +352,7 @@ class Trip(NamedTuple):
     direction: int  # +1 right, -1 left
     leg: Leg
     edge: Edge
+    to: float = None  # stop part way, as a share of the strip from the left; None goes to the edge
 
 
 WALK = Leg((("walk", 1.0, 1.0),))
@@ -422,6 +429,8 @@ def _pose(phase):
 
 def _edge_x(trip, travel, ball_margin):
     """Where the trip's leg stops."""
+    if trip.to is not None:
+        return travel * trip.to
     edge = travel if trip.direction > 0 else 0.0
     if trip.edge.touch == "ball":
         edge += trip.direction * ball_margin
@@ -470,6 +479,10 @@ def _motion(travel, walk_time, ball_margin=0, script=SCRIPT):
         for beat in trip.edge.beats:
             if isinstance(beat, Recoil):
                 advance(beat.phase, beat.seconds, x - direction * beat.distance)
+            elif isinstance(beat, Look):
+                starts.append((t, -direction))
+                advance(beat.phase, beat.seconds, x)
+                starts.append((t, direction))
             else:
                 advance(beat.phase, beat.seconds, x)
     return t, stops, spans, starts
