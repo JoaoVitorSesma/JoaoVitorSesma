@@ -14,7 +14,7 @@ from typing import NamedTuple
 
 import cards
 import hedgehog
-from svgkit import MIN_PX, MONO, MONO_MD, SANS, SANS_BD, THEMES, base_css, canvas, scale, smallest, svg, text, wrap
+from svgkit import DISPLAY, MIN_PX, MONO, MONO_MD, SANS, SANS_BD, THEMES, base_css, canvas, scale, smallest, svg, text, wrap
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "assets"
@@ -285,7 +285,8 @@ def numbers(lang, theme, mobile):
     W = 720 if mobile else 1200
     r = canvas(W, mobile)
     pad, gap = (r(12), r(10)) if mobile else (r(22), r(20))
-    eyebrow, num, lab = r(12), r(22), r(12.5)
+    # Smaller figures on phones, where three columns share 293 px.
+    eyebrow, num, lab = r(12), r(19 if mobile else 22), r(12.5)
     colw = (W - 2 * pad) / 3
     sw = r(1)
     top = pad + eyebrow
@@ -951,7 +952,7 @@ def status_notes(lang, theme, mobile):
     Padding is part of the SVG because GitHub strips custom README margins.
     """
     t, colors = THEMES[theme], STATUS_COLORS[theme]
-    width = 340 if mobile else 795
+    width = DISPLAY[mobile]
     scale(1)
     col = width if mobile else (width - 48) / 2
     parts, bottoms = [], []
@@ -962,7 +963,7 @@ def status_notes(lang, theme, mobile):
         parts.append(f'<g transform="translate({x} {y + 4})">{_status_instrument(kind, colors)}</g>')
         parts.append(text(MONO_MD, STATUS[lang][kind], x + 35, y + 21, 12, "",
                           tracking=0.7, extra=f' fill="{colors[kind]}"')[0])
-        lines = wrap(SANS, STATUS_COPY[lang][kind], 15, col - 35)
+        lines = wrap(SANS, STATUS_COPY[lang][kind], 15, col - 35 - (10 if mobile else 0))
         for j, line in enumerate(lines):
             parts.append(text(SANS, line, x + 35, y + 52 + j * 23, 15, "fg")[0])
         bottom = y + 52 + (len(lines) - 1) * 23 + 10
