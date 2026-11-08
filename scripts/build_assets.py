@@ -6,6 +6,7 @@ Outputs go to assets/ in English and Portuguese, light and dark, desktop and
 mobile. Data comes from scripts/data (see assets/SOURCES.md).
 """
 
+from functools import partial
 from math import pi
 from pathlib import Path
 from typing import NamedTuple
@@ -865,6 +866,7 @@ def cta_pill(label, primary, theme):
 
 def lang_globe(theme):
     t, k = THEMES[theme], 2
+    scale(k)  # no text, but start a fresh smallest-text record
     s, r = 30 * k, 7.5 * k
     c = s / 2
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="22" height="30" viewBox="{c - 11 * k} 0 {22 * k} {s}" '
@@ -874,10 +876,40 @@ def lang_globe(theme):
             f'<path d="M{c - r} {c} H{c + r}"/></g></svg>')
 
 
+def outputs():
+    """Every generated asset as (path, build), in build order. build() returns the SVG."""
+    for theme in THEMES:
+        for mobile in (False, True):
+            yield OUT / "strip" / f"walk-{theme}{'-mobile' if mobile else ''}.svg", partial(strip, theme, mobile)
+    for lang in STR:
+        for theme in THEMES:
+            for mobile in (False, True):
+                sfx = f"{lang}-{theme}{'-mobile' if mobile else ''}.svg"
+                for kind, build in cards.BUILDERS.items():
+                    yield OUT / "work" / f"{kind}-{sfx}", partial(build, lang, theme, mobile)
+                yield OUT / "hero" / f"hero-{sfx}", partial(hero, lang, theme, mobile)
+                yield OUT / "work" / f"numbers-{sfx}", partial(numbers, lang, theme, mobile)
+
+    for theme in THEMES:
+        yield OUT / "lang" / f"globe-{theme}.svg", partial(lang_globe, theme)
+        for lang in LANGS:
+            for active in (True, False):
+                yield (OUT / "lang" / f"{lang}-{'active' if active else 'idle'}-{theme}.svg",
+                       partial(lang_pill, lang, active, theme))
+
+    for lang in STR:
+        for theme in THEMES:
+            yield OUT / "cta" / f"main-{lang}-{theme}.svg", partial(cta_pill, STR[lang]["cta_main"], True, theme)
+            yield OUT / "cta" / f"alt-{lang}-{theme}.svg", partial(cta_pill, STR[lang]["cta_alt"], False, theme)
+            for mobile in (False, True):
+                suffix = "-mobile" if mobile else ""
+                yield OUT / "status" / f"notes-{lang}-{theme}{suffix}.svg", partial(status_notes, lang, theme, mobile)
+
+
 def main():
     report, failures = [], []
-
-    def write(path, content):
+    for path, build in outputs():
+        content = build()
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content, encoding="utf-8")
         size, sample = smallest()
@@ -885,32 +917,6 @@ def main():
             report.append((size, path.name, sample))
             if size < MIN_PX - 0.01:
                 failures.append(path.name)
-
-    for theme in THEMES:
-        for mobile in (False, True):
-            write(OUT / "strip" / f"walk-{theme}{'-mobile' if mobile else ''}.svg", strip(theme, mobile))
-    for lang in STR:
-        for theme in THEMES:
-            for mobile in (False, True):
-                sfx = f"{lang}-{theme}{'-mobile' if mobile else ''}.svg"
-                for kind, build in cards.BUILDERS.items():
-                    write(OUT / "work" / f"{kind}-{sfx}", build(lang, theme, mobile))
-                write(OUT / "hero" / f"hero-{sfx}", hero(lang, theme, mobile))
-                write(OUT / "work" / f"numbers-{sfx}", numbers(lang, theme, mobile))
-
-    for theme in THEMES:
-        write(OUT / "lang" / f"globe-{theme}.svg", lang_globe(theme))
-        for lang in LANGS:
-            for active in (True, False):
-                write(OUT / "lang" / f"{lang}-{'active' if active else 'idle'}-{theme}.svg", lang_pill(lang, active, theme))
-
-    for lang in STR:
-        for theme in THEMES:
-            write(OUT / "cta" / f"main-{lang}-{theme}.svg", cta_pill(STR[lang]["cta_main"], True, theme))
-            write(OUT / "cta" / f"alt-{lang}-{theme}.svg", cta_pill(STR[lang]["cta_alt"], False, theme))
-            for mobile in (False, True):
-                suffix = "-mobile" if mobile else ""
-                write(OUT / "status" / f"notes-{lang}-{theme}{suffix}.svg", status_notes(lang, theme, mobile))
 
     print("smallest text as rendered on GitHub (px):")
     for size, name, sample in sorted(report)[:6]:
