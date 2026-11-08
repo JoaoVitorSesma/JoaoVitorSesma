@@ -90,10 +90,10 @@ Disciplina de Flutter · Dart · [Repositório](https://github.com/JoaoVitorSesm
 Quer conversar sobre **dados, IA ou saúde**? Mande um e-mail ou me encontre no LinkedIn:
 
 <p>
-  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=jv0707204%40gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/gmail-dark.svg"><img src="./assets/contact/gmail-light.svg" alt="Enviar e-mail pelo Gmail" height="42" width="69"></picture></a>
-  <a href="https://outlook.live.com/mail/deeplink/compose?to=jv0707204%40gmail.com&nlp=1"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/outlook-dark.svg"><img src="./assets/contact/outlook-light.svg" alt="Enviar e-mail pelo Outlook" height="42" width="82"></picture></a>
-  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/mail-pt-dark.svg"><img src="./assets/contact/mail-pt-light.svg" alt="Enviar e-mail pelo aplicativo de e-mail" height="42" width="123"></picture></a>
-  <a href="https://www.linkedin.com/in/jo%C3%A3o-vitor-sesma-685ba6276/"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/linkedin-dark.svg"><img src="./assets/contact/linkedin-light.svg" alt="Perfil no LinkedIn" height="42" width="87"></picture></a>
+  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=jv0707204%40gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/gmail-dark.svg"><img src="./assets/contact/gmail-light.svg" alt="Enviar e-mail pelo Gmail" height="42" width="90"></picture></a>
+  <a href="https://outlook.live.com/mail/deeplink/compose?to=jv0707204%40gmail.com&nlp=1"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/outlook-dark.svg"><img src="./assets/contact/outlook-light.svg" alt="Enviar e-mail pelo Outlook" height="42" width="103"></picture></a>
+  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/mail-pt-dark.svg"><img src="./assets/contact/mail-pt-light.svg" alt="Enviar e-mail pelo aplicativo de e-mail" height="42" width="144"></picture></a>
+  <a href="https://www.linkedin.com/in/jo%C3%A3o-vitor-sesma-685ba6276/"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/linkedin-dark.svg"><img src="./assets/contact/linkedin-light.svg" alt="Perfil no LinkedIn" height="42" width="108"></picture></a>
 </p>
 
 E-mail: `jv0707204@gmail.com`

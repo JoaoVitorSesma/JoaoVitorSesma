@@ -90,10 +90,10 @@ Flutter · Dart coursework · [Repository](https://github.com/JoaoVitorSesma/202
 Want to talk about **data, AI or healthcare**? Email me or find me on LinkedIn:
 
 <p>
-  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=jv0707204%40gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/gmail-dark.svg"><img src="./assets/contact/gmail-light.svg" alt="Email me with Gmail" height="42" width="69"></picture></a>
-  <a href="https://outlook.live.com/mail/deeplink/compose?to=jv0707204%40gmail.com&nlp=1"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/outlook-dark.svg"><img src="./assets/contact/outlook-light.svg" alt="Email me with Outlook" height="42" width="82"></picture></a>
-  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/mail-en-dark.svg"><img src="./assets/contact/mail-en-light.svg" alt="Email me with your email app" height="42" width="96"></picture></a>
-  <a href="https://www.linkedin.com/in/jo%C3%A3o-vitor-sesma-685ba6276/"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/linkedin-dark.svg"><img src="./assets/contact/linkedin-light.svg" alt="LinkedIn profile" height="42" width="87"></picture></a>
+  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=jv0707204%40gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/gmail-dark.svg"><img src="./assets/contact/gmail-light.svg" alt="Email me with Gmail" height="42" width="90"></picture></a>
+  <a href="https://outlook.live.com/mail/deeplink/compose?to=jv0707204%40gmail.com&nlp=1"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/outlook-dark.svg"><img src="./assets/contact/outlook-light.svg" alt="Email me with Outlook" height="42" width="103"></picture></a>
+  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/mail-en-dark.svg"><img src="./assets/contact/mail-en-light.svg" alt="Email me with your email app" height="42" width="117"></picture></a>
+  <a href="https://www.linkedin.com/in/jo%C3%A3o-vitor-sesma-685ba6276/"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/linkedin-dark.svg"><img src="./assets/contact/linkedin-light.svg" alt="LinkedIn profile" height="42" width="108"></picture></a>
 </p>
 
 Email: `jv0707204@gmail.com`

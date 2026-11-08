@@ -893,8 +893,28 @@ def status_notes(lang, theme, mobile):
 CTA_GREEN = {"dark": "#238636", "light": "#1f883d"}
 
 
-def cta_pill(label, primary, theme):
-    """Call-to-action button: solid green for the main action, outline for the second."""
+def _contact_icon(name):
+    """[(path, fill)] in a 24-unit box. fill None means the text colour."""
+    import re
+    if name == "outlook":
+        # Microsoft's four squares, drawn here: Outlook and LinkedIn have no logo in Simple Icons.
+        return [(f"M{x} {y}h10.5v10.5H{x}z", c) for x, y, c in
+                ((1, 1, "#F25022"), (12.5, 1, "#7FBA00"), (1, 12.5, "#00A4EF"), (12.5, 12.5, "#FFB900"))]
+    src = (Path(__file__).parent / "icons" / "contact" / f"{name}.svg").read_text(encoding="utf-8")
+    d = re.search(r' d="([^"]+)"', src)[1]
+    if 'viewBox="0 0 16 16"' in src:  # Bootstrap Icons draw in 16 units
+        d = f'<g transform="scale(1.5)"><path d="{d}"/></g>'
+    return [(d, CONTACT_COLOURS.get(name))]
+
+
+# Gmail from Simple Icons 16.36.0 (CC0); LinkedIn and envelope from Bootstrap Icons 1.13.2 (MIT).
+# Licences in scripts/icons/contact/. Brand colours: Gmail and LinkedIn; the envelope uses the text colour.
+CONTACT_COLOURS = {"gmail": "#EA4335", "linkedin": "#0A66C2"}
+
+
+def cta_pill(label, primary, theme, icon=None):
+    """Call-to-action button: solid green for the main action, outline for the second.
+    icon names a logo drawn left of the label (see _contact_icon)."""
     t, k = THEMES[theme], 2
     scale(k)
     fs, h, pad = 14 * k, 34 * k, 15 * k
@@ -905,6 +925,16 @@ def cta_pill(label, primary, theme):
         r_ = 3.5 * k
         dot = f'<circle cx="{pad + r_:.1f}" cy="{h / 2:.1f}" r="{r_:.1f}" fill="#ffffff"/>'
         lx = pad + r_ * 2 + 8 * k
+    if icon:
+        size = 16 * k
+        g = []
+        for d, fill in _contact_icon(icon):
+            fill = fill or t["fg"]
+            g.append(d.replace("<path ", f'<path fill="{fill}" ') if d.startswith("<g")
+                     else f'<path fill="{fill}" d="{d}"/>')
+        dot = (f'<g transform="translate({pad - 2 * k:.1f} {(h - size) / 2:.1f}) scale({size / 24:.4f})">'
+               f'{"".join(g)}</g>')
+        lx = pad - 2 * k + size + 7 * k
     w = lx + font.width(label, fs) + pad
     if primary:
         frame = f'<rect width="{w:.1f}" height="{h}" rx="{h / 2}" fill="{CTA_GREEN[theme]}"/>'
@@ -952,7 +982,7 @@ def outputs():
     for theme in THEMES:
         yield OUT / "lang" / f"globe-{theme}.svg", partial(lang_globe, theme)
         for name, label in CONTACTS.items():
-            yield OUT / "contact" / f"{name}-{theme}.svg", partial(cta_pill, label, False, theme)
+            yield OUT / "contact" / f"{name}-{theme}.svg", partial(cta_pill, label, False, theme, name)
         for lang in LANGS:
             for active in (True, False):
                 yield (OUT / "lang" / f"{lang}-{'active' if active else 'idle'}-{theme}.svg",
@@ -963,7 +993,7 @@ def outputs():
             yield OUT / "cta" / f"main-{lang}-{theme}.svg", partial(cta_pill, STR[lang]["cta_main"], True, theme)
             yield OUT / "cta" / f"alt-{lang}-{theme}.svg", partial(cta_pill, STR[lang]["cta_alt"], False, theme)
             # Contact buttons in Let's talk; brand names read the same in both languages.
-            yield OUT / "contact" / f"mail-{lang}-{theme}.svg", partial(cta_pill, STR[lang]["contact_mail"], False, theme)
+            yield OUT / "contact" / f"mail-{lang}-{theme}.svg", partial(cta_pill, STR[lang]["contact_mail"], False, theme, "envelope")
             for mobile in (False, True):
                 suffix = "-mobile" if mobile else ""
                 yield OUT / "status" / f"notes-{lang}-{theme}{suffix}.svg", partial(status_notes, lang, theme, mobile)

@@ -36,6 +36,10 @@ Each number previews the card below it, in the same order, and matches that card
 
 - The tools are listed once, in `STR` in `scripts/build_assets.py`. A test checks that every tool in a project's stack line in the README is also in the panel, so the two lists cannot drift apart. The Flutter · Dart coursework link stays as text under the panel, because links inside a README image do not work.
 
+## Contact buttons
+
+- Gmail logo from [Simple Icons](https://simpleicons.org) 16.36.0 (CC0 1.0); LinkedIn logo and the email-app envelope from [Bootstrap Icons](https://icons.getbootstrap.com) 1.13.2 (MIT). Licences in `scripts/icons/contact/`. Outlook and LinkedIn are not in Simple Icons, so Outlook shows Microsoft's four squares, drawn in `build_assets.py`.
+
 ## Walking strip
 
 - The hedgehog was drawn by João and converted onto a single pixel grid and palette in `scripts/hedgehog.py` (four walking poses, crouch, curl and ball). A plain walking trip takes 20 seconds on desktop and 14 seconds on mobile. The four poses complete a cycle in approximately 440 ms, adjusted slightly to stay aligned with the full animation loop. Squares light up when planted paws touch them and fade after contact. The edges are invisible: at each one the hedgehog bumps and recovers on one visit and simply turns round on the next, and a roll that ends quietly slows down before the ball comes to rest, then pauses to catch its breath. Once per loop it also stops halfway across to glance back over its shoulder. Exposed spine borders are lighter in the dark theme. The squares under it are decorative, not real contribution data.
