@@ -50,8 +50,7 @@
 </picture>
 </a>
 
-**Colorectal cancer survival.** Data preparation, Cox regression and Kaplan–Meier curves on São Paulo's cancer registry (FOSP).<br>
-<sub>Python · pandas · lifelines · Jupyter · [Repository](https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC) · [Open in Colab](https://colab.research.google.com/github/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC/blob/main/Predi%C3%A7%C3%A3o_da_Sobrevida_em_Pacientes_com_C%C3%A2ncer_Colorretal_COX.ipynb)</sub>
+Python · pandas · lifelines · Jupyter · [Repository](https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC) · [Open in Colab](https://colab.research.google.com/github/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC/blob/main/Predi%C3%A7%C3%A3o_da_Sobrevida_em_Pacientes_com_C%C3%A2ncer_Colorretal_COX.ipynb)
 
 <a href="https://github.com/JoaoVitorSesma/Dashboard">
 <picture>
@@ -62,8 +61,7 @@
 </picture>
 </a>
 
-**Cervical cancer dashboard.** Interactive filters, trends and regional survival views for public FOSP data.<br>
-<sub>Python · Streamlit · Plotly · GeoPandas · Folium · [Repository](https://github.com/JoaoVitorSesma/Dashboard)</sub>
+Python · Streamlit · Plotly · GeoPandas · Folium · [Repository](https://github.com/JoaoVitorSesma/Dashboard)
 
 <a href="https://github.com/JoaoVitorSesma/codex-reset-monitor">
 <picture>
@@ -74,8 +72,7 @@
 </picture>
 </a>
 
-**Codex reset monitor.** Watches public sources, classifies reset announcements with deterministic rules, deduplicates across sources and alerts Discord.<br>
-<sub>Python · GitHub Actions · Cloudflare Workers · pytest · [Repository](https://github.com/JoaoVitorSesma/codex-reset-monitor)</sub>
+Python · GitHub Actions · Cloudflare Workers · pytest · [Repository](https://github.com/JoaoVitorSesma/codex-reset-monitor)
 
 ## Toolbox
 
