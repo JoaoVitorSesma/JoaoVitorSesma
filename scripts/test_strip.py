@@ -3,18 +3,17 @@ import unittest
 import re
 
 import build_assets as assets
-import creatures
+import hedgehog
 
 
 class HedgehogStripTests(unittest.TestCase):
     def test_four_short_steps(self):
-        hedgehog = creatures.CREATURES['hedgehog']
-        self.assertEqual(len(hedgehog['roll']['walk']), 4)
-        self.assertEqual(hedgehog['step'], .11)
-        _, frames, width, height = creatures.get('hedgehog')
-        self.assertEqual((width, height), (27, 20))
-        self.assertEqual(len({tuple(frames[i]) for i in hedgehog['roll']['walk']}), 4)
-        for i in hedgehog['roll']['walk']:
+        self.assertEqual(len(hedgehog.ROLL['walk']), 4)
+        self.assertEqual(hedgehog.STEP, .11)
+        frames = hedgehog.FRAMES
+        self.assertEqual((hedgehog.W, hedgehog.H), (27, 20))
+        self.assertEqual(len({tuple(frames[i]) for i in hedgehog.ROLL['walk']}), 4)
+        for i in hedgehog.ROLL['walk']:
             self.assertEqual(frames[i][:17], frames[0][:17])
             self.assertGreaterEqual(sum(row.count('f') for row in frames[i]), 4)
 
@@ -33,8 +32,7 @@ class HedgehogStripTests(unittest.TestCase):
         self.assertAlmostEqual(intervals[1][1], 2.7)
 
     def test_only_grounded_paws_make_tracks(self):
-        _, frames, _, _ = creatures.get('hedgehog')
-        roll = creatures.CREATURES['hedgehog']['roll']
+        frames, roll = hedgehog.FRAMES, hedgehog.ROLL
         spans = {'walk': [(0, .88)]}
         tracks = assets._contact_tracks(frames, roll, .22, 3, [(0, 0), (.88, 12)], spans, [(0, 1)])
         first = [track for track in tracks if track[0] == 0]
@@ -46,9 +44,8 @@ class HedgehogStripTests(unittest.TestCase):
             self.assertAlmostEqual(right[2] + left[2] + right[4], 93)
 
     def test_dark_spine_rim_keeps_face_and_eye(self):
-        light_palette, light, _, _ = creatures.get('hedgehog', 'light')
-        dark_palette, dark, _, _ = creatures.get('hedgehog', 'dark')
-        self.assertEqual(light, dark)
+        light_palette, dark_palette = hedgehog.palette('light'), hedgehog.palette('dark')
+        light = hedgehog.FRAMES
         self.assertEqual(light_palette['r'], light_palette['o'])
         self.assertNotEqual(dark_palette['r'], dark_palette['o'])
         self.assertEqual(light_palette['q'], dark_palette['q'])
@@ -57,8 +54,8 @@ class HedgehogStripTests(unittest.TestCase):
         self.assertEqual(light[0][10][20:22], 'oo')
 
     def test_dark_nose_is_visible_without_changing_shape(self):
-        light_palette, light, _, _ = creatures.get('hedgehog', 'light')
-        dark_palette, dark, _, _ = creatures.get('hedgehog', 'dark')
+        light_palette, dark_palette = hedgehog.palette('light'), hedgehog.palette('dark')
+        light = dark = hedgehog.FRAMES
         self.assertEqual(light_palette['n'], light_palette['o'])
         self.assertEqual(light_palette['h'], light_palette['o'])
         self.assertNotEqual(dark_palette['h'], dark_palette['n'])
@@ -69,10 +66,10 @@ class HedgehogStripTests(unittest.TestCase):
             self.assertTrue(all(dark[index][y][x] == light[index][y][x] for x, y in nose))
             self.assertEqual(sum(row.count('h') for row in dark[index]), 1)
         self.assertFalse(any(ch in 'nh' for row in light[6] for ch in row))
-        self.assertEqual(creatures.CREATURES['hedgehog']['palette']['n'], '#0b1024')
+        self.assertEqual(hedgehog.PALETTE['n'], '#0b1024')
 
     def test_short_paws_remain_attached_to_belly(self):
-        _, frames, width, height = creatures.get('hedgehog')
+        frames, width, height = hedgehog.FRAMES, hedgehog.W, hedgehog.H
         for frame in frames[:4]:
             seen, pending = {(12, 16)}, [(12, 16)]
             while pending:
@@ -86,7 +83,7 @@ class HedgehogStripTests(unittest.TestCase):
                     if ch in 'Yyf':
                         self.assertIn((x, y), seen)
 
-    def test_all_variants_and_optional_mascots_render(self):
+    def test_all_variants_render(self):
         for theme in assets.THEMES:
             for mobile in (False, True):
                 svg = assets.strip(theme, mobile)
@@ -96,21 +93,17 @@ class HedgehogStripTests(unittest.TestCase):
                 self.assertIn('y="68" width="10"', svg)
                 period = float(re.search(r'animation:walk ([\d.]+)s', svg)[1])
                 self.assertAlmostEqual(period / gait, round(period / gait), delta=.002)
-            for mascot in creatures.CREATURES:
-                self.assertIn('<svg', assets.strip(theme, False, mascot))
 
     def test_walking_speed_is_preserved_while_stopping_at_edges(self):
         for mobile, expected in ((False, 20), (True, 14)):
             travel = (720 if mobile else 1200) - 81
-            roll = creatures.CREATURES['hedgehog']['roll']
-            _, stops, spans, _ = assets._motion(travel, expected, roll)
+            _, stops, spans, _ = assets._motion(travel, expected)
             for (a, xa), (b, xb) in zip(stops, stops[1:]):
                 if any(lo <= (a+b)/2 < hi for lo, hi in spans['walk']):
                     self.assertAlmostEqual(abs(xb-xa)/(b-a), travel/expected)
 
     def test_both_collision_types_recover_before_turning_and_loop_continuously(self):
-        roll = creatures.CREATURES['hedgehog']['roll']
-        period, stops, spans, trips = assets._motion(1119, 20, roll)
+        period, stops, spans, trips = assets._motion(1119, 20)
         self.assertEqual(len(spans['walk_impact']), 2)
         self.assertEqual(len(spans['ball_impact']), 2)
         self.assertEqual(len(spans['shake']), 4)
@@ -121,24 +114,21 @@ class HedgehogStripTests(unittest.TestCase):
             self.assertFalse(any(a < turn < b for turn, _ in trips))
 
     def test_airborne_rebound_does_not_light_cells(self):
-        _, frames, _, _ = creatures.get('hedgehog')
-        roll = creatures.CREATURES['hedgehog']['roll']
-        tracks = assets._contact_tracks(frames, roll, .11, 3,
+        tracks = assets._contact_tracks(hedgehog.FRAMES, hedgehog.ROLL, .11, 3,
                                        [(0, 1119), (.7, 1029)],
                                        {'ball_recoil': [(0, .7)]}, [(0, 1)])
         self.assertEqual(tracks, [])
 
     def test_recovery_keeps_original_side_profile_and_planted_feet(self):
-        _, frames, _, _ = creatures.get('hedgehog')
-        poses = creatures.hedgehog_recovery()
+        frames = hedgehog.FRAMES
+        poses = hedgehog.recovery()
         self.assertEqual(poses['blink'][17:], frames[0][17:])
         self.assertEqual(poses['blink'][10][25:27], frames[0][10][25:27])
         for frame in poses.values():
             self.assertEqual(sum(row.count('h') for row in frame), 1)
 
     def test_roll_keeps_square_bounds_on_floor(self):
-        hedgehog = creatures.CREATURES['hedgehog']
-        frame = hedgehog['frames'][hedgehog['roll']['ball']]
+        frame = hedgehog.FRAMES[hedgehog.ROLL['ball']]
         points = [(x, y) for y, row in enumerate(frame) for x, ch in enumerate(row) if ch != '.']
         self.assertEqual(max(x for x, _ in points) - min(x for x, _ in points),
                          max(y for _, y in points) - min(y for _, y in points))
