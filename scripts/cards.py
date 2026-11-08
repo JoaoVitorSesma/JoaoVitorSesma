@@ -26,7 +26,7 @@ KEYS = (
 # Rendered sizes (CSS px) per layout.
 SIZES = {
     False: dict(pad=32, eyebrow=12, title=28, body=14, num=22, label=12.5, small=12.5, cap=13.5, term=13.5),
-    True: dict(pad=18, eyebrow=12, title=25, body=13, num=22, label=12.5, small=12, cap=13, term=12),
+    True: dict(pad=14, eyebrow=12, title=25, body=13, num=22, label=12.5, small=12, cap=13, term=12),
 }
 
 C = {
@@ -188,7 +188,9 @@ def window(L, t, x, y, w, h, title):
     ]
     for k in range(3):
         out.append(f'<circle cx="{x + r(13) + k * r(11):.1f}" cy="{y + bar / 2:.1f}" r="{r(3.5):.1f}" fill="{t["line"]}"/>')
-    out.append(text(MONO, title, x + w / 2, y + bar / 2 + L.small * 0.35, L.small, "fa", anchor="middle")[0])
+    # Centred, but never over the three dots when the window is narrow.
+    cx = max(x + w / 2, x + r(48) + MONO.width(title, L.small) / 2)
+    out.append(text(MONO, title, cx, y + bar / 2 + L.small * 0.35, L.small, "fa", anchor="middle")[0])
     return "".join(out), y + bar
 
 

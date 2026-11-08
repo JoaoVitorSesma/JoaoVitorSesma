@@ -103,9 +103,11 @@ def wrap(font, s, size, max_w):
     return lines
 
 
-# README column width in CSS px: ~795 on desktop (measured on the live profile),
-# ~340 on a phone. Sizes below are given in rendered px and converted per canvas.
-DISPLAY = {False: 795, True: 340}
+# README column width in CSS px, measured on the live profile: 795 on desktop and
+# 293 on a 375 px wide phone (GitHub's page and box padding take the rest). Wider
+# phones show more, so this is the small end. Sizes below are given in rendered px
+# and converted per canvas.
+DISPLAY = {False: 795, True: 293}
 MIN_PX = 12.0
 _track = {"k": 1.0, "min": None, "min_text": ""}
 
