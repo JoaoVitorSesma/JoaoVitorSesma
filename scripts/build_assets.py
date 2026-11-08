@@ -671,6 +671,43 @@ def _cell_contacts(cx, cell, tracks):
     return merged
 
 
+def rest(theme):
+    """The hedgehog at the end of the page: standing on a few cells, facing back
+    up the page, blinking twice now and then. Same pixel size as in the strip."""
+    scale(1)  # no text here; start a fresh smallest-text record
+    t, pal = THEMES[theme], hedgehog.palette(theme)
+    px, cell, pitch = 3, 10, 14
+    sw, sh = hedgehog.W * px, hedgehog.H * px
+    n = 7
+    W = n * pitch - (pitch - cell)
+    top = 4
+    H = top + sh + cell + 4
+    ox = (W - sw) / 2
+    # Cells lit where the planted paws stand, faint elsewhere, like the strip at rest.
+    feet = {x for x, ch in enumerate(hedgehog.FRAMES[0][-1]) if ch != "."}
+    cells = []
+    for i in range(n):
+        cx0, cx1 = i * pitch, i * pitch + cell
+        # The figure is mirrored, so a paw at column x lands at W - ox - (x + 1) * px.
+        lit = any(cx0 <= W - ox - (x + .5) * px <= cx1 for x in feet)
+        cells.append(f'<rect x="{cx0}" y="{top + sh}" width="{cell}" height="{cell}" rx="2" '
+                     f'fill="{t["cells"][4 if lit else 1]}"/>')
+    stand = hedgehog.frame_rects(pal, hedgehog.FRAMES[0], px)
+    closed = hedgehog.frame_rects(pal, hedgehog.recovery()["blink"], px)
+    period = 6.0
+    blinks = ((2.4, 2.55), (2.85, 3.0))
+    kf = "0%{opacity:0}" + "".join(
+        f"{a / period * 100 - .01:.3f}%{{opacity:0}}{a / period * 100:.3f}%{{opacity:1}}"
+        f"{b / period * 100:.3f}%{{opacity:1}}{b / period * 100 + .01:.3f}%{{opacity:0}}" for a, b in blinks
+    ) + "100%{opacity:0}"
+    css = base_css(t) + f".shut{{opacity:0;animation:shut {period}s linear infinite}}@keyframes shut{{{kf}}}"
+    body = (f'{"".join(cells)}<g transform="translate({W - ox:g} {top}) scale(-1 1)">'
+            f'{stand}<g class="shut">{closed}</g></g>')
+    title = "Hedgehog"
+    desc = "The pixel-art hedgehog from the top of the page stands at its end and blinks now and then."
+    return svg(W, H, title, desc, body, css)
+
+
 def strip(theme, mobile):
     """A thin band where the hedgehog crosses a row of contribution-style cells
     that light up under it. The edges are invisible: at each one it either
@@ -1019,6 +1056,7 @@ def outputs():
     for theme in THEMES:
         for mobile in (False, True):
             yield OUT / "strip" / f"walk-{theme}{'-mobile' if mobile else ''}.svg", partial(strip, theme, mobile)
+        yield OUT / "strip" / f"rest-{theme}.svg", partial(rest, theme)
     for lang in STR:
         for theme in THEMES:
             for mobile in (False, True):
