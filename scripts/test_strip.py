@@ -134,6 +134,14 @@ class HedgehogStripTests(unittest.TestCase):
         self.assertEqual(dict(stops)[sb], 0.0)
         self.assertIn(sb, [a for a, _ in spans['ball_rest']])
 
+    def test_every_scripted_phase_has_exactly_one_pose(self):
+        _, _, spans, _ = assets._motion(1119, 20, 12)
+        for phase in spans:
+            self.assertEqual(sum(phase in pose.phases for pose in assets.POSES), 1)
+        self.assertEqual([pose.cls for pose in assets.POSES if pose.shown], ['gw'])
+        with self.assertRaises(ValueError):
+            assets._pose('sniff')
+
     def test_edges_have_no_visible_bars(self):
         for theme in assets.THEMES:
             for mobile in (False, True):
