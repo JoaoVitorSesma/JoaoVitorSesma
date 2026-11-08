@@ -104,14 +104,40 @@ class HedgehogStripTests(unittest.TestCase):
 
     def test_both_collision_types_recover_before_turning_and_loop_continuously(self):
         period, stops, spans, trips = assets._motion(1119, 20)
-        self.assertEqual(len(spans['walk_impact']), 2)
-        self.assertEqual(len(spans['ball_impact']), 2)
-        self.assertEqual(len(spans['shake']), 4)
+        self.assertEqual(len(spans['walk_impact']), 1)
+        self.assertEqual(len(spans['ball_impact']), 1)
+        self.assertEqual(len(spans['shake']), 2)
         self.assertAlmostEqual(stops[0][1], stops[-1][1])
         self.assertEqual(stops[-1][0], period)
         for a, b in spans['shake']:
             self.assertAlmostEqual(b-a, .75)
             self.assertFalse(any(a < turn < b for turn, _ in trips))
+
+    def test_each_edge_alternates_bumping_and_quietly_turning(self):
+        trips = assets.TRIPS
+        for direction in (+1, -1):
+            self.assertEqual(sorted(b for d, _, b in trips if d == direction), [False, True])
+        for rolls in (True, False):
+            self.assertEqual(sorted(b for _, r, b in trips if r == rolls), [False, True])
+        period, stops, spans, starts = assets._motion(1119, 20, 12)
+        # Quiet turns stay on the edge: no impact, no recoil, no head shake.
+        self.assertEqual(len(starts), 4)
+        self.assertEqual(len(spans['blink']), 4)
+        self.assertEqual(len(spans['ball_slow']), 1)
+
+    def test_rolling_turn_brakes_before_resting_at_the_edge(self):
+        period, stops, spans, _ = assets._motion(1119, 20, 12)
+        speed = lambda a, b: abs(dict(stops)[b] - dict(stops)[a]) / (b - a)
+        (fa, fb), = [s for s in spans['ball'] if s[1] == spans['ball_slow'][0][0]]
+        sa, sb = spans['ball_slow'][0]
+        self.assertAlmostEqual(speed(fa, fb) / speed(sa, sb), 3)
+        self.assertEqual(dict(stops)[sb], 0.0)
+        self.assertIn(sb, [a for a, _ in spans['ball_rest']])
+
+    def test_edges_have_no_visible_bars(self):
+        for theme in assets.THEMES:
+            for mobile in (False, True):
+                self.assertNotIn('<path', assets.strip(theme, mobile))
 
     def test_airborne_rebound_does_not_light_cells(self):
         tracks = assets._contact_tracks(hedgehog.FRAMES, hedgehog.ROLL, .11, 3,
