@@ -26,6 +26,7 @@ STR = {
                ("Monitor", "96", "automated checks a day")],
         cta_main="Get in touch",
         cta_alt="See projects",
+        contact_mail="Email app",
         # Hero: the sidebar already says who I am, so the hero only makes the claim.
         kicker="FULL-STACK AI",
         head=[[("From the cluster", "fg")], [("to ", "fg"), ("the people.", "or")]],
@@ -43,6 +44,7 @@ STR = {
                ("Monitor", "96", "verificações automáticas por dia")],
         cta_main="Fale comigo",
         cta_alt="Ver projetos",
+        contact_mail="App de e-mail",
         kicker="IA FULL-STACK",
         head=[[("Do cluster", "fg")], [("às ", "fg"), ("pessoas.", "or")]],
         sub="Infraestrutura, modelos e as interfaces que as pessoas usam de fato. Atuo nas três.",
@@ -866,6 +868,9 @@ def cta_pill(label, primary, theme):
             f'<style>{base_css(t)}</style>{frame}{dot}{el}</svg>')
 
 
+CONTACTS = {"gmail": "Gmail", "outlook": "Outlook", "linkedin": "LinkedIn"}
+
+
 def lang_globe(theme):
     t, k = THEMES[theme], 2
     scale(k)  # no text, but start a fresh smallest-text record
@@ -894,6 +899,8 @@ def outputs():
 
     for theme in THEMES:
         yield OUT / "lang" / f"globe-{theme}.svg", partial(lang_globe, theme)
+        for name, label in CONTACTS.items():
+            yield OUT / "contact" / f"{name}-{theme}.svg", partial(cta_pill, label, False, theme)
         for lang in LANGS:
             for active in (True, False):
                 yield (OUT / "lang" / f"{lang}-{'active' if active else 'idle'}-{theme}.svg",
@@ -903,6 +910,8 @@ def outputs():
         for theme in THEMES:
             yield OUT / "cta" / f"main-{lang}-{theme}.svg", partial(cta_pill, STR[lang]["cta_main"], True, theme)
             yield OUT / "cta" / f"alt-{lang}-{theme}.svg", partial(cta_pill, STR[lang]["cta_alt"], False, theme)
+            # Contact buttons in Let's talk; brand names read the same in both languages.
+            yield OUT / "contact" / f"mail-{lang}-{theme}.svg", partial(cta_pill, STR[lang]["contact_mail"], False, theme)
             for mobile in (False, True):
                 suffix = "-mobile" if mobile else ""
                 yield OUT / "status" / f"notes-{lang}-{theme}{suffix}.svg", partial(status_notes, lang, theme, mobile)

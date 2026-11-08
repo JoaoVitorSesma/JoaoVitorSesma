@@ -21,7 +21,7 @@
 </p>
 
 <p>
-  <a href="#lets-talk"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-en-dark.svg"><img src="./assets/cta/main-en-light.svg" alt="Get in touch: choose how to email me" height="42" width="126"></picture></a>
+  <a href="#lets-talk"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-en-dark.svg"><img src="./assets/cta/main-en-light.svg" alt="Get in touch: email or LinkedIn" height="42" width="126"></picture></a>
   <a href="#selected-work"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/alt-en-dark.svg"><img src="./assets/cta/alt-en-light.svg" alt="See projects" height="42" width="111"></picture></a>
 </p>
 
@@ -83,9 +83,14 @@ Python · GitHub Actions · Cloudflare Workers · pytest · [Repository](https:/
 
 ## Let's talk
 
-Want to talk about **data, AI or healthcare**? Choose how to email me:
+Want to talk about **data, AI or healthcare**? Email me or find me on LinkedIn:
 
-[Gmail](https://mail.google.com/mail/?view=cm&fs=1&to=jv0707204%40gmail.com) · [Outlook Web](https://outlook.live.com/mail/deeplink/compose?to=jv0707204%40gmail.com&nlp=1) · [Default email app](mailto:jv0707204@gmail.com)
+<p>
+  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=jv0707204%40gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/gmail-dark.svg"><img src="./assets/contact/gmail-light.svg" alt="Email me with Gmail" height="42" width="69"></picture></a>
+  <a href="https://outlook.live.com/mail/deeplink/compose?to=jv0707204%40gmail.com&nlp=1"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/outlook-dark.svg"><img src="./assets/contact/outlook-light.svg" alt="Email me with Outlook" height="42" width="82"></picture></a>
+  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/mail-en-dark.svg"><img src="./assets/contact/mail-en-light.svg" alt="Email me with your email app" height="42" width="96"></picture></a>
+  <a href="https://www.linkedin.com/in/jo%C3%A3o-vitor-sesma-685ba6276/"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/linkedin-dark.svg"><img src="./assets/contact/linkedin-light.svg" alt="LinkedIn profile" height="42" width="87"></picture></a>
+</p>
 
 Email: `jv0707204@gmail.com`
 
