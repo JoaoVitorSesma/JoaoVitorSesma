@@ -1,4 +1,4 @@
-"""Build every README asset: hero, numbers, walking strip, project cards and buttons.
+"""Build every README asset: hero, numbers, walking strip, project cards, toolbox and buttons.
 
     python scripts/build_assets.py
 
@@ -24,6 +24,13 @@ STR = {
         # One number per project card below, in the same order, matching the card's own figures.
         stats=[("Research", "37,499", "patients modeled"), ("Dashboard", "55,647", "records visualized"),
                ("Monitor", "96", "automated checks a day")],
+        # The Toolbox panel. Every tool in a project's stack line in the README must be here
+        # (test_assets checks it), so the two never drift apart.
+        toolbox_title="Toolbox",
+        toolbox=[("Data & research", ["Python", "pandas", "NumPy", "lifelines", "Jupyter"]),
+                 ("Apps & visualization", ["Streamlit", "Plotly", "GeoPandas", "Folium"]),
+                 ("Automation", ["GitHub Actions", "Cloudflare Workers", "Discord webhooks", "pytest"]),
+                 ("Coursework", ["Flutter", "Dart"])],
         cta_main="Get in touch",
         cta_alt="See projects",
         # Hero: the sidebar already says who I am, so the hero only makes the claim.
@@ -41,6 +48,11 @@ STR = {
     "pt": dict(
         stats=[("Pesquisa", "37.499", "pacientes modelados"), ("Dashboard", "55.647", "registros visualizados"),
                ("Monitor", "96", "verificações automáticas por dia")],
+        toolbox_title="Ferramentas",
+        toolbox=[("Dados e pesquisa", ["Python", "pandas", "NumPy", "lifelines", "Jupyter"]),
+                 ("Aplicações e visualização", ["Streamlit", "Plotly", "GeoPandas", "Folium"]),
+                 ("Automação", ["GitHub Actions", "Cloudflare Workers", "webhooks do Discord", "pytest"]),
+                 ("Disciplina", ["Flutter", "Dart"])],
         cta_main="Fale comigo",
         cta_alt="Ver projetos",
         kicker="IA FULL-STACK",
@@ -295,6 +307,45 @@ def numbers(lang, theme, mobile):
     H = int(box_h + r(6))
     alt = ", ".join(f"{v} {label}" for _, v, label in s["stats"])
     return svg(W, H, alt, alt, frame + "".join(parts), base_css(t))
+
+
+def toolbox(lang, theme, mobile):
+    """The tools, grouped by area: a panel like the numbers strip, each group an
+    accent label over a row of chips. Two groups per row on desktop, one on mobile."""
+    t, s = THEMES[theme], STR[lang]
+    W = 720 if mobile else 1200
+    r = canvas(W, mobile)
+    pad, gap = (r(14), r(14)) if mobile else (r(22), r(28))
+    eyebrow, fs = r(12), r(13)
+    chip_h, chip_px, chip_gap = fs * 2.0, r(10), r(6)
+    sw = r(1)
+    per_row = 1 if mobile else 2
+    colw = (W - 2 * pad - gap * (per_row - 1)) / per_row
+    groups = s["toolbox"]
+    parts, y = [], pad
+    for row in range(0, len(groups), per_row):
+        bottom = y
+        for k, (area, tools) in enumerate(groups[row:row + per_row]):
+            x0 = pad + k * (colw + gap)
+            parts.append(text(MONO_MD, area.upper(), x0, y + eyebrow, eyebrow, "ac", tracking=r(0.6))[0])
+            cx, cy = x0, y + eyebrow + r(10)
+            for tool in tools:
+                w = SANS.width(tool, fs) + 2 * chip_px
+                if cx > x0 and cx + w > x0 + colw:
+                    cx, cy = x0, cy + chip_h + chip_gap
+                parts.append(
+                    f'<rect x="{cx:.1f}" y="{cy:.1f}" width="{w:.1f}" height="{chip_h:.1f}" rx="{chip_h / 2:.1f}" '
+                    f'fill="{t["panel2"]}" stroke="{t["line"]}" stroke-width="{sw:.2f}"/>'
+                    + text(SANS, tool, cx + w / 2, cy + chip_h / 2 + fs * 0.35, fs, "fg", anchor="middle")[0]
+                )
+                cx += w + chip_gap
+            bottom = max(bottom, cy + chip_h)
+        y = bottom + (r(18) if mobile else r(22))
+    box_h = y - (r(18) if mobile else r(22)) + pad
+    frame = (f'<rect x="{sw * .6:.1f}" y="{sw * .6:.1f}" width="{W - sw * 1.2:.1f}" height="{box_h - sw * 1.2:.1f}" '
+             f'rx="{r(12):.1f}" fill="{t["panel"]}" stroke="{t["line"]}" stroke-width="{sw:.2f}"/>')
+    desc = ". ".join(f"{area}: {', '.join(tools)}" for area, tools in groups) + "."
+    return svg(W, int(box_h + r(6)), s["toolbox_title"], desc, frame + "".join(parts), base_css(t))
 
 
 def _hex(c):
@@ -891,6 +942,7 @@ def outputs():
                     yield OUT / "work" / f"{kind}-{sfx}", partial(build, lang, theme, mobile)
                 yield OUT / "hero" / f"hero-{sfx}", partial(hero, lang, theme, mobile)
                 yield OUT / "work" / f"numbers-{sfx}", partial(numbers, lang, theme, mobile)
+                yield OUT / "work" / f"toolbox-{sfx}", partial(toolbox, lang, theme, mobile)
 
     for theme in THEMES:
         yield OUT / "lang" / f"globe-{theme}.svg", partial(lang_globe, theme)
