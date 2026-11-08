@@ -11,8 +11,8 @@ from pathlib import Path
 from svgkit import MONO, MONO_MD, SANS, SANS_BD, THEMES, base_css, canvas, svg, text, wrap
 
 DATA = Path(__file__).parent / "data"
-HR = json.loads((DATA / "cox_hazard_ratios.json").read_text())
-YEARS = json.loads((DATA / "dashboard_cases_by_year.json").read_text())
+HR = json.loads((DATA / "cox_hazard_ratios.json").read_text(encoding="utf-8"))
+YEARS = json.loads((DATA / "dashboard_cases_by_year.json").read_text(encoding="utf-8"))
 
 P = 16.0  # loop period for card animations, seconds
 

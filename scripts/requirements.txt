@@ -1,3 +1,4 @@
 fonttools
 uharfbuzz
+pillow  # reads the pipeline icons embedded in the hero
 playwright  # only for scripts/preview.py

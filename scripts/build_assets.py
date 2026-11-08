@@ -8,6 +8,7 @@ mobile. Data comes from scripts/data (see assets/SOURCES.md).
 
 from math import pi
 from pathlib import Path
+from typing import NamedTuple
 
 import cards
 import hedgehog
@@ -302,40 +303,107 @@ def _mix(a, b, k):
     return "#" + "".join(f"{round(x + (y - x) * k):02x}" for x, y in zip(a, b))
 
 
-# Each trip across the strip: (direction, rolls, bumps). direction is +1 for
-# right and -1 for left; a trip that bumps hits the invisible edge, recoils and
-# shakes its head, otherwise the hedgehog stops at the edge and turns round.
+# The hedgehog's routine is a script: a list of trips, each a leg that crosses
+# the strip followed by what happens at the edge. _motion() only plays it back,
+# so a new behaviour is a new entry here, not new code. Each phase name is a
+# pose that strip() knows how to draw.
+
+
+class Leg(NamedTuple):
+    """Cross to the edge: [(phase, share of the leg's time, speed relative to walking)]."""
+    phases: tuple
+
+    @property
+    def rolls(self):
+        return any(phase.startswith("ball") for phase, _, _ in self.phases)
+
+
+class Hold(NamedTuple):
+    """Stay put in one pose for a few seconds."""
+    phase: str
+    seconds: float
+
+
+class Recoil(NamedTuple):
+    """Move back, against the direction of travel, while holding one pose."""
+    phase: str
+    seconds: float
+    distance: float
+
+
+class Edge(NamedTuple):
+    """What happens at the edge. touch="ball" stops where the ball itself, not
+    the sprite's box, meets the edge."""
+    beats: tuple
+    touch: str = "body"
+
+    @property
+    def bumps(self):
+        return any(isinstance(beat, Recoil) for beat in self.beats)
+
+
+class Trip(NamedTuple):
+    direction: int  # +1 right, -1 left
+    leg: Leg
+    edge: Edge
+
+
+WALK = Leg((("walk", 1.0, 1.0),))
+# Curls up a third of the way in and reaches the edge at full speed.
+ROLL = Leg((("walk", 0.30, 1.0), ("crouch", 0.05, 0.3),
+            ("curl", 0.05, 0.3), ("ball", 0.60, 3.0)))
+# Brakes to walking pace first, so the ball comes to rest without hitting anything.
+ROLL_STOP = Leg((("walk", 0.30, 1.0), ("crouch", 0.05, 0.3), ("curl", 0.05, 0.3),
+                 ("ball", 0.42, 3.0), ("ball_slow", 0.18, 1.0)))
+
+UNCURL = (Hold("ball_rest", .25), Hold("curl", .25), Hold("crouch", .25))
+TURN = (Hold("rest", .35), Hold("blink", .15), Hold("rest", .25))
+RECOVER = (Hold("rest", .55), Hold("shake", .75), Hold("rest", .15),
+           Hold("blink", .15), Hold("rest", .20))
+
+BALL_BUMP = Edge((Hold("ball_impact", .20), Recoil("ball_recoil", .70, 90),
+                  *UNCURL, *RECOVER), touch="ball")
+WALK_BUMP = Edge((Hold("walk_impact", .25), Recoil("walk_recoil", .50, 24), *RECOVER))
+BALL_TURN = Edge((*UNCURL, *TURN))
+WALK_TURN = Edge(TURN)
+
 # Every edge sees one bump and one quiet turn, and both gaits do each once.
-TRIPS = [(+1, True, True), (-1, False, True), (+1, False, False), (-1, True, False)]
-# (phase, share of the trip's duration, speed relative to walking).
-# A rolling trip that bumps reaches the edge at full speed; one that turns
-# slows down first so the ball can come to rest without hitting anything.
-ROLL_PLAN = [("walk", 0.30, 1.0), ("crouch", 0.05, 0.3),
-             ("curl", 0.05, 0.3), ("ball", 0.60, 3.0)]
-ROLL_STOP_PLAN = [("walk", 0.30, 1.0), ("crouch", 0.05, 0.3), ("curl", 0.05, 0.3),
-                  ("ball", 0.42, 3.0), ("ball_slow", 0.18, 1.0)]
-BALL_RECOIL, WALK_RECOIL = 90, 24
+SCRIPT = (
+    Trip(+1, ROLL, BALL_BUMP),
+    Trip(-1, WALK, WALK_BUMP),
+    Trip(+1, WALK, WALK_TURN),
+    Trip(-1, ROLL_STOP, BALL_TURN),
+)
+# The same routine as (direction, rolls, bumps).
+TRIPS = [(trip.direction, trip.leg.rolls, trip.edge.bumps) for trip in SCRIPT]
 
 
-def _trip_end(direction, rolls, bumps, travel, ball_margin):
-    """Where the trip stops at the edge, and where its recovery leaves the hedgehog."""
-    edge = travel if direction > 0 else 0.0
-    if rolls and bumps:
-        edge += direction * ball_margin  # the ball itself touches the edge
-    if not bumps:
-        return edge, edge
-    return edge, edge - direction * (BALL_RECOIL if rolls else WALK_RECOIL)
+def _edge_x(trip, travel, ball_margin):
+    """Where the trip's leg stops."""
+    edge = travel if trip.direction > 0 else 0.0
+    if trip.edge.touch == "ball":
+        edge += trip.direction * ball_margin
+    return edge
 
 
-def _motion(travel, walk_time, ball_margin=0, trips=TRIPS):
-    """Keyframes for a full cycle at a constant walking speed.
+def _trip_end(trip, travel, ball_margin):
+    """Where the trip's edge beats leave the hedgehog."""
+    x = _edge_x(trip, travel, ball_margin)
+    for beat in trip.edge.beats:
+        if isinstance(beat, Recoil):
+            x = x - trip.direction * beat.distance
+    return x
+
+
+def _motion(travel, walk_time, ball_margin=0, script=SCRIPT):
+    """Play the script back as keyframes for one cycle at a constant walking speed.
 
     walk_time is how long a plain walking trip takes. Returns
     (period, stops [(t, x)], spans {phase: [(t0, t1)]}, trips [(t0, direction)]).
     """
     speed = travel / walk_time
     # Start where the last trip leaves the hedgehog, so the loop never teleports.
-    x = _trip_end(*trips[-1], travel, ball_margin)[1]
+    x = _trip_end(script[-1], travel, ball_margin)
     t, stops, spans, starts = 0.0, [(0.0, x)], {"walk": [], "crouch": [], "curl": [], "ball": []}, []
 
     def advance(phase, duration, target):
@@ -345,40 +413,23 @@ def _motion(travel, walk_time, ball_margin=0, trips=TRIPS):
         x = target
         stops.append((t, x))
 
-    for direction, rolls, bumps in trips:
+    for trip in script:
+        direction = trip.direction
         starts.append((t, direction))
-        end, _ = _trip_end(direction, rolls, bumps, travel, ball_margin)
-        plan = [("walk", 1.0, 1.0)] if not rolls else ROLL_PLAN if bumps else ROLL_STOP_PLAN
+        end = _edge_x(trip, travel, ball_margin)
+        plan = trip.leg.phases
         dur = abs(end - x) / (speed * sum(f * v for _, f, v in plan))
         for phase, f, v in plan:
             dt = f * dur
             advance(phase, dt, x + direction * speed * v * dt)
+        # Land exactly on the edge, whatever rounding the leg accumulated.
         x = end
         stops[-1] = (t, x)
-        if not bumps:
-            # A quiet stop: uncurl if needed, blink, then turn round.
-            if rolls:
-                advance("ball_rest", .25, x)
-                advance("curl", .25, x)
-                advance("crouch", .25, x)
-            advance("rest", .35, x)
-            advance("blink", .15, x)
-            advance("rest", .25, x)
-            continue
-        if rolls:
-            advance("ball_impact", .20, x)
-            advance("ball_recoil", .70, x - direction * BALL_RECOIL)
-            advance("ball_rest", .25, x)
-            advance("curl", .25, x)
-            advance("crouch", .25, x)
-        else:
-            advance("walk_impact", .25, x)
-            advance("walk_recoil", .50, x - direction * WALK_RECOIL)
-        advance("rest", .55, x)
-        advance("shake", .75, x)
-        advance("rest", .15, x)
-        advance("blink", .15, x)
-        advance("rest", .20, x)
+        for beat in trip.edge.beats:
+            if isinstance(beat, Recoil):
+                advance(beat.phase, beat.seconds, x - direction * beat.distance)
+            else:
+                advance(beat.phase, beat.seconds, x)
     return t, stops, spans, starts
 
 
@@ -765,7 +816,7 @@ def main():
 
     def write(path, content):
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content)
+        path.write_text(content, encoding="utf-8")
         size, sample = smallest()
         if size is not None:
             report.append((size, path.name, sample))

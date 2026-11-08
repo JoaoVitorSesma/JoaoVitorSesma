@@ -33,7 +33,7 @@ def main():
             for f in files:
                 pg = b.new_page(viewport={"width": width, "height": 400},
                                 reduced_motion="reduce" if reduced else "no-preference")
-                src = Path(f).read_text()
+                src = Path(f).read_text(encoding="utf-8")
                 pg.set_content(
                     f"<html><body style='margin:0;background:{BG[bg]}'>"
                     f"<style>svg{{width:{width}px;height:auto;display:block}}</style>{src}</body></html>"
