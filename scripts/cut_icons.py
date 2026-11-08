@@ -1,11 +1,18 @@
 """Cut the hero's pipeline icons out of my icon renders.
 
+    pip install -r scripts/requirements-icons.txt
     python scripts/cut_icons.py
+    python scripts/build_assets.py
 
 One render per icon and theme, scripts/icons/source-<name>-<theme>.png, each on
 a plain background with its label underneath. Each icon is cropped above its
 label and its background is turned into transparency (colour-to-alpha), so it
-sits on GitHub's own background. Outputs scripts/icons/<name>-<theme>.png.
+sits on GitHub's own background. Outputs scripts/icons/<name>-<theme>.png,
+which the hero embeds, so rebuild the assets afterwards.
+
+Re-running on unchanged renders gives the same pixels, but the PNG bytes can
+differ with the Pillow version's compressor; only commit the icons (and the
+rebuilt hero) when a render actually changed.
 """
 
 from pathlib import Path

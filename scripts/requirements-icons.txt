@@ -1,0 +1,4 @@
+# Only for scripts/cut_icons.py, on top of requirements.txt.
+-r requirements.txt
+numpy==2.5.4
+scipy==1.18.1
