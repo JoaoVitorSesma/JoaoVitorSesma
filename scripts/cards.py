@@ -59,6 +59,18 @@ C = {
         m_likely="likely",
         m_confirmed="confirmed",
         m_note="Illustrative run, based on the project README.",
+        # Accessible title and description of each card.
+        r_name="Colorectal cancer survival research",
+        r_desc="Cox model on the FOSP registry: C-index 0.747, 37,499 patients, 22,078 deaths. "
+        "Adjusted hazard ratios: metastasis 2.18, no treatment 1.73, recurrence 1.20, stage 1.12 per level, "
+        "hormone therapy 0.66, chemotherapy 0.59, surgery 0.55.",
+        d_name="Cervical cancer dashboard",
+        d_desc="Streamlit dashboard with age, stage and outcome filters. Chart: diagnoses per year in the "
+        "public FOSP cervical cancer data, 2000 to 2023, with a 20 percent drop in 2020.",
+        m_name="Codex reset monitor",
+        m_desc="Terminal showing an illustrative run: a Cloudflare cron dispatches the workflow, three public "
+        "sources are fetched, the announcement is classified, deduplicated into one event and sent to Discord. "
+        "Free to run, no LLM calls, four sources, two independent schedulers.",
     ),
     "pt": dict(
         r_eyebrow="Iniciação científica · FOSP",
@@ -89,6 +101,17 @@ C = {
         m_likely="provável",
         m_confirmed="confirmado",
         m_note="Execução ilustrativa, baseada no README do projeto.",
+        r_name="Pesquisa de sobrevida no câncer colorretal",
+        r_desc="Modelo de Cox no registro da FOSP: C-index 0,747, 37.499 pacientes, 22.078 óbitos. "
+        "Hazard ratios ajustados: metástase 2,18, sem tratamento 1,73, recidiva 1,20, estádio 1,12 por nível, "
+        "hormonioterapia 0,66, quimioterapia 0,59, cirurgia 0,55.",
+        d_name="Dashboard de câncer do colo do útero",
+        d_desc="Dashboard em Streamlit com filtros de idade, estádio e desfecho. Gráfico: diagnósticos por ano "
+        "nos dados públicos da FOSP de câncer do colo do útero, de 2000 a 2023, com queda de 20 por cento em 2020.",
+        m_name="Monitor de resets do Codex",
+        m_desc="Terminal com uma execução ilustrativa: um cron da Cloudflare dispara o workflow, três fontes "
+        "públicas são consultadas, o anúncio é classificado, deduplicado em um único evento e enviado ao Discord. "
+        "Custo zero, sem chamadas a LLM, quatro fontes, dois agendadores independentes.",
     ),
 }
 
@@ -246,12 +269,7 @@ def research(lang, theme, mobile):
     parts += [fb, cap]
     css.append(fc)
     H = int(cy + L.pad)
-    desc = (
-        "Cox model on the FOSP registry: C-index 0.747, 37,499 patients, 22,078 deaths. "
-        "Adjusted hazard ratios: metastasis 2.18, no treatment 1.73, recurrence 1.20, stage 1.12 per level, "
-        "hormone therapy 0.66, chemotherapy 0.59, surgery 0.55."
-    )
-    return svg(L.W, H, "Colorectal cancer survival research", desc, frame(L, H, t) + "".join(parts), "".join(css))
+    return svg(L.W, H, s["r_name"], s["r_desc"], frame(L, H, t) + "".join(parts), "".join(css))
 
 
 # --------------------------------------------------------------- dashboard
@@ -353,11 +371,7 @@ def dashboard(lang, theme, mobile):
     cap, cy = caption(L, "Fig. 2", s["d_fig"], L.pad, wy + wh + L.cap * 3, L.W - 2 * L.pad)
     parts.append(cap)
     H = int(cy + L.pad)
-    desc = (
-        "Streamlit dashboard with age, stage and outcome filters. Chart: diagnoses per year in the "
-        "public FOSP cervical cancer data, 2000 to 2023, with a 20 percent drop in 2020."
-    )
-    return svg(L.W, H, "Cervical cancer dashboard", desc, frame(L, H, t) + "".join(parts), "".join(css))
+    return svg(L.W, H, s["d_name"], s["d_desc"], frame(L, H, t) + "".join(parts), "".join(css))
 
 
 # ----------------------------------------------------------------- monitor
@@ -450,12 +464,7 @@ def monitor(lang, theme, mobile):
         last = ny + i * L.small * 1.5
     parts.append("".join(note))
     H = int(max(last, left_end) + L.pad)
-    desc = (
-        "Terminal showing an illustrative run: a Cloudflare cron dispatches the workflow, three public "
-        "sources are fetched, the announcement is classified, deduplicated into one event and sent to Discord. "
-        "Free to run, no LLM calls, four sources, two independent schedulers."
-    )
-    return svg(L.W, H, "Codex reset monitor", desc, frame(L, H, t) + "".join(parts), "".join(css))
+    return svg(L.W, H, s["m_name"], s["m_desc"], frame(L, H, t) + "".join(parts), "".join(css))
 
 
 BUILDERS = {"research": research, "dashboard": dashboard, "monitor": monitor}
