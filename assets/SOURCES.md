@@ -35,6 +35,7 @@ Each number previews the card below it, in the same order, and matches that card
 ## Toolbox
 
 - The tools are listed once, in `STR` in `scripts/build_assets.py`. A test checks that every tool in a project's stack line in the README is also in the panel, so the two lists cannot drift apart. The Flutter · Dart coursework link stays as text under the panel, because links inside a README image do not work.
+- The tool logos are from [Simple Icons](https://simpleicons.org) 16.36.0 (CC0 1.0, `scripts/icons/tools/LICENSE-simple-icons.md`), copied into the repository so the build stays offline. Each is drawn in its brand colour from Simple Icons' data file; colours too faint against a chip are moved toward the text colour until they reach 3:1 contrast, or 6:1 for the thin-stroked Jupyter and Folium logos. lifelines has no logo.
 
 ## Walking strip
 
