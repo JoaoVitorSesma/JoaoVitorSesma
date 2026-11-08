@@ -25,10 +25,11 @@ Each number previews the card below it, in the same order, and matches that card
 - Count of records per `ANODIAG` in [`Dashboard/colo_utero1.csv`](https://github.com/JoaoVitorSesma/Dashboard/blob/main/colo_utero1.csv), the same aggregation as the dashboard's first chart. Only yearly totals are used. Data: `scripts/data/dashboard_cases_by_year.json`.
 - 2000–2023 shown; 2023 is incomplete because of registry lag, and 2024 (355 records) is omitted.
 - The filter panel mirrors the controls in `DFOSP.py`.
+- Card facts, all from [`DFOSP.py`](https://github.com/JoaoVitorSesma/Dashboard/blob/main/DFOSP.py): **17 health regions** is the `NOME_DRS` list of São Paulo's regional health departments (DRS) drawn on the Folium map; **36-month survival** is the Kaplan–Meier estimate `calcular_porcentagem_sobrevida` computes per region; **3 filters** are the sidebar's age slider, stage and outcome controls.
 
 ## Codex reset monitor
 
-- Facts (four sources, Cloudflare cron plus GitHub fallback, every 15 minutes, no LLM, R$ 0 expected cost) from the [project README](https://github.com/JoaoVitorSesma/codex-reset-monitor/blob/main/README.md).
+- Facts (four sources, Cloudflare cron plus GitHub fallback, every 15 minutes, no LLM, R$ 0 expected cost) from the [project README](https://github.com/JoaoVitorSesma/codex-reset-monitor/blob/main/README.md). The four sources are the fetchers in `SOURCE_FETCHERS` ([`src/monitor.py`](https://github.com/JoaoVitorSesma/codex-reset-monitor/blob/main/src/monitor.py)): OpenAI Help Center, OpenAI Developer Community, codexreset.org and willcodexresets.com; the terminal fetches all four.
 - The terminal shows an illustrative run, not real output; the time in the `classify` line is an example.
 
 ## Walking strip
