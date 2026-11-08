@@ -21,7 +21,9 @@ OUT = ROOT / "assets"
 
 STR = {
     "en": dict(
-        stats=[("37,621", "patients modeled"), ("55,647", "records visualized"), ("96", "automated checks a day")],
+        # One number per project card below, in the same order, matching the card's own figures.
+        stats=[("Research", "37,499", "patients modeled"), ("Dashboard", "55,647", "records visualized"),
+               ("Monitor", "96", "automated checks a day")],
         cta_main="Get in touch",
         cta_alt="See projects",
         # Hero: the sidebar already says who I am, so the hero only makes the claim.
@@ -37,7 +39,8 @@ STR = {
         "dashboards, with user feedback flowing back into the models.",
     ),
     "pt": dict(
-        stats=[("37.621", "pacientes modelados"), ("55.647", "registros visualizados"), ("96", "verificações automáticas por dia")],
+        stats=[("Pesquisa", "37.499", "pacientes modelados"), ("Dashboard", "55.647", "registros visualizados"),
+               ("Monitor", "96", "verificações automáticas por dia")],
         cta_main="Fale comigo",
         cta_alt="Ver projetos",
         kicker="IA FULL-STACK",
@@ -259,25 +262,39 @@ def hero(lang, theme, mobile):
 
 
 def numbers(lang, theme, mobile):
-    """The three project numbers, static, opening the Selected work section."""
+    """The three project numbers, static, opening the Selected work section.
+
+    A panel like the cards', one column per card in the cards' order, each named
+    after its project so the number reads as a preview of that card."""
     t, s = THEMES[theme], STR[lang]
     W = 720 if mobile else 1200
     r = canvas(W, mobile)
-    x = r(4)
-    colw = (W - 2 * x) / 3
-    num, lab = r(22), r(12.5)
-    parts = []
-    y = num * 1.1
-    rows = 1
-    for i, (v, label) in enumerate(s["stats"]):
-        parts.append(text(MONO_MD, v, x + i * colw, y, num, "fg")[0])
-        lines = wrap(SANS, label, lab, colw - r(10))
+    pad, gap = (r(12), r(10)) if mobile else (r(22), r(20))
+    eyebrow, num, lab = r(12), r(22), r(12.5)
+    colw = (W - 2 * pad) / 3
+    sw = r(1)
+    top = pad + eyebrow
+    y = top + eyebrow * 0.9 + num * 1.15
+    parts, rows = [], 1
+    for i, (project, v, label) in enumerate(s["stats"]):
+        x = pad + i * colw + (gap if i else 0)
+        inner = colw - (gap if i else 0) - gap
+        parts.append(text(MONO_MD, project.upper(), x, top, eyebrow, "ac", tracking=r(0.6))[0])
+        parts.append(text(MONO_MD, v, x, y, num, "fg")[0])
+        lines = wrap(SANS, label, lab, inner)
         rows = max(rows, len(lines))
         for j, line in enumerate(lines):
-            parts.append(text(SANS, line, x + i * colw, y + lab * (1.6 + 1.3 * j), lab, "mu")[0])
-    H = int(y + lab * (1.6 + 1.3 * (rows - 1)) + r(8))
-    alt = ", ".join(f"{v} {label}" for v, label in s["stats"])
-    return svg(W, H, alt, alt, "".join(parts), base_css(t))
+            parts.append(text(SANS, line, x, y + lab * (1.6 + 1.3 * j), lab, "mu")[0])
+    box_h = y + lab * (1.6 + 1.3 * (rows - 1)) + lab * 0.4 + pad
+    for i in (1, 2):
+        dx = pad + i * colw
+        parts.append(f'<path class="ln" stroke-width="{sw:.2f}" d="M{dx:.1f} {pad:.1f} V{box_h - pad:.1f}"/>')
+    frame = (f'<rect x="{sw * .6:.1f}" y="{sw * .6:.1f}" width="{W - sw * 1.2:.1f}" height="{box_h - sw * 1.2:.1f}" '
+             f'rx="{r(12):.1f}" fill="{t["panel"]}" stroke="{t["line"]}" stroke-width="{sw:.2f}"/>')
+    # Air below the panel, before the first card: GitHub strips margins.
+    H = int(box_h + r(6))
+    alt = ", ".join(f"{v} {label}" for _, v, label in s["stats"])
+    return svg(W, H, alt, alt, frame + "".join(parts), base_css(t))
 
 
 def _hex(c):
