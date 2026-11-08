@@ -304,9 +304,9 @@ def _mix(a, b, k):
 
 
 # The hedgehog's routine is a script: a list of trips, each a leg that crosses
-# the strip followed by what happens at the edge. _motion() only plays it back,
-# so a new behaviour is a new entry here, not new code. Each phase name is a
-# pose that strip() knows how to draw.
+# the strip (or stops part way) followed by what happens where it stops.
+# _motion() only plays it back, so a new behaviour is a new entry here, not new
+# code. Each phase name is drawn by one entry of POSES.
 
 
 class Leg(NamedTuple):
@@ -331,9 +331,15 @@ class Recoil(NamedTuple):
     distance: float
 
 
+class Look(NamedTuple):
+    """Turn to look back without moving, then face the way of travel again."""
+    seconds: float
+    phase: str = "rest"
+
+
 class Edge(NamedTuple):
-    """What happens at the edge. touch="ball" stops where the ball itself, not
-    the sprite's box, meets the edge."""
+    """What happens where the leg stops. touch="ball" stops where the ball
+    itself, not the sprite's box, meets the edge."""
     beats: tuple
     touch: str = "body"
 
@@ -346,6 +352,7 @@ class Trip(NamedTuple):
     direction: int  # +1 right, -1 left
     leg: Leg
     edge: Edge
+    to: float = None  # stop part way, as a share of the strip from the left; None goes to the edge
 
 
 WALK = Leg((("walk", 1.0, 1.0),))
@@ -364,18 +371,26 @@ RECOVER = (Hold("rest", .55), Hold("shake", .75), Hold("rest", .15),
 BALL_BUMP = Edge((Hold("ball_impact", .20), Recoil("ball_recoil", .70, 90),
                   *UNCURL, *RECOVER), touch="ball")
 WALK_BUMP = Edge((Hold("walk_impact", .25), Recoil("walk_recoil", .50, 24), *RECOVER))
-BALL_TURN = Edge((*UNCURL, *TURN))
+# Out of breath after a roll: a longer rest and two blinks before turning.
+TIRED = (Hold("rest", .6), Hold("blink", .15), Hold("rest", .25),
+         Hold("blink", .15), Hold("rest", .4))
+
+BALL_TURN = Edge((*UNCURL, *TIRED))
 WALK_TURN = Edge(TURN)
+# Halfway across: blink, glance back over the shoulder, blink, carry on.
+LOOK_BACK = Edge((Hold("rest", .4), Hold("blink", .15), Look(.9),
+                  Hold("rest", .3), Hold("blink", .15), Hold("rest", .3)))
 
 # Every edge sees one bump and one quiet turn, and both gaits do each once.
 SCRIPT = (
     Trip(+1, ROLL, BALL_BUMP),
     Trip(-1, WALK, WALK_BUMP),
+    Trip(+1, WALK, LOOK_BACK, to=.55),
     Trip(+1, WALK, WALK_TURN),
     Trip(-1, ROLL_STOP, BALL_TURN),
 )
-# The same routine as (direction, rolls, bumps).
-TRIPS = [(trip.direction, trip.leg.rolls, trip.edge.bumps) for trip in SCRIPT]
+# The trips that reach an edge, as (direction, rolls, bumps).
+TRIPS = [(trip.direction, trip.leg.rolls, trip.edge.bumps) for trip in SCRIPT if trip.to is None]
 
 
 class Pose(NamedTuple):
@@ -422,6 +437,8 @@ def _pose(phase):
 
 def _edge_x(trip, travel, ball_margin):
     """Where the trip's leg stops."""
+    if trip.to is not None:
+        return travel * trip.to
     edge = travel if trip.direction > 0 else 0.0
     if trip.edge.touch == "ball":
         edge += trip.direction * ball_margin
@@ -470,6 +487,10 @@ def _motion(travel, walk_time, ball_margin=0, script=SCRIPT):
         for beat in trip.edge.beats:
             if isinstance(beat, Recoil):
                 advance(beat.phase, beat.seconds, x - direction * beat.distance)
+            elif isinstance(beat, Look):
+                starts.append((t, -direction))
+                advance(beat.phase, beat.seconds, x)
+                starts.append((t, direction))
             else:
                 advance(beat.phase, beat.seconds, x)
     return t, stops, spans, starts
@@ -714,7 +735,7 @@ def strip(theme, mobile):
     content = f'<g transform="translate(0 {top_pad:.1f})">{content}</g>'
     return svg(
         W, int(H + top_pad), "Walking mascot",
-        "A pixel-art hedgehog alternates walking and rolling; sometimes it bumps into the edge, recoils and shakes its head, other times it just turns around.",
+        "A pixel-art hedgehog alternates walking and rolling; sometimes it bumps into the edge, recoils and shakes its head, other times it just turns around, and once it stops halfway to glance back.",
         content, "".join(css),
     )
 
