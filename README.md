@@ -38,7 +38,7 @@
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/work/numbers-en-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/work/numbers-en-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/work/numbers-en-dark.svg">
-  <img src="./assets/work/numbers-en-light.svg" width="100%" alt="37,621 patients modeled, 55,647 records visualized, 96 automated checks a day">
+  <img src="./assets/work/numbers-en-light.svg" width="100%" alt="37,499 patients modeled, 55,647 records visualized, 96 automated checks a day">
 </picture>
 
 <a href="https://github.com/JoaoVitorSesma/Predicao-da-Sobrevida-em-Pacientes-com-Cancer-Colorretal-IC">
