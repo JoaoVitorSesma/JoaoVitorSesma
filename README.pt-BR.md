@@ -21,7 +21,7 @@
 </p>
 
 <p>
-  <a href="#vamos-conversar"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-pt-dark.svg"><img src="./assets/cta/main-pt-light.svg" alt="Fale comigo: escolha como enviar um e-mail" height="42" width="125"></picture></a>
+  <a href="#vamos-conversar"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/main-pt-dark.svg"><img src="./assets/cta/main-pt-light.svg" alt="Fale comigo: e-mail ou LinkedIn" height="42" width="125"></picture></a>
   <a href="#projetos"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/cta/alt-pt-dark.svg"><img src="./assets/cta/alt-pt-light.svg" alt="Ver projetos" height="42" width="109"></picture></a>
 </p>
 
@@ -87,9 +87,14 @@ Disciplina de Flutter · Dart · [Repositório](https://github.com/JoaoVitorSesm
 
 ## Vamos conversar
 
-Quer conversar sobre **dados, IA ou saúde**? Escolha como me escrever:
+Quer conversar sobre **dados, IA ou saúde**? Mande um e-mail ou me encontre no LinkedIn:
 
-[Gmail](https://mail.google.com/mail/?view=cm&fs=1&to=jv0707204%40gmail.com) · [Outlook Web](https://outlook.live.com/mail/deeplink/compose?to=jv0707204%40gmail.com&nlp=1) · [Aplicativo de e-mail](mailto:jv0707204@gmail.com)
+<p>
+  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=jv0707204%40gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/gmail-dark.svg"><img src="./assets/contact/gmail-light.svg" alt="Enviar e-mail pelo Gmail" height="42" width="69"></picture></a>
+  <a href="https://outlook.live.com/mail/deeplink/compose?to=jv0707204%40gmail.com&nlp=1"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/outlook-dark.svg"><img src="./assets/contact/outlook-light.svg" alt="Enviar e-mail pelo Outlook" height="42" width="82"></picture></a>
+  <a href="mailto:jv0707204@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/mail-pt-dark.svg"><img src="./assets/contact/mail-pt-light.svg" alt="Enviar e-mail pelo aplicativo de e-mail" height="42" width="123"></picture></a>
+  <a href="https://www.linkedin.com/in/jo%C3%A3o-vitor-sesma-685ba6276/"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/linkedin-dark.svg"><img src="./assets/contact/linkedin-light.svg" alt="Perfil no LinkedIn" height="42" width="87"></picture></a>
+</p>
 
 E-mail: `jv0707204@gmail.com`
 
