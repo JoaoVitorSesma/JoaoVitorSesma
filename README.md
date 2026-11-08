@@ -98,4 +98,6 @@ Want to talk about **data, AI or healthcare**? Email me or find me on LinkedIn:
 
 Email: `jv0707204@gmail.com`
 
+<p align="right"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/strip/rest-dark.svg"><img src="./assets/strip/rest-light.svg" alt="The pixel-art hedgehog stands at the end of the page and blinks now and then." height="52" width="62"></picture></p>
+
 <sub>Every figure on this page is drawn from the projects' own data by [`scripts/build_assets.py`](./scripts/build_assets.py); sources in [`assets/SOURCES.md`](./assets/SOURCES.md). Animations stop when your system asks for reduced motion. Set in Atkinson Hyperlegible, designed by the Braille Institute for readers with low vision.</sub>
