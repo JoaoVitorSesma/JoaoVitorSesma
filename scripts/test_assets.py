@@ -4,6 +4,7 @@ Run: python -m unittest discover -s scripts
 """
 import re
 import unittest
+from xml.etree import ElementTree
 
 import build_assets as assets
 from svgkit import MIN_PX, smallest
@@ -43,6 +44,16 @@ class GeneratedAssetTests(unittest.TestCase):
             if re.search(r"animation:(?!none)", svg):
                 with self.subTest(name):
                     self.assertIn("@media (prefers-reduced-motion:reduce)", svg)
+
+    def test_every_asset_is_well_formed_xml(self):
+        # GitHub shows README SVGs through <img>, which parses them as strict XML:
+        # a single bare "&" breaks the image even though inline SVG would render.
+        for name, (svg, _) in self.built.items():
+            with self.subTest(name):
+                try:
+                    ElementTree.fromstring(svg)
+                except ElementTree.ParseError as error:
+                    self.fail(f"not well-formed XML: {error}")
 
     def test_every_asset_has_an_accessible_name(self):
         for name, (svg, _) in self.built.items():

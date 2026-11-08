@@ -4,6 +4,7 @@ GitHub serves README images through <img>, where SVGs cannot load web fonts,
 so every string is converted to outline paths with HarfBuzz shaping.
 """
 
+from html import escape
 from pathlib import Path
 
 import uharfbuzz as hb
@@ -163,6 +164,8 @@ def svg(w, h, title, desc, body, css):
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
         f'viewBox="0 0 {w} {h}" role="img" aria-labelledby="t d">'
-        f'<title id="t">{title}</title><desc id="d">{desc}</desc>'
+        # Escaped: an <img> SVG is strict XML, and one bare "&" (as in "Data & research")
+        # makes GitHub show a broken image.
+        f'<title id="t">{escape(title)}</title><desc id="d">{escape(desc)}</desc>'
         f"<style>{css}</style>{body}</svg>"
     )
