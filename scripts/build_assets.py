@@ -7,6 +7,7 @@ mobile. Data comes from scripts/data (see assets/SOURCES.md).
 """
 
 from functools import partial
+from html import escape
 from math import pi
 from pathlib import Path
 from typing import NamedTuple
@@ -865,7 +866,7 @@ def lang_pill(lang, active, theme):
     el, _ = text(font, label, pad, h / 2 + fs * 0.36, fs, "fg" if active else "mu")
     title = f"{label} (current)" if active else label
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w / k:.0f}" height="{h / k:.0f}" '
-            f'viewBox="0 0 {w:.0f} {h:.0f}" role="img" aria-label="{title}"><title>{title}</title>'
+            f'viewBox="0 0 {w:.0f} {h:.0f}" role="img" aria-label="{escape(title)}"><title>{escape(title)}</title>'
             f'<style>{base_css(t)}</style>{frame}{el}</svg>')
 
 
@@ -994,7 +995,7 @@ def cta_pill(label, primary, theme, icon=None):
                  f'fill="none" stroke="{t["line"]}" stroke-width="{k}"/>')
         el, _ = text(font, label, lx, h / 2 + fs * 0.36, fs, "fg")
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w / k:.0f}" height="{h / k:.0f}" '
-            f'viewBox="0 0 {w:.0f} {h:.0f}" role="img" aria-label="{label}"><title>{label}</title>'
+            f'viewBox="0 0 {w:.0f} {h:.0f}" role="img" aria-label="{escape(label)}"><title>{escape(label)}</title>'
             f'<style>{base_css(t)}</style>{frame}{dot}{el}</svg>')
 
 
