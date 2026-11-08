@@ -311,6 +311,48 @@ def numbers(lang, theme, mobile):
     return svg(W, H, alt, alt, frame + "".join(parts), base_css(t))
 
 
+# Tool logos from Simple Icons 16.36.0 (CC0, scripts/icons/tools/LICENSE-simple-icons.md),
+# one 24x24 path each, with the brand colour from its data file. lifelines has no logo.
+TOOL_ICONS = {
+    "Python": ("python", "#3776AB"), "pandas": ("pandas", "#150458"), "NumPy": ("numpy", "#013243"),
+    "Jupyter": ("jupyter", "#F37626"), "Streamlit": ("streamlit", "#FF4B4B"), "Plotly": ("plotly", "#7A76FF"),
+    "GeoPandas": ("geopandas", "#139C5A"), "Folium": ("folium", "#77B829"),
+    "GitHub Actions": ("githubactions", "#2088FF"), "Cloudflare Workers": ("cloudflareworkers", "#F38020"),
+    "Discord webhooks": ("discord", "#5865F2"), "webhooks do Discord": ("discord", "#5865F2"),
+    "pytest": ("pytest", "#0A9EDC"), "Flutter": ("flutter", "#02569B"), "Dart": ("dart", "#0175C2"),
+}
+# Logos drawn with thin strokes need more contrast than solid ones to stay visible.
+THIN_ICONS = {"jupyter", "folium"}
+
+
+def _luminance(c):
+    def ch(v):
+        v /= 255
+        return v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4
+    r_, g, b = (ch(v) for v in _hex(c))
+    return 0.2126 * r_ + 0.7152 * g + 0.0722 * b
+
+
+def _contrast(a, b):
+    hi, lo = sorted((_luminance(a), _luminance(b)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def _legible(colour, bg, toward, minimum):
+    """The brand colour, moved toward the text colour in 5% steps until it reaches the contrast minimum."""
+    for k in range(21):
+        c = _mix(colour, toward, k / 20)
+        if _contrast(c, bg) >= minimum:
+            return c
+    return toward
+
+
+def _tool_icon(slug):
+    import re
+    src = (Path(__file__).parent / "icons" / "tools" / f"{slug}.svg").read_text(encoding="utf-8")
+    return re.search(r' d="([^"]+)"', src)[1]
+
+
 def toolbox(lang, theme, mobile):
     """The tools, grouped by area: a panel like the numbers strip, each group an
     accent label over a row of chips. Two groups per row on desktop, one on mobile."""
@@ -319,7 +361,8 @@ def toolbox(lang, theme, mobile):
     r = canvas(W, mobile)
     pad, gap = (r(14), r(14)) if mobile else (r(22), r(28))
     eyebrow, fs = r(12), r(13)
-    chip_h, chip_px, chip_gap = fs * 2.0, r(10), r(6)
+    chip_h, chip_px, chip_gap = fs * 2.0, r(8), r(5)
+    ic, ic_gap = r(14), r(5)
     sw = r(1)
     per_row = 1 if mobile else 2
     colw = (W - 2 * pad - gap * (per_row - 1)) / per_row
@@ -332,14 +375,20 @@ def toolbox(lang, theme, mobile):
             parts.append(text(MONO_MD, area.upper(), x0, y + eyebrow, eyebrow, "ac", tracking=r(0.6))[0])
             cx, cy = x0, y + eyebrow + r(10)
             for tool in tools:
-                w = SANS.width(tool, fs) + 2 * chip_px
+                icon = TOOL_ICONS.get(tool)
+                w = SANS.width(tool, fs) + 2 * chip_px + ((ic + ic_gap) if icon else 0)
                 if cx > x0 and cx + w > x0 + colw:
                     cx, cy = x0, cy + chip_h + chip_gap
-                parts.append(
-                    f'<rect x="{cx:.1f}" y="{cy:.1f}" width="{w:.1f}" height="{chip_h:.1f}" rx="{chip_h / 2:.1f}" '
-                    f'fill="{t["panel2"]}" stroke="{t["line"]}" stroke-width="{sw:.2f}"/>'
-                    + text(SANS, tool, cx + w / 2, cy + chip_h / 2 + fs * 0.35, fs, "fg", anchor="middle")[0]
-                )
+                el = (f'<rect x="{cx:.1f}" y="{cy:.1f}" width="{w:.1f}" height="{chip_h:.1f}" rx="{chip_h / 2:.1f}" '
+                      f'fill="{t["panel2"]}" stroke="{t["line"]}" stroke-width="{sw:.2f}"/>')
+                tx = cx + chip_px
+                if icon:
+                    slug, brand = icon
+                    fill = _legible(brand, t["panel2"], t["fg"], 6 if slug in THIN_ICONS else 3)
+                    el += (f'<path transform="translate({tx:.1f} {cy + (chip_h - ic) / 2:.1f}) scale({ic / 24:.4f})" '
+                           f'fill="{fill}" d="{_tool_icon(slug)}"/>')
+                    tx += ic + ic_gap
+                parts.append(el + text(SANS, tool, tx, cy + chip_h / 2 + fs * 0.35, fs, "fg")[0])
                 cx += w + chip_gap
             bottom = max(bottom, cy + chip_h)
         y = bottom + (r(18) if mobile else r(22))
