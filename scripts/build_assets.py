@@ -21,14 +21,6 @@ OUT = ROOT / "assets"
 
 STR = {
     "en": dict(
-        cmd="whoami",
-        name="João Vitor Morimoto Sesma",
-        name_lines=["João Vitor", "Morimoto Sesma"],
-        tagline="Health data, survival models and the tools people use.",
-        # Only what the profile sidebar does not already show (name aside).
-        rows=[("drawn to", "AI for healthcare, data analysis and automation"),
-              ("now", "building ML and deep learning models for medical diagnosis"),
-              ("learning", "LLMs (building and using them) and computer vision")],
         stats=[("37,621", "patients modeled"), ("55,647", "records visualized"), ("96", "automated checks a day")],
         cta_main="Get in touch",
         cta_alt="See projects",
@@ -45,13 +37,6 @@ STR = {
         "dashboards, with user feedback flowing back into the models.",
     ),
     "pt": dict(
-        cmd="whoami",
-        name="João Vitor Morimoto Sesma",
-        name_lines=["João Vitor", "Morimoto Sesma"],
-        tagline="Dados de saúde, modelos de sobrevida e as ferramentas que as pessoas usam.",
-        rows=[("interesses", "IA para saúde, análise de dados e automação"),
-              ("agora", "construindo modelos de ML e deep learning para diagnóstico médico"),
-              ("aprendendo", "LLMs (construindo e usando) e visão computacional")],
         stats=[("37.621", "pacientes modelados"), ("55.647", "registros visualizados"), ("96", "verificações automáticas por dia")],
         cta_main="Fale comigo",
         cta_alt="Ver projetos",
