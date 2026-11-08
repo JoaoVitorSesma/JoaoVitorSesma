@@ -378,6 +378,48 @@ SCRIPT = (
 TRIPS = [(trip.direction, trip.leg.rolls, trip.edge.bumps) for trip in SCRIPT]
 
 
+class Pose(NamedTuple):
+    """How strip() draws the script's phases.
+
+    cls is the CSS class of the pose's group, shown only during its phases.
+    art names a drawing that strip() builds. ground says what touches the
+    floor and lights cells: "gait" (the walking poses in turn), "stand" (the
+    first walking pose), "crouch", "curl", "ball" (one centred tangent while
+    the square sprite rotates) or None (airborne). shown is the pose visible
+    without animation, under reduced motion.
+    """
+    cls: str
+    phases: tuple
+    art: str
+    ground: object
+    shown: bool = False
+
+
+# Order matters: it is the stacking and CSS order of the generated SVG.
+POSES = (
+    Pose("gw", ("walk",), "walking", "gait", shown=True),
+    Pose("gc", ("crouch",), "crouch", "crouch"),
+    Pose("gu", ("curl",), "curl", "curl"),
+    Pose("gb", ("ball",), "ball_spin", "ball"),
+    Pose("gbs", ("ball_slow",), "ball_slow", "ball"),
+    Pose("idle", ("rest",), "stand", "stand"),
+    Pose("closed", ("blink", "walk_recoil"), "closed", "stand"),
+    Pose("whit", ("walk_impact",), "walk_hit", "stand"),
+    Pose("bhit", ("ball_impact",), "ball_hit", "ball"),
+    Pose("bback", ("ball_recoil",), "ball_hop", None),
+    Pose("bstop", ("ball_rest",), "ball", "ball"),
+    Pose("shake", ("shake",), "shake", "stand"),
+)
+
+
+def _pose(phase):
+    """The pose that draws a phase; every phase in the script needs one."""
+    for pose in POSES:
+        if phase in pose.phases:
+            return pose
+    raise ValueError(f"phase {phase!r} has no pose in POSES")
+
+
 def _edge_x(trip, travel, ball_margin):
     """Where the trip's leg stops."""
     edge = travel if trip.direction > 0 else 0.0
@@ -450,27 +492,26 @@ def _contact_tracks(frames, roll, step, px, stops, spans, trips):
     tracks = []
     width = len(frames[0][0]) * px
     footprints = [_ground_runs(frame) for frame in frames]
-    phase_frames = {"crouch": roll["curl"][0], "curl": roll["curl"][1], "ball": roll["ball"],
-                    "ball_slow": roll["ball"], "ball_impact": roll["ball"], "ball_rest": roll["ball"]}
-    phase_frames.update({p: roll["walk"][0] for p in
-                         ("walk_impact", "walk_recoil", "rest", "shake", "blink")})
+    still = {"stand": roll["walk"][0], "crouch": roll["curl"][0], "curl": roll["curl"][1],
+             "ball": roll["ball"]}
     for (a, xa), (b, xb) in zip(stops, stops[1:]):
         mid = (a + b) / 2
         phase = next(p for p, intervals in spans.items() if any(lo <= mid < hi for lo, hi in intervals))
-        if phase == "ball_recoil":
+        ground = _pose(phase).ground
+        if ground is None:
             continue  # airborne: cells light again on landing, not during the hop
         direction = next(d for t, d in reversed(trips) if t <= mid)
         ticks = [a, b]
-        if phase == "walk":
+        if ground == "gait":
             ticks += [i * step for i in range(int(a / step) + 1, int(b / step) + 1) if i * step < b]
         ticks.sort()
         for start, end in zip(ticks, ticks[1:]):
-            if phase == "walk":
+            if ground == "gait":
                 index = roll["walk"][int(((start + end) / 2) / step) % len(roll["walk"])]
             else:
-                index = phase_frames[phase]
+                index = still[ground]
             supports = footprints[index]
-            if phase in ("ball", "ball_slow", "ball_impact", "ball_rest"):
+            if ground == "ball":
                 # The tangent remains centered as the square sprite rotates.
                 supports = [(len(frames[index][0]) / 2 - .5, 1)]
             for x, size in supports:
@@ -522,6 +563,8 @@ def strip(theme, mobile):
     ball = frames[roll["ball"]]
     ball_margin = min(x for row in ball for x, ch in enumerate(row) if ch != ".") * px
     period, stops, spans, trips = _motion(travel, walk_time, ball_margin)
+    for phase in spans:
+        _pose(phase)  # fail early on a scripted phase nothing draws
     # Keep the pose clock aligned with the repeating contact/position clock.
     gait = step * len(roll["walk"])
     step = period / (round(period / gait) * len(roll["walk"]))
@@ -609,16 +652,9 @@ def strip(theme, mobile):
         return (f".{cls}{{opacity:{1 if base_on else 0};animation:{cls} {period}s linear infinite}}"
                 f"@keyframes {cls}{{{''.join(kf)}}}")
 
-    css.append(vis("gw", groups["walk"], True))
-    css.append(vis("gc", groups["crouch"], False))
-    css.append(vis("gu", groups["curl"], False))
-    css.append(vis("gb", groups["ball"], False))
-    css.append(vis("gbs", groups["ball_slow"], False))
-    for cls, phases in (("idle", ("rest",)), ("closed", ("blink", "walk_recoil")),
-                        ("whit", ("walk_impact",)), ("bhit", ("ball_impact",)),
-                        ("bback", ("ball_recoil",)), ("bstop", ("ball_rest",)),
-                        ("shake", ("shake",))):
-        css.append(vis(cls, [span for phase in phases for span in groups[phase]], False))
+    for pose in POSES:
+        css.append(vis(pose.cls, [span for phase in pose.phases for span in groups.get(phase, [])],
+                       pose.shown))
     diameter = sum(any(ch != "." for ch in row) for row in ball) * px
     spin_time = pi * diameter / (travel / walk_time * 3)
     css.append(f".spin{{transform-box:fill-box;transform-origin:center;animation:spin {spin_time:g}s steps(4) infinite}}"
@@ -655,17 +691,23 @@ def strip(theme, mobile):
         offset = -px if pose != "blink" else 0
         heads.append(f'<g class="{cls}">{hedgehog.frame_rects(pal, recovery[pose], px, offset)}</g>')
     c0, c1 = roll["curl"]
-    body = (
-        f'<g class="gw">{walking}</g>'
-        f'<g class="gc">{rf(c0)}</g><g class="gu">{rf(c1)}</g>'
-        f'<g class="gb"><g class="spin">{rf(roll["ball"])}</g></g>'
-        f'<g class="gbs"><g class="slowspin">{rf(roll["ball"])}</g></g>'
-        f'<g class="idle">{rf(walk_frames[0])}</g><g class="closed">{closed}</g>'
-        f'<g class="whit"><g class="walkhit">{closed}</g></g>'
-        f'<g class="bhit"><g class="ballhit">{rf(roll["ball"])}</g></g>'
-        f'<g class="bback"><g class="hop"><g class="backspin">{rf(roll["ball"])}</g></g></g>'
-        f'<g class="bstop">{rf(roll["ball"])}</g><g class="shake">{"".join(heads)}</g>'
-    )
+    rolled = rf(roll["ball"])
+    # The drawings POSES refers to by name.
+    art = {
+        "walking": walking,
+        "crouch": rf(c0),
+        "curl": rf(c1),
+        "ball_spin": f'<g class="spin">{rolled}</g>',
+        "ball_slow": f'<g class="slowspin">{rolled}</g>',
+        "stand": rf(walk_frames[0]),
+        "closed": closed,
+        "walk_hit": f'<g class="walkhit">{closed}</g>',
+        "ball_hit": f'<g class="ballhit">{rolled}</g>',
+        "ball_hop": f'<g class="hop"><g class="backspin">{rolled}</g></g>',
+        "ball": rolled,
+        "shake": "".join(heads),
+    }
+    body = "".join(f'<g class="{pose.cls}">{art[pose.art]}</g>' for pose in POSES)
     # A larger pause separates contact actions from the project divider.
     top_pad = r_px(12)
     content = "".join(rects) + f'<g class="walk" shape-rendering="crispEdges"><g class="flip">{body}</g></g>'
