@@ -10,7 +10,7 @@ from math import pi
 from pathlib import Path
 
 import cards
-import creatures
+import hedgehog
 from svgkit import MIN_PX, MONO, MONO_MD, SANS, SANS_BD, THEMES, base_css, canvas, scale, smallest, svg, text, wrap
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -302,28 +302,40 @@ def _mix(a, b, k):
     return "#" + "".join(f"{round(x + (y - x) * k):02x}" for x, y in zip(a, b))
 
 
-MASCOT = "hedgehog"  # one of creatures.CREATURES: silver, egg, mecha, blob, hedgehog
-
-
-# Each trip across the strip: direction (+1 right, -1 left) and whether it rolls.
-# The first trip always rolls; later ones mix plain walks in.
-TRIPS = [(+1, True), (-1, False), (+1, False), (-1, True)]
-# Rolling trips finish curled up so the ball itself reaches the boundary.
-# (phase, share of the trip's duration, speed relative to walking)
+# Each trip across the strip: (direction, rolls, bumps). direction is +1 for
+# right and -1 for left; a trip that bumps hits the invisible edge, recoils and
+# shakes its head, otherwise the hedgehog stops at the edge and turns round.
+# Every edge sees one bump and one quiet turn, and both gaits do each once.
+TRIPS = [(+1, True, True), (-1, False, True), (+1, False, False), (-1, True, False)]
+# (phase, share of the trip's duration, speed relative to walking).
+# A rolling trip that bumps reaches the edge at full speed; one that turns
+# slows down first so the ball can come to rest without hitting anything.
 ROLL_PLAN = [("walk", 0.30, 1.0), ("crouch", 0.05, 0.3),
              ("curl", 0.05, 0.3), ("ball", 0.60, 3.0)]
+ROLL_STOP_PLAN = [("walk", 0.30, 1.0), ("crouch", 0.05, 0.3), ("curl", 0.05, 0.3),
+                  ("ball", 0.42, 3.0), ("ball_slow", 0.18, 1.0)]
+BALL_RECOIL, WALK_RECOIL = 90, 24
 
 
-def _motion(travel, walk_time, roll, ball_margin=0):
+def _trip_end(direction, rolls, bumps, travel, ball_margin):
+    """Where the trip stops at the edge, and where its recovery leaves the hedgehog."""
+    edge = travel if direction > 0 else 0.0
+    if rolls and bumps:
+        edge += direction * ball_margin  # the ball itself touches the edge
+    if not bumps:
+        return edge, edge
+    return edge, edge - direction * (BALL_RECOIL if rolls else WALK_RECOIL)
+
+
+def _motion(travel, walk_time, ball_margin=0, trips=TRIPS):
     """Keyframes for a full cycle at a constant walking speed.
 
     walk_time is how long a plain walking trip takes. Returns
     (period, stops [(t, x)], spans {phase: [(t0, t1)]}, trips [(t0, direction)]).
     """
-    trips = TRIPS if roll else [(+1, False), (-1, False)]
     speed = travel / walk_time
-    # Start where the last recovery ends, so the loop never teleports.
-    x = (90 - ball_margin if trips[-1][1] else 24) if roll else 0.0
+    # Start where the last trip leaves the hedgehog, so the loop never teleports.
+    x = _trip_end(*trips[-1], travel, ball_margin)[1]
     t, stops, spans, starts = 0.0, [(0.0, x)], {"walk": [], "crouch": [], "curl": [], "ball": []}, []
 
     def advance(phase, duration, target):
@@ -333,29 +345,35 @@ def _motion(travel, walk_time, roll, ball_margin=0):
         x = target
         stops.append((t, x))
 
-    for direction, rolls in trips:
+    for direction, rolls, bumps in trips:
         starts.append((t, direction))
-        end = travel if direction > 0 else 0.0
-        if rolls:
-            end += direction * ball_margin
-        plan = ROLL_PLAN if rolls else [("walk", 1.0, 1.0)]
+        end, _ = _trip_end(direction, rolls, bumps, travel, ball_margin)
+        plan = [("walk", 1.0, 1.0)] if not rolls else ROLL_PLAN if bumps else ROLL_STOP_PLAN
         dur = abs(end - x) / (speed * sum(f * v for _, f, v in plan))
         for phase, f, v in plan:
             dt = f * dur
             advance(phase, dt, x + direction * speed * v * dt)
         x = end
         stops[-1] = (t, x)
-        if not roll:
+        if not bumps:
+            # A quiet stop: uncurl if needed, blink, then turn round.
+            if rolls:
+                advance("ball_rest", .25, x)
+                advance("curl", .25, x)
+                advance("crouch", .25, x)
+            advance("rest", .35, x)
+            advance("blink", .15, x)
+            advance("rest", .25, x)
             continue
         if rolls:
             advance("ball_impact", .20, x)
-            advance("ball_recoil", .70, x - direction * 90)
+            advance("ball_recoil", .70, x - direction * BALL_RECOIL)
             advance("ball_rest", .25, x)
             advance("curl", .25, x)
             advance("crouch", .25, x)
         else:
             advance("walk_impact", .25, x)
-            advance("walk_recoil", .50, x - direction * 24)
+            advance("walk_recoil", .50, x - direction * WALK_RECOIL)
         advance("rest", .55, x)
         advance("shake", .75, x)
         advance("rest", .15, x)
@@ -382,7 +400,7 @@ def _contact_tracks(frames, roll, step, px, stops, spans, trips):
     width = len(frames[0][0]) * px
     footprints = [_ground_runs(frame) for frame in frames]
     phase_frames = {"crouch": roll["curl"][0], "curl": roll["curl"][1], "ball": roll["ball"],
-                    "ball_impact": roll["ball"], "ball_rest": roll["ball"]}
+                    "ball_slow": roll["ball"], "ball_impact": roll["ball"], "ball_rest": roll["ball"]}
     phase_frames.update({p: roll["walk"][0] for p in
                          ("walk_impact", "walk_recoil", "rest", "shake", "blink")})
     for (a, xa), (b, xb) in zip(stops, stops[1:]):
@@ -401,7 +419,7 @@ def _contact_tracks(frames, roll, step, px, stops, spans, trips):
             else:
                 index = phase_frames[phase]
             supports = footprints[index]
-            if phase in ("ball", "ball_impact", "ball_rest"):
+            if phase in ("ball", "ball_slow", "ball_impact", "ball_rest"):
                 # The tangent remains centered as the square sprite rotates.
                 supports = [(len(frames[index][0]) / 2 - .5, 1)]
             for x, size in supports:
@@ -434,43 +452,29 @@ def _cell_contacts(cx, cell, tracks):
     return merged
 
 
-def strip(theme, mobile, mascot=None):
-    """A thin band where the mascot crosses a row of contribution-style cells
-    that light up under it, turning round at each end."""
+def strip(theme, mobile):
+    """A thin band where the hedgehog crosses a row of contribution-style cells
+    that light up under it. The edges are invisible: at each one it either
+    bumps and recovers or simply turns round."""
     t = THEMES[theme]
     r_px = canvas(720 if mobile else 1200, mobile)
-    name = mascot or MASCOT
-    pal, frames, gw, gh = creatures.get(name, theme)
-    roll = creatures.CREATURES[name].get("roll")
-    step = creatures.CREATURES[name].get("step", .22)
+    pal, frames, gw, gh = hedgehog.palette(theme), hedgehog.FRAMES, hedgehog.W, hedgehog.H
+    roll, step = hedgehog.ROLL, hedgehog.STEP
     W, walk_time = (720, 14.0) if mobile else (1200, 20.0)
     px, cell, pitch = 3, 10, 14
     sw, sh = gw * px, gh * px
     top = 8
-    cells_y = top + sh + (0 if name == "hedgehog" else 4)
+    cells_y = top + sh
     H = cells_y + cell + 4
     travel = W - sw
     fade = 2.6
-    ball_margin = 0
-    if roll:
-        ball = frames[roll["ball"]]
-        ball_margin = min(x for row in ball for x, ch in enumerate(row) if ch != ".") * px
-    period, stops, spans, trips = _motion(travel, walk_time, roll, ball_margin)
-    if roll:
-        # Keep the pose clock aligned with the repeating contact/position clock.
-        gait = step * len(roll["walk"])
-        step = period / (round(period / gait) * len(roll["walk"]))
-    tracks = _contact_tracks(frames, roll, step, px, stops, spans, trips) if roll else None
-
-    def pass_times(cx):
-        """Moments when the mascot's centre crosses x = cx."""
-        target, out = cx - sw / 2, []
-        for (t0, x0), (t1, x1) in zip(stops, stops[1:]):
-            lo, hi = min(x0, x1), max(x0, x1)
-            if lo <= target <= hi and x1 != x0:
-                out.append(round(t0 + (target - x0) / (x1 - x0) * (t1 - t0), 3) % period)
-        out = sorted(set(out))
-        return [v for i, v in enumerate(out) if i == 0 or v - out[i - 1] > 0.05] or [0.0]
+    ball = frames[roll["ball"]]
+    ball_margin = min(x for row in ball for x, ch in enumerate(row) if ch != ".") * px
+    period, stops, spans, trips = _motion(travel, walk_time, ball_margin)
+    # Keep the pose clock aligned with the repeating contact/position clock.
+    gait = step * len(roll["walk"])
+    step = period / (round(period / gait) * len(roll["walk"]))
+    tracks = _contact_tracks(frames, roll, step, px, stops, spans, trips)
 
     seed, levels = 7, []
     n = (W + pitch - cell) // pitch
@@ -484,8 +488,7 @@ def strip(theme, mobile, mascot=None):
     x0 = (W - (n * pitch - (pitch - cell))) / 2
     for i, lv in enumerate(levels):
         cx = x0 + i * pitch + cell / 2
-        contacts = (_cell_contacts(cx, cell, tracks) if tracks is not None else
-                    [(f, f) for f in pass_times(min(max(cx, sw / 2), W - sw / 2))])
+        contacts = _cell_contacts(cx, cell, tracks)
         base, hot = t["cells"][lv], t["cells"][4]
 
         def col(tt):
@@ -522,8 +525,8 @@ def strip(theme, mobile, mascot=None):
         + "".join(f"{t0 / period * 100:.3f}%{{transform:scaleX({d})}}" for t0, d in trips)
         + f"100%{{transform:scaleX({trips[-1][1]})}}}}"
     )
-    rf = lambda k: creatures.frame_rects(pal, frames[k], px)
-    walk_frames = roll["walk"] if roll else [0, 1]
+    rf = lambda k: hedgehog.frame_rects(pal, frames[k], px)
+    walk_frames = roll["walk"]
     walking = []
     for i, frame in enumerate(walk_frames):
         keyframes = "".join(f"{j / len(walk_frames) * 100:g}%{{opacity:{int(i == j)}}}"
@@ -532,97 +535,93 @@ def strip(theme, mobile, mascot=None):
                    f"@keyframes wf{i}{{{keyframes}100%{{opacity:{int(i == 0)}}}}}")
         walking.append(f'<g class="wf{i}">{rf(frame)}</g>')
     walking = "".join(walking)
-    if not roll:
-        body = walking
-    else:
-        # which pose is visible when: crouch/curl split their phases in two
-        groups = spans
+    # Each pose group is visible only during its phases of the cycle.
+    groups = spans
 
-        def vis(cls, spans, base_on):
-            merged = []
-            for a_, b_ in sorted(spans):
-                if merged and a_ <= merged[-1][1] + 1e-6:
-                    merged[-1] = (merged[-1][0], max(merged[-1][1], b_))
-                else:
-                    merged.append((a_, b_))
-            kf = [] if merged and merged[0][0] <= 0 else ["0%{opacity:0}"]
-            for a_, b_ in merged:
-                pa, pb = a_ / period * 100, b_ / period * 100
-                if pa > 0:
-                    kf.append(f"{pa - .001:.3f}%{{opacity:0}}")
-                kf.append(f"{pa:.3f}%{{opacity:1}}{pb:.3f}%{{opacity:1}}")
-                if pb < 100:
-                    kf.append(f"{pb + .001:.3f}%{{opacity:0}}")
-            if not (merged and merged[-1][1] >= period):
-                kf.append("100%{opacity:0}")
-            return (f".{cls}{{opacity:{1 if base_on else 0};animation:{cls} {period}s linear infinite}}"
-                    f"@keyframes {cls}{{{''.join(kf)}}}")
+    def vis(cls, intervals, base_on):
+        merged = []
+        for a_, b_ in sorted(intervals):
+            if merged and a_ <= merged[-1][1] + 1e-6:
+                merged[-1] = (merged[-1][0], max(merged[-1][1], b_))
+            else:
+                merged.append((a_, b_))
+        kf = [] if merged and merged[0][0] <= 0 else ["0%{opacity:0}"]
+        for a_, b_ in merged:
+            pa, pb = a_ / period * 100, b_ / period * 100
+            if pa > 0:
+                kf.append(f"{pa - .001:.3f}%{{opacity:0}}")
+            kf.append(f"{pa:.3f}%{{opacity:1}}{pb:.3f}%{{opacity:1}}")
+            if pb < 100:
+                kf.append(f"{pb + .001:.3f}%{{opacity:0}}")
+        if not (merged and merged[-1][1] >= period):
+            kf.append("100%{opacity:0}")
+        return (f".{cls}{{opacity:{1 if base_on else 0};animation:{cls} {period}s linear infinite}}"
+                f"@keyframes {cls}{{{''.join(kf)}}}")
 
-        css.append(vis("gw", groups["walk"], True))
-        css.append(vis("gc", groups["crouch"], False))
-        css.append(vis("gu", groups["curl"], False))
-        css.append(vis("gb", groups["ball"], False))
-        for cls, phases in (("idle", ("rest",)), ("closed", ("blink", "walk_recoil")),
-                            ("whit", ("walk_impact",)), ("bhit", ("ball_impact",)),
-                            ("bback", ("ball_recoil",)), ("bstop", ("ball_rest",)),
-                            ("shake", ("shake",))):
-            css.append(vis(cls, [span for phase in phases for span in groups[phase]], False))
-        ball = frames[roll["ball"]]
-        diameter = sum(any(ch != "." for ch in row) for row in ball) * px
-        spin_time = pi * diameter / (travel / walk_time * 3)
-        css.append(f".spin{{transform-box:fill-box;transform-origin:center;animation:spin {spin_time:g}s steps(4) infinite}}"
-                   "@keyframes spin{to{transform:rotate(360deg)}}")
-        css.append(f".backspin{{transform-box:fill-box;transform-origin:center;animation:spin {spin_time:g}s steps(4) infinite reverse}}")
+    css.append(vis("gw", groups["walk"], True))
+    css.append(vis("gc", groups["crouch"], False))
+    css.append(vis("gu", groups["curl"], False))
+    css.append(vis("gb", groups["ball"], False))
+    css.append(vis("gbs", groups["ball_slow"], False))
+    for cls, phases in (("idle", ("rest",)), ("closed", ("blink", "walk_recoil")),
+                        ("whit", ("walk_impact",)), ("bhit", ("ball_impact",)),
+                        ("bback", ("ball_recoil",)), ("bstop", ("ball_rest",)),
+                        ("shake", ("shake",))):
+        css.append(vis(cls, [span for phase in phases for span in groups[phase]], False))
+    diameter = sum(any(ch != "." for ch in row) for row in ball) * px
+    spin_time = pi * diameter / (travel / walk_time * 3)
+    css.append(f".spin{{transform-box:fill-box;transform-origin:center;animation:spin {spin_time:g}s steps(4) infinite}}"
+               "@keyframes spin{to{transform:rotate(360deg)}}")
+    css.append(f".backspin{{transform-box:fill-box;transform-origin:center;animation:spin {spin_time:g}s steps(4) infinite reverse}}")
+    # While braking the ball turns at walking pace, a third of its rolling spin.
+    css.append(f".slowspin{{transform-box:fill-box;transform-origin:center;animation:spin {spin_time * 3:g}s steps(4) infinite}}")
 
-        def reaction(cls, intervals, transforms, origin=""):
-            marks = {0.0: transforms[0][1], period: transforms[0][1]}
-            for a_, b_ in intervals:
-                for share, transform in transforms:
-                    marks[a_ + (b_ - a_) * share] = transform
-            keys = "".join(f"{tt / period * 100:.6f}%{{transform:{value}}}" for tt, value in sorted(marks.items()))
-            css.append(f".{cls}{{{origin}animation:{cls} {period}s linear infinite}}@keyframes {cls}{{{keys}}}")
+    def reaction(cls, intervals, transforms, origin=""):
+        marks = {0.0: transforms[0][1], period: transforms[0][1]}
+        for a_, b_ in intervals:
+            for share, transform in transforms:
+                marks[a_ + (b_ - a_) * share] = transform
+        keys = "".join(f"{tt / period * 100:.6f}%{{transform:{value}}}" for tt, value in sorted(marks.items()))
+        css.append(f".{cls}{{{origin}animation:{cls} {period}s linear infinite}}@keyframes {cls}{{{keys}}}")
 
-        reaction("walkhit", groups["walk_impact"],
-                 [(0, "scaleX(1)"), (.5, "scaleX(.93)"), (1, "scaleX(1)")],
-                 f"transform-origin:{sw}px {sh}px;")
-        ball_right = sw - ball_margin
-        reaction("ballhit", groups["ball_impact"],
-                 [(0, "scale(1,1)"), (.5, "scale(.8,1.1)"), (1, "scale(1,1)")],
-                 f"transform-origin:{ball_right}px {sh}px;")
-        reaction("hop", groups["ball_recoil"],
-                 [(0, "translateY(0px)"), (.25, "translateY(-12px)"),
-                  (.5, "translateY(-17px)"), (.75, "translateY(-12px)"), (1, "translateY(0px)")])
-        recovery = creatures.hedgehog_recovery()
-        closed = creatures.frame_rects(pal, recovery["blink"], px)
-        heads = []
-        for cls, pose, slots in (("sl", "left", (0,)), ("sm", "blink", (1, 3)), ("sr", "right", (2,))):
-            keys = "".join(f"{j * 25}%{{opacity:{int(j in slots)}}}" for j in range(4))
-            keys += f"100%{{opacity:{int(0 in slots)}}}"
-            css.append(f".{cls}{{opacity:0;animation:{cls} .25s steps(1) infinite}}@keyframes {cls}{{{keys}}}")
-            offset = -px if pose != "blink" else 0
-            heads.append(f'<g class="{cls}">{creatures.frame_rects(pal, recovery[pose], px, offset)}</g>')
-        c0, c1 = roll["curl"]
-        body = (
-            f'<g class="gw">{walking}</g>'
-            f'<g class="gc">{rf(c0)}</g><g class="gu">{rf(c1)}</g>'
-            f'<g class="gb"><g class="spin">{rf(roll["ball"])}</g></g>'
-            f'<g class="idle">{rf(walk_frames[0])}</g><g class="closed">{closed}</g>'
-            f'<g class="whit"><g class="walkhit">{closed}</g></g>'
-            f'<g class="bhit"><g class="ballhit">{rf(roll["ball"])}</g></g>'
-            f'<g class="bback"><g class="hop"><g class="backspin">{rf(roll["ball"])}</g></g></g>'
-            f'<g class="bstop">{rf(roll["ball"])}</g><g class="shake">{"".join(heads)}</g>'
-        )
+    reaction("walkhit", groups["walk_impact"],
+             [(0, "scaleX(1)"), (.5, "scaleX(.93)"), (1, "scaleX(1)")],
+             f"transform-origin:{sw}px {sh}px;")
+    ball_right = sw - ball_margin
+    reaction("ballhit", groups["ball_impact"],
+             [(0, "scale(1,1)"), (.5, "scale(.8,1.1)"), (1, "scale(1,1)")],
+             f"transform-origin:{ball_right}px {sh}px;")
+    reaction("hop", groups["ball_recoil"],
+             [(0, "translateY(0px)"), (.25, "translateY(-12px)"),
+              (.5, "translateY(-17px)"), (.75, "translateY(-12px)"), (1, "translateY(0px)")])
+    recovery = hedgehog.recovery()
+    closed = hedgehog.frame_rects(pal, recovery["blink"], px)
+    heads = []
+    for cls, pose, slots in (("sl", "left", (0,)), ("sm", "blink", (1, 3)), ("sr", "right", (2,))):
+        keys = "".join(f"{j * 25}%{{opacity:{int(j in slots)}}}" for j in range(4))
+        keys += f"100%{{opacity:{int(0 in slots)}}}"
+        css.append(f".{cls}{{opacity:0;animation:{cls} .25s steps(1) infinite}}@keyframes {cls}{{{keys}}}")
+        offset = -px if pose != "blink" else 0
+        heads.append(f'<g class="{cls}">{hedgehog.frame_rects(pal, recovery[pose], px, offset)}</g>')
+    c0, c1 = roll["curl"]
+    body = (
+        f'<g class="gw">{walking}</g>'
+        f'<g class="gc">{rf(c0)}</g><g class="gu">{rf(c1)}</g>'
+        f'<g class="gb"><g class="spin">{rf(roll["ball"])}</g></g>'
+        f'<g class="gbs"><g class="slowspin">{rf(roll["ball"])}</g></g>'
+        f'<g class="idle">{rf(walk_frames[0])}</g><g class="closed">{closed}</g>'
+        f'<g class="whit"><g class="walkhit">{closed}</g></g>'
+        f'<g class="bhit"><g class="ballhit">{rf(roll["ball"])}</g></g>'
+        f'<g class="bback"><g class="hop"><g class="backspin">{rf(roll["ball"])}</g></g></g>'
+        f'<g class="bstop">{rf(roll["ball"])}</g><g class="shake">{"".join(heads)}</g>'
+    )
     # A larger pause separates contact actions from the project divider.
     top_pad = r_px(12)
     content = "".join(rects) + f'<g class="walk" shape-rendering="crispEdges"><g class="flip">{body}</g></g>'
-    if roll:
-        content += (f'<path d="M0 {top}V{cells_y + cell}M{W} {top}V{cells_y + cell}" '
-                    f'fill="none" stroke="{t["mu"]}" stroke-width="2"/>')
     content = f'<g transform="translate(0 {top_pad:.1f})">{content}</g>'
     return svg(
         W, int(H + top_pad), "Walking mascot",
-        "A pixel-art hedgehog alternates walking and rolling, bumps into the edges, recoils, shakes its head and walks back."
-        if roll else "A small pixel-art creature walking across a row of contribution squares.",
+        "A pixel-art hedgehog alternates walking and rolling; sometimes it bumps into the edge, recoils and shakes its head, other times it just turns around.",
         content, "".join(css),
     )
 
