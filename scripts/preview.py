@@ -4,6 +4,7 @@
 """
 
 import sys
+from io import BytesIO
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
@@ -48,9 +49,9 @@ def main():
                     t,
                 )
                 pg.wait_for_timeout(120)
-                tmp = f"/tmp/_pv_{len(shots)}.png"
-                pg.locator("svg").screenshot(path=tmp)
-                shots.append((f"{Path(f).name} @ {t}s", Image.open(tmp).convert("RGB")))
+                # Read the capture from memory: no scratch file, so it also works where /tmp does not exist.
+                png = pg.locator("svg").screenshot()
+                shots.append((f"{Path(f).name} @ {t}s", Image.open(BytesIO(png)).convert("RGB")))
                 pg.close()
         b.close()
     W = max(im.width for _, im in shots)
