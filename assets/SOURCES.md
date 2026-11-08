@@ -32,6 +32,10 @@ Each number previews the card below it, in the same order, and matches that card
 - Facts (four sources, Cloudflare cron plus GitHub fallback, every 15 minutes, no LLM, R$ 0 expected cost) from the [project README](https://github.com/JoaoVitorSesma/codex-reset-monitor/blob/main/README.md). The four sources are the fetchers in `SOURCE_FETCHERS` ([`src/monitor.py`](https://github.com/JoaoVitorSesma/codex-reset-monitor/blob/main/src/monitor.py)): OpenAI Help Center, OpenAI Developer Community, codexreset.org and willcodexresets.com; the terminal fetches all four.
 - The terminal shows an illustrative run, not real output; the time in the `classify` line is an example.
 
+## Toolbox
+
+- The tools are listed once, in `STR` in `scripts/build_assets.py`. A test checks that every tool in a project's stack line in the README is also in the panel, so the two lists cannot drift apart. The Flutter · Dart coursework link stays as text under the panel, because links inside a README image do not work.
+
 ## Contact buttons
 
 - Gmail logo from [Simple Icons](https://simpleicons.org) 16.36.0 (CC0 1.0); LinkedIn logo and the email-app envelope from [Bootstrap Icons](https://icons.getbootstrap.com) 1.13.2 (MIT). Licences in `scripts/icons/contact/`. Outlook and LinkedIn are not in Simple Icons, so Outlook shows Microsoft's four squares, drawn in `build_assets.py`.

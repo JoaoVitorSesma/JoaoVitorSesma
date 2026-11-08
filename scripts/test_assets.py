@@ -71,6 +71,20 @@ class GeneratedAssetTests(unittest.TestCase):
             with self.subTest(name):
                 self.assertIn(name, shown)
 
+    def test_project_stacks_are_in_the_toolbox(self):
+        # The line under each project card lists its stack before the links; every
+        # tool there must also be in that language's Toolbox panel.
+        for lang, path in READMES.items():
+            toolbox = {tool for _, tools in assets.STR[lang]["toolbox"] for tool in tools}
+            lines = [line for line in path.read_text(encoding="utf-8").splitlines()
+                     if line.startswith("Python · ") and "](" in line]
+            self.assertEqual(len(lines), 3, f"expected three project stack lines in {path.name}")
+            for line in lines:
+                for tool in line.split("[", 1)[0].split(" · "):
+                    if tool.strip():
+                        with self.subTest(readme=lang, tool=tool):
+                            self.assertIn(tool.strip(), toolbox)
+
     def test_each_readme_shows_its_own_language(self):
         # The language buttons are the one place a README shows the other language.
         for lang, other in (("en", "pt"), ("pt", "en")):

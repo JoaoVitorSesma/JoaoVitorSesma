@@ -76,10 +76,14 @@ Python · GitHub Actions · Cloudflare Workers · pytest · [Repositório](https
 
 ## Ferramentas
 
-**Dados e pesquisa:** Python · pandas · NumPy · lifelines · Jupyter<br>
-**Aplicações e visualização:** Streamlit · Plotly · GeoPandas · Folium<br>
-**Automação:** GitHub Actions · Cloudflare Workers · webhooks do Discord<br>
-**Disciplina:** [Flutter · Dart](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter)
+<picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/work/toolbox-pt-dark-mobile.svg">
+  <source media="(max-width: 600px)" srcset="./assets/work/toolbox-pt-light-mobile.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/work/toolbox-pt-dark.svg">
+  <img src="./assets/work/toolbox-pt-light.svg" width="100%" alt="Dados e pesquisa: Python, pandas, NumPy, lifelines, Jupyter. Aplicações e visualização: Streamlit, Plotly, GeoPandas, Folium. Automação: GitHub Actions, Cloudflare Workers, webhooks do Discord, pytest. Disciplina: Flutter, Dart.">
+</picture>
+
+Disciplina de Flutter · Dart · [Repositório](https://github.com/JoaoVitorSesma/2026_maua_ecm252_flutter)
 
 ## Vamos conversar
 
