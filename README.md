@@ -57,7 +57,7 @@ Python · pandas · lifelines · Jupyter · [Repository](https://github.com/Joao
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/work/dashboard-en-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/work/dashboard-en-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/work/dashboard-en-dark.svg">
-  <img src="./assets/work/dashboard-en-light.svg" width="100%" alt="Cervical cancer dashboard built with Streamlit: age, stage and outcome filters. Chart of diagnoses per year in public FOSP data from 2000 to 2023, with a 20 percent drop in 2020.">
+  <img src="./assets/work/dashboard-en-light.svg" width="100%" alt="Cervical cancer dashboard built with Streamlit: age, stage and outcome filters and a map of 36-month Kaplan–Meier survival across 17 health regions. Chart of diagnoses per year in public FOSP data from 2000 to 2023, with a 20 percent drop in 2020.">
 </picture>
 </a>
 

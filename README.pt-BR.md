@@ -57,7 +57,7 @@ Python · pandas · lifelines · Jupyter · [Repositório](https://github.com/Jo
   <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./assets/work/dashboard-pt-dark-mobile.svg">
   <source media="(max-width: 600px)" srcset="./assets/work/dashboard-pt-light-mobile.svg">
   <source media="(prefers-color-scheme: dark)" srcset="./assets/work/dashboard-pt-dark.svg">
-  <img src="./assets/work/dashboard-pt-light.svg" width="100%" alt="Dashboard de câncer do colo do útero em Streamlit: filtros de idade, estádio e desfecho. Gráfico de diagnósticos por ano nos dados públicos da FOSP de 2000 a 2023, com queda de 20 por cento em 2020.">
+  <img src="./assets/work/dashboard-pt-light.svg" width="100%" alt="Dashboard de câncer do colo do útero em Streamlit: filtros de idade, estádio e desfecho e um mapa da sobrevida de Kaplan–Meier em 36 meses nas 17 regiões de saúde. Gráfico de diagnósticos por ano nos dados públicos da FOSP de 2000 a 2023, com queda de 20 por cento em 2020.">
 </picture>
 </a>
 

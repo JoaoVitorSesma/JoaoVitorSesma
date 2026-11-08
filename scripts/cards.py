@@ -33,7 +33,7 @@ C = {
     "en": dict(
         r_eyebrow="Undergraduate research · FOSP",
         r_title="Who survives colorectal cancer, and why?",
-        r_body="A Cox proportional hazards model on São Paulo's cancer registry: data cleaning, "
+        r_body="Cox regression and Kaplan–Meier curves on São Paulo's cancer registry: data cleaning, "
         "encoding, variable selection and validation.",
         r_stats=[("0.747", "C-index"), ("37,499", "patients"), ("22,078", "deaths observed"), ("2000–23", "follow-up")],
         r_fig="Adjusted hazard ratios, 95% CI",
@@ -41,6 +41,10 @@ C = {
         r_higher="higher risk",
         d_eyebrow="App · Streamlit",
         d_title="Cervical cancer in São Paulo, year by year",
+        d_body="A Streamlit app over public FOSP data: filter by age, stage and outcome, follow diagnoses "
+        "year by year and compare survival across health regions on a map.",
+        d_stats=[("17", "health regions"), ("36 mo", "survival by region"), ("3", "interactive filters"),
+                 ("2000–23", "diagnosis years")],
         d_window="DFOSP.py · streamlit run",
         d_filters="Filters",
         d_age="Age",
@@ -65,17 +69,18 @@ C = {
         "Adjusted hazard ratios: metastasis 2.18, no treatment 1.73, recurrence 1.20, stage 1.12 per level, "
         "hormone therapy 0.66, chemotherapy 0.59, surgery 0.55.",
         d_name="Cervical cancer dashboard",
-        d_desc="Streamlit dashboard with age, stage and outcome filters. Chart: diagnoses per year in the "
+        d_desc="Streamlit dashboard with age, stage and outcome filters and a map of 36-month Kaplan–Meier "
+        "survival across 17 health regions. Chart: diagnoses per year in the "
         "public FOSP cervical cancer data, 2000 to 2023, with a 20 percent drop in 2020.",
         m_name="Codex reset monitor",
-        m_desc="Terminal showing an illustrative run: a Cloudflare cron dispatches the workflow, three public "
+        m_desc="Terminal showing an illustrative run: a Cloudflare cron dispatches the workflow, four public "
         "sources are fetched, the announcement is classified, deduplicated into one event and sent to Discord. "
         "Free to run, no LLM calls, four sources, two independent schedulers.",
     ),
     "pt": dict(
         r_eyebrow="Iniciação científica · FOSP",
         r_title="Quem sobrevive ao câncer colorretal, e por quê?",
-        r_body="Modelo de riscos proporcionais de Cox no registro de câncer de SP: limpeza, "
+        r_body="Regressão de Cox e curvas de Kaplan–Meier no registro de câncer de SP: limpeza, "
         "codificação, seleção de variáveis e validação.",
         r_stats=[("0,747", "C-index"), ("37.499", "pacientes"), ("22.078", "óbitos observados"), ("2000–23", "seguimento")],
         r_fig="Hazard ratios ajustados, IC 95%",
@@ -83,6 +88,10 @@ C = {
         r_higher="maior risco",
         d_eyebrow="Aplicação · Streamlit",
         d_title="Câncer do colo do útero em SP, ano a ano",
+        d_body="Um app em Streamlit sobre dados públicos da FOSP: filtre por idade, estádio e desfecho, "
+        "acompanhe os diagnósticos ano a ano e compare a sobrevida entre regiões de saúde num mapa.",
+        d_stats=[("17", "regiões de saúde"), ("36 meses", "sobrevida por região"), ("3", "filtros interativos"),
+                 ("2000–23", "anos de diagnóstico")],
         d_window="DFOSP.py · streamlit run",
         d_filters="Filtros",
         d_age="Idade",
@@ -106,10 +115,11 @@ C = {
         "Hazard ratios ajustados: metástase 2,18, sem tratamento 1,73, recidiva 1,20, estádio 1,12 por nível, "
         "hormonioterapia 0,66, quimioterapia 0,59, cirurgia 0,55.",
         d_name="Dashboard de câncer do colo do útero",
-        d_desc="Dashboard em Streamlit com filtros de idade, estádio e desfecho. Gráfico: diagnósticos por ano "
+        d_desc="Dashboard em Streamlit com filtros de idade, estádio e desfecho e um mapa da sobrevida de "
+        "Kaplan–Meier em 36 meses nas 17 regiões de saúde. Gráfico: diagnósticos por ano "
         "nos dados públicos da FOSP de câncer do colo do útero, de 2000 a 2023, com queda de 20 por cento em 2020.",
         m_name="Monitor de resets do Codex",
-        m_desc="Terminal com uma execução ilustrativa: um cron da Cloudflare dispara o workflow, três fontes "
+        m_desc="Terminal com uma execução ilustrativa: um cron da Cloudflare dispara o workflow, quatro fontes "
         "públicas são consultadas, o anúncio é classificado, deduplicado em um único evento e enviado ao Discord. "
         "Custo zero, sem chamadas a LLM, quatro fontes, dois agendadores independentes.",
     ),
@@ -155,15 +165,16 @@ def body_lines(L, s, y, max_w, x=None):
     return "".join(out), y
 
 
-def stats(L, items, x, y, col_w):
+def stats(L, items, x, y, col_w, per_row=2):
     out = []
     row_h = L.num + L.label * 2.4
+    rows = -(-len(items) // per_row)
     for i, (num, lbl) in enumerate(items):
-        cx = x + (i % 2) * col_w
-        cy = y + L.num + (i // 2) * row_h
+        cx = x + (i % per_row) * col_w
+        cy = y + L.num + (i // per_row) * row_h
         out.append(text(MONO_MD, num, cx, cy, L.num, "fg")[0])
         out.append(text(SANS, lbl, cx, cy + L.label * 1.5, L.label, "mu")[0])
-    end = y + L.num + row_h + L.label * 1.5
+    end = y + L.num + row_h * (rows - 1) + L.label * 1.5
     return f'<g class="st">{"".join(out)}</g>', end
 
 
@@ -300,6 +311,16 @@ def dashboard(lang, theme, mobile):
     vmax = max(v for _, v in years)
     head, y = header(L, s, "d_eyebrow", "d_title", L.W - 2 * L.pad if mobile else r(560))
     parts = [head]
+    css.append(f".st{{animation:pop {P}s ease .1s infinite both}}")
+    # Same anatomy as the other cards: body and four facts (body left out on mobile),
+    # here above the window because the window takes the full width.
+    if mobile:
+        st, y = stats(L, s["d_stats"], L.pad, y + r(18), (L.W - 2 * L.pad) / 2)
+    else:
+        bl, y = body_lines(L, s["d_body"], y + r(8), L.W - 2 * L.pad)
+        parts.append(bl)
+        st, y = stats(L, s["d_stats"], L.pad, y + r(22), (L.W - 2 * L.pad) / 4, per_row=4)
+    parts.append(st)
 
     wx, wy, ww = L.pad, y + r(22), L.W - 2 * L.pad
     side_w = 0 if mobile else r(200)
@@ -382,6 +403,7 @@ LOG = [
     ("", "fetch help.openai.com ...... ok", "mu"),
     ("", "fetch community.openai.com . ok", "mu"),
     ("", "fetch codexreset.org ....... ok", "mu"),
+    ("", "fetch willcodexresets.com .. ok", "mu"),
     ("", "classify  reset · global · high", "fg"),
     ("", "dedupe    3 sources -> 1 event", "fg"),
     ("", "notify    discord #codex-alerts", "fg"),
