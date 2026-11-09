@@ -87,7 +87,7 @@ Disciplina de Flutter · Dart · [Repositório](https://github.com/JoaoVitorSesm
 
 ## Vamos conversar
 
-Quer conversar sobre **dados, IA ou saúde**? Mande um e-mail ou me encontre no LinkedIn:
+Está trabalhando com **dados de saúde ou IA**, ou só quer trocar ideias? Me escreva ou me encontre no LinkedIn.
 
 <p>
   <a href="https://mail.google.com/mail/?view=cm&fs=1&to=jv0707204%40gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/gmail-dark.svg"><img src="./assets/contact/gmail-light.svg" alt="Enviar e-mail pelo Gmail" height="42" width="90"></picture></a>
@@ -98,6 +98,5 @@ Quer conversar sobre **dados, IA ou saúde**? Mande um e-mail ou me encontre no 
 
 E-mail: `jv0707204@gmail.com`
 
-<p align="right"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/strip/rest-dark.svg"><img src="./assets/strip/rest-light.svg" alt="O ouriço em pixel art fica no fim da página e pisca de vez em quando." height="52" width="62"></picture></p>
-
-<sub>Todas as figuras desta página são desenhadas a partir dos dados dos próprios projetos por [`scripts/build_assets.py`](./scripts/build_assets.py); fontes em [`assets/SOURCES.md`](./assets/SOURCES.md). As animações param quando o sistema pede movimento reduzido. Tipografia em Atkinson Hyperlegible, desenhada pelo Braille Institute para leitores com baixa visão.</sub>
+<p><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/strip/rest-dark.svg"><img src="./assets/strip/rest-light.svg" align="right" alt="O ouriço em pixel art fica no fim da página e pisca de vez em quando." height="52" width="62"></picture>
+<sub>Cada número desta página vem dos dados dos próprios projetos e é conferido de novo toda semana; veja <a href="./assets/SOURCES.md">as fontes</a>. As imagens são geradas por <a href="./scripts/build_assets.py"><code>build_assets.py</code></a>, param de se mexer quando o sistema pede movimento reduzido e usam a Atkinson Hyperlegible, fonte criada pelo Braille Institute para leitores com baixa visão. Obrigado por ler até aqui.</sub></p>
