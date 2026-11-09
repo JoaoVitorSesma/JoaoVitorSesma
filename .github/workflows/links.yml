@@ -1,0 +1,30 @@
+name: links
+
+# Links can break without any change here (a renamed repository, a moved notebook),
+# so besides pull requests that touch the pages this also runs every Monday.
+on:
+  pull_request:
+    paths:
+      - README.md
+      - README.pt-BR.md
+      - assets/SOURCES.md
+      - scripts/check_links.py
+      - .github/workflows/links.yml
+  schedule:
+    - cron: "17 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    name: README links answer
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+      - name: Check links
+        run: python scripts/check_links.py
