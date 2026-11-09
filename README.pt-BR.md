@@ -87,7 +87,7 @@ Disciplina de Flutter · Dart · [Repositório](https://github.com/JoaoVitorSesm
 
 ## Vamos conversar
 
-Está trabalhando com **dados de saúde ou IA**, ou só quer trocar ideias? Me escreva ou me encontre no LinkedIn.
+Está trabalhando com **dados de saúde, análise de dados ou IA**, ou só quer trocar ideias? Me escreva ou me encontre no LinkedIn.
 
 <p>
   <a href="https://mail.google.com/mail/?view=cm&fs=1&to=jv0707204%40gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/contact/gmail-dark.svg"><img src="./assets/contact/gmail-light.svg" alt="Enviar e-mail pelo Gmail" height="42" width="90"></picture></a>
@@ -99,4 +99,4 @@ Está trabalhando com **dados de saúde ou IA**, ou só quer trocar ideias? Me e
 E-mail: `jv0707204@gmail.com`
 
 <p><picture><source media="(prefers-color-scheme: dark)" srcset="./assets/strip/rest-dark.svg"><img src="./assets/strip/rest-light.svg" align="right" alt="O ouriço em pixel art fica no fim da página e pisca de vez em quando." height="52" width="62"></picture>
-<sub>Cada número desta página vem dos dados dos próprios projetos e é conferido de novo toda semana; veja <a href="./assets/SOURCES.md">as fontes</a>. As imagens são geradas por <a href="./scripts/build_assets.py"><code>build_assets.py</code></a>, param de se mexer quando o sistema pede movimento reduzido e usam a Atkinson Hyperlegible, fonte criada pelo Braille Institute para leitores com baixa visão. Obrigado por ler até aqui.</sub></p>
+<sub><b>© 2026 João Vitor Morimoto Sesma.</b> Design, textos e arte, incluindo o ouriço e os ícones do topo, são de minha autoria.<br>Cada número vem dos dados dos próprios projetos e é conferido de novo toda semana (<a href="./assets/SOURCES.md">fontes</a>). Imagens geradas por <a href="./scripts/build_assets.py"><code>build_assets.py</code></a>; as animações param quando o sistema pede movimento reduzido. Tipografia Atkinson Hyperlegible, do Braille Institute (SIL OFL 1.1); logos das ferramentas do Simple Icons (CC0) e do Bootstrap Icons (MIT).<br>Obrigado por ler até aqui.</sub></p>
