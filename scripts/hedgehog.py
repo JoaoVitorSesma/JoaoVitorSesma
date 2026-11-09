@@ -1,5 +1,9 @@
 """The README mascot: an original pixel-art hedgehog drawn by João.
 
+The drawings in this file (PALETTE, DARK, FRAMES and the poses built from them)
+are artwork, all rights reserved, and are not covered by the MIT License that
+applies to the code. See LICENSING.md.
+
 Every pose is a grid of characters; each character maps to a colour in the
 palette and '.' is transparent. Poses face right; the strip mirrors them on
 the way back. Spines have an outer rim (r) and interior quills (q).
