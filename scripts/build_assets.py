@@ -361,24 +361,42 @@ def toolbox(lang, theme, mobile):
     t, s = THEMES[theme], STR[lang]
     W = 720 if mobile else 1200
     r = canvas(W, mobile)
-    pad, gap = (r(14), r(14)) if mobile else (r(22), r(28))
+    pad, gap = (r(14), r(14)) if mobile else (r(22), r(20))
     eyebrow, fs = r(12), r(13)
     chip_h, chip_px, chip_gap = fs * 2.0, r(8), r(5)
     ic, ic_gap = r(14), r(5)
     sw = r(1)
     per_row = 1 if mobile else 2
-    colw = (W - 2 * pad - gap * (per_row - 1)) / per_row
     groups = s["toolbox"]
+
+    def chip_w(tool):
+        return SANS.width(tool, fs) + 2 * chip_px + ((ic + ic_gap) if tool in TOOL_ICONS else 0)
+
+    def one_row(tools):
+        return sum(chip_w(tool) for tool in tools) + chip_gap * (len(tools) - 1)
+
+    inner = W - 2 * pad
+    if mobile:
+        cols = [inner]
+    else:
+        # Split where the most groups fit on one line: the left column as wide as its
+        # longest group, but never narrower than leaving the right one its longest.
+        left = [one_row(tools) for _, tools in groups[0::2]]
+        right = [one_row(tools) for _, tools in groups[1::2]]
+        split = min(max(left), inner - gap - max(right))
+        split = max(split, (inner - gap) / 2)
+        cols = [split, inner - gap - split]
     parts, y = [], pad
     for row in range(0, len(groups), per_row):
         bottom = y
         for k, (area, tools) in enumerate(groups[row:row + per_row]):
-            x0 = pad + k * (colw + gap)
+            x0 = pad + k * (cols[0] + gap)
+            colw = cols[k]
             parts.append(text(MONO_MD, area.upper(), x0, y + eyebrow, eyebrow, "ac", tracking=r(0.6))[0])
             cx, cy = x0, y + eyebrow + r(10)
             for tool in tools:
                 icon = TOOL_ICONS.get(tool)
-                w = SANS.width(tool, fs) + 2 * chip_px + ((ic + ic_gap) if icon else 0)
+                w = chip_w(tool)
                 if cx > x0 and cx + w > x0 + colw:
                     cx, cy = x0, cy + chip_h + chip_gap
                 el = (f'<rect x="{cx:.1f}" y="{cy:.1f}" width="{w:.1f}" height="{chip_h:.1f}" rx="{chip_h / 2:.1f}" '
